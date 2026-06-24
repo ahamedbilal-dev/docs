@@ -1,5 +1,5 @@
 ---
-title: "Object-Oriented Programming in Python: Using Classes"
+title: "Python Classes and Object-Oriented Programming Guide"
 sidebarTitle: "Classes Overview"
 description: "Learn what OOP is, how Python classes work as blueprints for objects, and how classes help you write cleaner, more scalable AI programs."
 ---
@@ -31,7 +31,7 @@ model = "gpt-4o-mini"
 
 def generate_response(prompt):
     # Process prompt...
-    return response
+    return "AI response"
 
 # With classes — everything bundled together
 class OpenAIClient:
@@ -41,7 +41,7 @@ class OpenAIClient:
 
     def generate_response(self, prompt):
         # Process prompt...
-        return response
+        return "AI response"
 ```
 
 ## Why Use Classes?
@@ -71,7 +71,7 @@ Classes help your code scale gracefully. Here is the progression most Python dev
 
     def generate_response(api_config, prompt):
         # Make API call
-        return response
+        return "AI response"
 
     api = setup_api("sk-...")
     result = generate_response(api, "Explain Python")
@@ -104,7 +104,7 @@ Classes help your code scale gracefully. Here is the progression most Python dev
 
         def generate(self, prompt):
             # All logic encapsulated here
-            return response
+            return "AI response"
 
     # main.py
     from client import OpenAIClient
@@ -133,7 +133,7 @@ class OpenAIClient:
     def generate(self, prompt):
         self.request_count += 1
         # Make API call with self.api_key and self.model
-        return response
+        return "AI response"
 
     def usage_summary(self):
         return f"Total requests made: {self.request_count}"
