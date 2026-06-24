@@ -1,0 +1,363 @@
+---
+title: "Common Python Errors: What They Mean and How to Fix Them"
+sidebarTitle: "Common Errors"
+description: "A reference guide to the most frequent Python exceptions — NameError, TypeError, ValueError, IndexError, KeyError, and more, with causes and fixes."
+---
+
+Understanding Python's most common error types is one of the highest-leverage skills you can develop. When you know what each error means, you spend less time guessing and more time fixing. This page covers the errors you'll encounter most often — what causes them, a minimal example that triggers them, and the right way to fix them.
+
+## How to Read an Error Message
+
+Before diving into specific errors, here's how to read Python's traceback output — the text Python prints when something goes wrong. Always read it **from the bottom up**:
+
+```
+Traceback (most recent call last):
+  File "script.py", line 5, in <module>
+    result = 10 / 0
+ZeroDivisionError: division by zero
+```
+
+1. **Error type** — `ZeroDivisionError` — tells you *what* went wrong
+2. **Error message** — `division by zero` — tells you *why*
+3. **Location** — `script.py`, line 5 — tells you *where*
+4. **Code that failed** — `result = 10 / 0` — shows you the exact line
+
+<Tip>
+  Copy the error type and message into a search engine or your AI assistant. These messages are precise and standardised — you'll almost always find an explanation and a fix immediately.
+</Tip>
+
+---
+
+## Error Reference
+
+<Accordion title="NameError — name is not defined">
+  **What causes it:** You're referencing a variable or function name that Python has never seen — either because it was never defined, it was defined later in the file, or there's a typo.
+
+  ```python
+  # Triggers NameError
+  print(user_name)   # user_name was never assigned
+
+  result = calcualte(10, 5)  # typo — should be calculate()
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Define the variable before using it
+  user_name = "Alice"
+  print(user_name)
+
+  # Fix the typo
+  result = calculate(10, 5)
+  ```
+
+  **Common patterns to watch for:**
+  - Using a loop variable outside the loop (it *does* persist in Python, but only if the loop ran at least once)
+  - Importing from the wrong module name
+  - Defining a function after calling it in a script that runs top-to-bottom
+</Accordion>
+
+<Accordion title="TypeError — wrong type for an operation">
+  **What causes it:** You're applying an operation or function to a value of the wrong type — like trying to add a string to a number, or passing the wrong number of arguments to a function.
+
+  ```python
+  # Triggers TypeError
+  "hello" + 5           # can't concatenate str and int
+  len(42)               # integers don't have a length
+  int([1, 2, 3])        # can't convert a list to int
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Explicitly convert types
+  "hello" + str(5)      # "hello5"
+  str(42)               # "42"
+
+  # Check the type before operating on it
+  value = get_user_input()
+  if isinstance(value, str):
+      print(f"Length: {len(value)}")
+  else:
+      print(f"Value: {value}")
+  ```
+
+  **Tip:** If you're getting a TypeError from a function you wrote, double-check the number of positional arguments you're passing — a missing or extra argument is a very common cause.
+</Accordion>
+
+<Accordion title="ValueError — right type, wrong value">
+  **What causes it:** The type is correct, but the value itself is not acceptable — like trying to convert the string `"hello"` to an integer, or asking a list to remove an item that isn't in it.
+
+  ```python
+  # Triggers ValueError
+  int("hello")          # valid string, but not a number
+  int("12.5")           # int() doesn't accept decimal strings
+  [1, 2, 3].remove(9)   # 9 is not in the list
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Validate user input
+  try:
+      age = int(input("Enter your age: "))
+  except ValueError:
+      print("Please enter a whole number")
+
+  # Convert via float first if needed
+  number = int(float("12.5"))   # 12
+
+  # Check before removing
+  items = [1, 2, 3]
+  if 9 in items:
+      items.remove(9)
+  ```
+</Accordion>
+
+<Accordion title="IndexError — list index out of range">
+  **What causes it:** You're trying to access a position in a list (or tuple, or string) that doesn't exist. Remember that Python lists are **zero-indexed** — a list with 3 items has valid indices `0`, `1`, and `2`.
+
+  ```python
+  # Triggers IndexError
+  numbers = [1, 2, 3]
+  print(numbers[5])     # only indices 0, 1, 2 exist
+  print(numbers[3])     # still out of range!
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Check the length before indexing
+  if len(numbers) > 5:
+      print(numbers[5])
+  else:
+      print("Not enough items")
+
+  # Safely get the last item
+  last = numbers[-1] if numbers else None
+
+  # Handle it explicitly
+  try:
+      print(numbers[5])
+  except IndexError:
+      print("Index out of range")
+  ```
+
+  **Off-by-one reminder:** The last valid index of a list is always `len(list) - 1`, not `len(list)`.
+</Accordion>
+
+<Accordion title="KeyError — dictionary key does not exist">
+  **What causes it:** You're accessing a key in a dictionary using `dict[key]` syntax, but that key doesn't exist in the dictionary.
+
+  ```python
+  # Triggers KeyError
+  user = {"name": "Alice", "age": 25}
+  print(user["email"])    # "email" key was never set
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Option 1 — check first
+  if "email" in user:
+      print(user["email"])
+
+  # Option 2 — use .get() with a default value (most Pythonic)
+  email = user.get("email", "no-email@example.com")
+  print(email)   # no-email@example.com
+
+  # Option 3 — handle the error
+  try:
+      print(user["email"])
+  except KeyError:
+      print("Email not found in user data")
+  ```
+
+  <Tip>
+    Prefer `.get()` over `dict[key]` whenever a key might legitimately be absent — it's cleaner than a `try/except` for this common case.
+  </Tip>
+</Accordion>
+
+<Accordion title="AttributeError — object has no such attribute">
+  **What causes it:** You're trying to access an attribute or method on an object that doesn't have it — either because the type is wrong, you have a typo, or the attribute was never set.
+
+  ```python
+  # Triggers AttributeError
+  text = "hello"
+  text.append("!")      # strings don't have .append()
+
+  number = 42
+  number.upper()        # integers don't have .upper()
+
+  # Also triggered if you typo an attribute
+  class Dog:
+      def __init__(self, name):
+          self.name = name
+
+  d = Dog("Buddy")
+  print(d.nme)          # typo — should be d.name
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Use the correct method for the type
+  text = "hello"
+  text = text + "!"         # strings are immutable — create a new one
+  # or
+  text = f"{text}!"
+
+  # Check before accessing
+  if hasattr(obj, "append"):
+      obj.append(item)
+
+  # Fix the typo
+  print(d.name)
+  ```
+</Accordion>
+
+<Accordion title="ImportError / ModuleNotFoundError — can't import module">
+  **What causes it:** Python can't find the module you're trying to import. Either the package isn't installed, the file doesn't exist at the path you specified, or there's a typo in the module name.
+
+  ```python
+  # Triggers ModuleNotFoundError
+  import numppy               # typo — should be numpy
+  from utils import helper    # utils.py doesn't exist in your path
+
+  # Triggers ImportError
+  from os import nonexistent  # os exists, but nonexistent doesn't
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Fix the typo
+  import numpy
+
+  # Install the package if it's missing
+  # pip install numpy  (run in terminal, not in Python)
+
+  # Handle optional imports gracefully
+  try:
+      import numpy as np
+      HAS_NUMPY = True
+  except ImportError:
+      HAS_NUMPY = False
+      print("numpy not available — using slower fallback")
+  ```
+</Accordion>
+
+<Accordion title="FileNotFoundError — no such file or directory">
+  **What causes it:** You're trying to open a file that doesn't exist at the path you specified. This is one of the most common errors in data and AI projects.
+
+  ```python
+  # Triggers FileNotFoundError
+  with open("missing.txt", "r") as f:
+      content = f.read()
+  ```
+
+  **How to fix it:**
+
+  ```python
+  import os
+
+  # Option 1 — check first
+  if os.path.exists("data.txt"):
+      with open("data.txt", "r") as f:
+          content = f.read()
+  else:
+      print("data.txt not found")
+
+  # Option 2 — handle with try/except (most common in production code)
+  try:
+      with open("data.txt", "r") as f:
+          content = f.read()
+  except FileNotFoundError:
+      content = ""   # safe default
+      print("data.txt not found — starting with empty content")
+  ```
+
+  **Tip:** File paths are relative to the directory where you *run* the script, not where the script *lives*. Use `os.path.join` or `pathlib.Path` for robust path handling.
+</Accordion>
+
+<Accordion title="ZeroDivisionError — division by zero">
+  **What causes it:** The denominator in a division or modulo operation is zero.
+
+  ```python
+  # Triggers ZeroDivisionError
+  result = 10 / 0
+  remainder = 7 % 0
+  ```
+
+  **How to fix it:**
+
+  ```python
+  # Guard the division
+  denominator = get_value()
+  if denominator != 0:
+      result = 10 / denominator
+  else:
+      result = 0   # or None, or raise a meaningful error
+
+  # Handle it explicitly
+  try:
+      average = total / count
+  except ZeroDivisionError:
+      average = 0
+      print("No items to average")
+  ```
+</Accordion>
+
+---
+
+## Common Mistake Patterns
+
+Beyond individual error types, there are a few recurring patterns that trigger errors across many different situations:
+
+<Accordion title="Off-by-one errors with lists">
+  ```python
+  items = ["a", "b", "c"]
+
+  # Wrong — lists are zero-indexed, so index 3 doesn't exist
+  third = items[3]   # IndexError
+
+  # Right
+  third = items[2]   # "c"
+
+  # Safest — use negative indexing for the last item
+  last = items[-1]   # "c"
+  ```
+</Accordion>
+
+<Accordion title="Modifying a list while iterating over it">
+  ```python
+  numbers = [1, 2, 3, 4, 5]
+
+  # Wrong — removing items shifts indices, causing skips or errors
+  for num in numbers:
+      if num % 2 == 0:
+          numbers.remove(num)   # Dangerous!
+
+  # Right — iterate over a copy, or build a new list
+  odd_numbers = [n for n in numbers if n % 2 != 0]
+  ```
+</Accordion>
+
+<Accordion title="Mutable default arguments in function definitions">
+  ```python
+  # Wrong — the same list object is reused on every call!
+  def add_item(item, items=[]):
+      items.append(item)
+      return items
+
+  print(add_item("apple"))   # ['apple']
+  print(add_item("banana"))  # ['apple', 'banana']  — unexpected!
+
+  # Right — use None as the default
+  def add_item(item, items=None):
+      if items is None:
+          items = []
+      items.append(item)
+      return items
+  ```
+</Accordion>

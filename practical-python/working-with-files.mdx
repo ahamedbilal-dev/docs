@@ -1,0 +1,286 @@
+---
+title: "Working with Files in Python: CSV, JSON, and More"
+sidebarTitle: "Working with Files"
+description: "Read and write CSV, JSON, Excel, and text files in Python using pandas and built-in modules, with format comparisons and practical code examples."
+---
+
+Almost every real-world Python project involves reading data from files and writing results back out. Whether you're pulling records from a CSV export, consuming a JSON API response, or saving a processed dataset to Excel, Python has excellent tools for every common file format. This page walks through the most important ones with practical, runnable examples.
+
+## Common File Types in AI Projects
+
+<CardGroup cols={3}>
+  <Card title="CSV" icon="table">
+    **Comma-Separated Values.** The universal format for tabular data — output from Excel, databases, and most data tools. Human-readable and widely supported.
+  </Card>
+  <Card title="JSON" icon="brackets-curly">
+    **JavaScript Object Notation.** The standard format for API responses and configuration files. Supports nested structures like dictionaries and lists.
+  </Card>
+  <Card title="Excel (.xlsx)" icon="file-spreadsheet">
+    Feature-rich spreadsheet format. Supports multiple sheets, formatting, and formulas. Common in business settings.
+  </Card>
+  <Card title="Text (.txt)" icon="file-lines">
+    Plain text files for raw content, logs, or prompt templates. Read and written with Python's built-in `open()`.
+  </Card>
+  <Card title="Parquet" icon="database">
+    Efficient columnar storage format used in data engineering and ML pipelines. Much faster and smaller than CSV for large datasets.
+  </Card>
+  <Card title="XML" icon="code">
+    Structured markup format used by some enterprise systems and data feeds. More verbose than JSON but still widely encountered.
+  </Card>
+</CardGroup>
+
+## Libraries to Use
+
+Python covers every format — often with built-in modules, and with powerful third-party libraries for the rest:
+
+| Format | Recommended Library | Notes |
+|---|---|---|
+| CSV | `pandas` | Best for data analysis; `csv` module for simple reads |
+| JSON | `json` (built-in) | `json.load()` / `json.dump()` handle everything |
+| Excel (.xlsx) | `pandas` + `openpyxl` | `pd.read_excel()` / `pd.to_excel()` |
+| Text | `open()` built-in | No library needed |
+| Parquet | `pandas` + `pyarrow` | `pd.read_parquet()` / `pd.to_parquet()` |
+| XML | `xml.etree` (built-in) | Or `lxml` for more complex documents |
+| PDF | `PyPDF2` or `pdfplumber` | External packages |
+
+## Reading and Writing CSV
+
+CSV is the workhorse format for data analysis. `pandas` makes it trivial to load and save:
+
+<CodeGroup>
+```python Read CSV with pandas
+import pandas as pd
+
+# Read a CSV file into a DataFrame
+df = pd.read_csv("data/sales.csv")
+
+# Inspect the data
+print(df.head())              # First 5 rows
+print(f"Shape: {df.shape}")  # (rows, columns)
+print(df.dtypes)              # Column data types
+```
+
+```python Write CSV with pandas
+import pandas as pd
+import os
+
+df = pd.read_csv("data/sales.csv")
+
+# Add a calculated column
+df["total"] = df["quantity"] * df["price"]
+
+# Save to a new CSV file
+os.makedirs("output", exist_ok=True)
+df.to_csv("output/sales_with_totals.csv", index=False)
+# index=False prevents pandas writing the row numbers as a column
+print("Saved to output/sales_with_totals.csv")
+```
+
+```python CSV with built-in csv module
+import csv
+
+# Reading
+with open("data/sales.csv", "r", newline="") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(row["product"], row["price"])
+
+# Writing
+rows = [
+    {"product": "Laptop", "price": 999.99},
+    {"product": "Mouse",  "price": 29.99},
+]
+with open("output/products.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["product", "price"])
+    writer.writeheader()
+    writer.writerows(rows)
+```
+</CodeGroup>
+
+<Note>
+  Always pass `index=False` to `df.to_csv()` unless you specifically want pandas to write the integer row index as the first column.
+</Note>
+
+## Reading and Writing JSON
+
+JSON maps naturally to Python dictionaries and lists, making it easy to work with API responses and configuration files:
+
+<CodeGroup>
+```python Read JSON with json module
+import json
+
+# Read a JSON file
+with open("data/config.json", "r") as f:
+    config = json.load(f)
+
+print(config["api_key"])
+print(config["settings"]["timeout"])
+```
+
+```python Write JSON with json module
+import json
+
+data = {
+    "report_date": "2024-01-05",
+    "total_sales": 4589.82,
+    "products": [
+        {"name": "Laptop",   "units": 3, "revenue": 2999.97},
+        {"name": "Monitor",  "units": 3, "revenue": 899.97},
+        {"name": "Keyboard", "units": 5, "revenue": 399.95},
+    ]
+}
+
+with open("output/report.json", "w") as f:
+    json.dump(data, f, indent=2)
+
+print("Report saved to output/report.json")
+```
+
+```python JSON with pandas
+import pandas as pd
+
+# Read JSON into a DataFrame
+df = pd.read_json("data/sales.json")
+
+# Save DataFrame as JSON
+df.to_json("output/sales_data.json", orient="records", indent=2)
+# orient="records" → list of {column: value} dicts per row
+```
+</CodeGroup>
+
+## Reading Excel, Text, and Parquet
+
+<CodeGroup>
+```python Excel
+import pandas as pd
+
+# Read Excel (requires openpyxl: pip install openpyxl)
+df = pd.read_excel("data/sales.xlsx")
+df = pd.read_excel("data/workbook.xlsx", sheet_name="January")
+
+# Write to Excel
+df.to_excel("output/results.xlsx", index=False, sheet_name="Results")
+```
+
+```python Text files
+# Read entire file as a string
+with open("data/notes.txt", "r") as f:
+    content = f.read()
+
+# Read line by line
+with open("data/notes.txt", "r") as f:
+    for line in f:
+        print(line.strip())
+
+# Write a text file
+with open("output/summary.txt", "w") as f:
+    f.write("Sales Analysis Summary\n")
+    f.write("======================\n")
+    f.write("Grand total: $4,589.82\n")
+```
+
+```python Parquet
+import pandas as pd
+
+# Read Parquet (requires pyarrow: pip install pyarrow)
+df = pd.read_parquet("data/large_dataset.parquet")
+
+# Write Parquet — much faster and smaller than CSV
+df.to_parquet("output/dataset.parquet", index=False)
+```
+</CodeGroup>
+
+## Converting Between Formats
+
+A common task is loading data from one format and saving it in another. Here's a complete example that reads CSV, processes it, and outputs multiple formats:
+
+```python
+import pandas as pd
+import json
+import os
+
+# Load source CSV
+df = pd.read_csv("data/sales.csv")
+df["total"] = df["quantity"] * df["price"]
+
+# Ensure output folder exists
+os.makedirs("output", exist_ok=True)
+
+# 1. Save as CSV (updated with totals column)
+df.to_csv("output/sales_with_totals.csv", index=False)
+
+# 2. Save as JSON (records format — list of objects)
+df.to_json("output/sales_data.json", orient="records", indent=2)
+
+# 3. Save as Excel
+df.to_excel("output/sales_data.xlsx", index=False)
+
+# 4. Save a JSON summary using the built-in json module
+summary = {
+    "total_revenue":  round(df["total"].sum(), 2),
+    "total_units":    int(df["quantity"].sum()),
+    "unique_products": df["product"].nunique(),
+}
+with open("output/summary.json", "w") as f:
+    json.dump(summary, f, indent=2)
+
+print("Files saved:")
+for fname in os.listdir("output"):
+    print(f"  output/{fname}")
+```
+
+## File Format Comparison
+
+Choosing the right format matters for readability, file size, and compatibility:
+
+```
+# JSON — great for APIs and nested / hierarchical data
+{
+  "date": "2024-01-01",
+  "product": "Laptop",
+  "quantity": 2,
+  "price": 999.99,
+  "total": 1999.98
+}
+
+# CSV — simple, universal, best for tabular data
+date,product,quantity,price,total
+2024-01-01,Laptop,2,999.99,1999.98
+
+# Excel — feature-rich, good for business users
+# Binary format with formatting, formulas, multiple sheets.
+# Not human-readable in a text editor.
+
+# Parquet — columnar, compressed, fast
+# Not human-readable, but ideal for large datasets in ML pipelines.
+```
+
+<CardGroup cols={2}>
+  <Card title="Use CSV when…" icon="check">
+    - Sharing tabular data with non-programmers
+    - The data is simple (no nesting)
+    - You need universal compatibility
+  </Card>
+  <Card title="Use JSON when…" icon="check">
+    - Working with API responses
+    - Data has nested or hierarchical structure
+    - Storing configuration
+  </Card>
+  <Card title="Use Excel when…" icon="check">
+    - Delivering results to business stakeholders
+    - You need multiple sheets or formatting
+    - Recipients will open the file in Excel
+  </Card>
+  <Card title="Use Parquet when…" icon="check">
+    - Working with large datasets (millions of rows)
+    - Building data pipelines or ML workflows
+    - File size and read speed matter
+  </Card>
+</CardGroup>
+
+## Further Reading
+
+- [pandas documentation](https://pandas.pydata.org/docs/) — comprehensive data handling
+- [Python `json` module](https://docs.python.org/3/library/json.html) — official JSON docs
+- [Python `csv` module](https://docs.python.org/3/library/csv.html) — built-in CSV handling
+- [Real Python: Working with Files](https://realpython.com/working-with-files-in-python/) — detailed tutorial

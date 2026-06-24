@@ -1,0 +1,208 @@
+---
+title: "Install Python on Windows: Step-by-Step Guide"
+sidebarTitle: "Windows"
+description: "A complete guide to installing Python on Windows 10 or 11, including the critical PATH setup, verification steps, and troubleshooting tips."
+---
+
+Installing Python on Windows is straightforward, but there is one step that trips up almost every beginner: the **Add to PATH** checkbox. Miss it and Python won't be accessible from your terminal. This guide walks you through every step so you get a clean, working installation the first time.
+
+<Steps>
+
+  <Step title="Download Python">
+    1. Open your browser and go to [python.org/downloads](https://www.python.org/downloads/)
+    2. The site automatically detects Windows and shows the latest stable release
+    3. Click the main **Download Python** button
+    4. Save the installer file (`.exe`) to your Downloads folder
+
+    <Tip>
+      Always download Python from the official website — **python.org** — to ensure you get a secure, up-to-date version.
+    </Tip>
+  </Step>
+
+  <Step title="Run the Installer">
+    Locate the downloaded `.exe` file and double-click it to launch the installer.
+
+    <Warning>
+      **Critical step:** At the bottom of the first installer screen, check the box that says **"Add python.exe to PATH"** before clicking anything else. If you skip this, Python won't be accessible from the terminal and you'll need to reinstall.
+    </Warning>
+
+    Once you've checked that box:
+
+    1. Click **"Install Now"** (not "Customize installation" unless you have a specific reason)
+    2. If Windows asks *"Do you want to allow this app to make changes?"*, click **Yes**
+    3. Wait 1–2 minutes for the installation to complete
+    4. Click **Close** when you see *"Setup was successful"*
+  </Step>
+
+  <Step title="Open Windows Terminal">
+    You'll verify the installation using Windows Terminal — the modern command-line app built into Windows 10 and 11.
+
+    Open it using one of these methods:
+    - Press `Windows + R`, type `wt`, and press Enter
+    - Search for **Terminal** in the Start menu and click it
+
+    <Note>
+      Windows Terminal can run Command Prompt (cmd), PowerShell, and other shells. It's the recommended way to interact with Python on Windows.
+    </Note>
+  </Step>
+
+  <Step title="Verify the Installation">
+    In the Terminal window, type the following command and press Enter:
+
+    ```bash
+    python --version
+    ```
+
+    You should see the Python version you just installed printed to the screen, for example:
+
+    ```
+    Python 3.13.5
+    ```
+
+    <Note>
+      On Windows, the command is `python` (not `python3` like on macOS or Linux).
+    </Note>
+  </Step>
+
+  <Step title="Test Python Interactive Mode">
+    Let's confirm Python runs correctly by launching the interactive interpreter:
+
+    1. In Terminal, type `python` and press Enter:
+
+    ```bash
+    python
+    ```
+
+    2. You'll see the Python prompt (`>>>`):
+
+    ```
+    Python 3.13.5 (tags/v3.13.5:0fa1754, Jul 29 2025, 12:03:01) [MSC v.1935 64 bit (AMD64)] on win32
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    ```
+
+    3. Type your first Python command and press Enter:
+
+    ```python
+    print("Hello from Python!")
+    ```
+
+    4. You should see:
+
+    ```
+    Hello from Python!
+    ```
+
+    5. Exit the interactive interpreter when you're done:
+
+    ```python
+    exit()
+    ```
+
+    Or press `Ctrl + Z` then Enter.
+
+    <Tip>
+      Congratulations — Python is installed and working on your Windows machine!
+    </Tip>
+  </Step>
+
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="'python' is not recognized as a command">
+    This means Python wasn't added to PATH during installation.
+
+    **Quick fix** — try the `py` launcher instead:
+
+    ```bash
+    py --version
+    ```
+
+    **Solution 1 — Reinstall Python (recommended):**
+
+    1. Go to **Settings > Apps** and uninstall Python
+    2. Download and run the installer again from python.org
+    3. This time, **check the "Add to PATH" box** before clicking Install Now
+
+    **Solution 2 — Add to PATH manually:**
+
+    1. Search for **"Environment Variables"** in the Start menu
+    2. Click **"Edit the system environment variables"**
+    3. Click the **"Environment Variables"** button
+    4. Under *System variables*, find **Path** and double-click it
+    5. Click **New** and add these two entries (replace `[YourName]` and `Python313` with your actual username and version):
+
+    ```
+    C:\Users\[YourName]\AppData\Local\Programs\Python\Python313
+    C:\Users\[YourName]\AppData\Local\Programs\Python\Python313\Scripts
+    ```
+
+    6. Click **OK** on all windows, then **close and reopen Terminal**
+  </Accordion>
+
+  <Accordion title="Permission denied during installation or when running Python">
+    **During installation:**
+
+    - Right-click the installer file
+    - Select **"Run as administrator"**
+
+    **When running Python from Terminal:**
+
+    - Right-click the Terminal icon in the taskbar
+    - Select **"Run as administrator"**
+  </Accordion>
+
+  <Accordion title="Windows Defender or SmartScreen is blocking the installer">
+    Windows may flag the installer as unrecognized:
+
+    1. When the warning appears, click **"More info"**
+    2. Click **"Run anyway"**
+
+    If you want to add a permanent exception:
+
+    1. Go to **Settings > Windows Security > Virus & threat protection**
+    2. Under *Virus & threat protection settings*, click **Manage settings**
+    3. Scroll to **Exclusions** and click **Add or remove exclusions**
+    4. Add the Python installation folder as an exclusion
+  </Accordion>
+
+  <Accordion title="Managing multiple Python versions">
+    Windows supports multiple Python versions side-by-side via the `py` launcher.
+
+    **See all installed versions:**
+
+    ```bash
+    py -0
+    ```
+
+    **Use a specific version:**
+
+    ```bash
+    py -3.13 --version
+    py -3.12 script.py
+    ```
+
+    **Set a default version** by creating a file named `py.ini` in your home folder with:
+
+    ```ini
+    [defaults]
+    python=3.13
+    ```
+  </Accordion>
+
+  <Accordion title="Typing 'python' opens the Microsoft Store instead of Python">
+    Windows ships with a stub that redirects `python` to the Store. To disable it:
+
+    1. Go to **Settings > Apps > Apps & features**
+    2. Click **"App execution aliases"** (or search for "Manage app execution aliases")
+    3. Toggle **OFF** both Python aliases
+
+    Now re-run the python.org installer and ensure "Add to PATH" is checked.
+
+    <Note>
+      The Microsoft Store version of Python has limitations for development work. Use the official installer from python.org instead.
+    </Note>
+  </Accordion>
+</AccordionGroup>

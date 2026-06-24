@@ -1,0 +1,78 @@
+---
+title: "Modern Python Dependency Management with uv"
+sidebarTitle: "uv Overview"
+description: "Discover why uv replaces pip, venv, and pyenv with one blazing-fast tool written in Rust, and how it simplifies every Python project you create."
+---
+
+You've probably used `pip install` and `python -m venv` — they work, but they're slow, verbose, and frustrating when things go wrong. `uv` is a modern replacement that does everything those tools do, but 10 to 100 times faster, with simpler commands, and with better error messages. Once you try it, you won't go back.
+
+## The problem with traditional tools
+
+Setting up a new Python project the old way involves at least four steps that differ by operating system:
+
+```bash
+# Traditional setup
+python -m venv .venv
+source .venv/bin/activate   # Mac/Linux
+# .venv\Scripts\activate    # Windows — different command!
+pip install requests pandas numpy
+pip freeze > requirements.txt
+```
+
+That's slow (45+ seconds for common packages), OS-dependent, and split across multiple tools. Developers new to Python consistently struggle with activation commands and venv confusion.
+
+## What uv replaces
+
+`uv` is a single binary written in Rust that consolidates every Python environment tool you'd otherwise need:
+
+<CardGroup cols={2}>
+  <Card title="pip" icon="box">
+    Package installation — `uv add requests` replaces `pip install requests`,
+    but runs 10–100× faster thanks to parallel downloads and smart caching.
+  </Card>
+  <Card title="venv" icon="layer-group">
+    Virtual environment creation — `uv init` creates and manages `.venv`
+    automatically. No activation commands needed when you use `uv run`.
+  </Card>
+  <Card title="pip-tools" icon="lock">
+    Dependency locking — `uv.lock` pins exact versions so every collaborator
+    and every deploy gets identical packages.
+  </Card>
+  <Card title="pyenv" icon="python">
+    Python version management — `uv python install 3.12` downloads and manages
+    Python versions without a separate tool.
+  </Card>
+</CardGroup>
+
+## What you'll learn
+
+<CardGroup cols={3}>
+  <Card
+    title="Why uv?"
+    icon="gauge-high"
+    href="/tools/dependencies/uv-intro"
+  >
+    Speed benchmarks, architecture decisions, and when to switch from pip to uv.
+  </Card>
+  <Card
+    title="Using uv"
+    icon="terminal"
+    href="/tools/dependencies/virtual-env"
+  >
+    Create projects, add packages, understand `pyproject.toml`, and run code
+    with `uv run`.
+  </Card>
+  <Card
+    title="Complete Setup"
+    icon="rocket"
+    href="/tools/dependencies/complete-setup"
+  >
+    A step-by-step walkthrough of building a real project from scratch with uv,
+    Git, and environment variables.
+  </Card>
+</CardGroup>
+
+<Note>
+  uv is backwards compatible — it can read and install from `requirements.txt`
+  files, so you can use it even on projects that haven't been migrated yet.
+</Note>

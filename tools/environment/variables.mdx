@@ -1,0 +1,141 @@
+---
+title: "Environment Variables in Python: os.environ and os.getenv"
+sidebarTitle: "Env Variables"
+description: "Understand what environment variables are, how to set them in your shell, and how to read them safely in Python using os.environ and os.getenv."
+---
+
+Environment variables are named values stored in your operating system's memory, outside of any application. Your Python program can read them at runtime, which means you can change configuration — like which API key to use or which database to connect to — without touching your code at all. It's one of the most important patterns in professional Python development.
+
+## What problem do they solve?
+
+```python
+# ❌ The wrong way — secrets baked into code
+api_key = "sk-1234567890abcdef"   # visible to everyone, forever
+database = "production_database"  # changing this means editing code
+```
+
+Environment variables fix all three problems at once:
+- Secrets stay out of your source files
+- Configuration can change without code changes
+- Each machine can have its own values (laptop vs. server vs. CI pipeline)
+
+## How environment variables work
+
+Your operating system maintains a table of name-value pairs available to any process it runs. You can set them in your terminal and read them from Python:
+
+```bash
+# Set a variable in your shell (Mac/Linux)
+export API_KEY=sk-1234567890abcdef
+
+# Set a variable on Windows
+set API_KEY=sk-1234567890abcdef
+```
+
+```python
+import os
+
+# Read it in Python
+api_key = os.environ.get("API_KEY")
+print(f"Using API key: {api_key}")
+```
+
+<Note>
+  Variables set this way only last for the current terminal session. Close the
+  terminal and they're gone. That's why `.env` files (covered next) are more
+  practical for day-to-day development.
+</Note>
+
+## Reading environment variables in Python
+
+Python's built-in `os` module gives you full access to environment variables. There are three common patterns:
+
+<CodeGroup>
+```python Get with a default value
+import os
+
+# Returns "demo-key" if API_KEY is not set
+api_key = os.environ.get("API_KEY", "demo-key")
+
+# Returns None if PORT is not set
+port = os.environ.get("PORT")
+```
+
+```python Check before reading
+import os
+
+if "API_KEY" in os.environ:
+    api_key = os.environ["API_KEY"]
+    print("API key loaded successfully")
+else:
+    print("Warning: API_KEY not set")
+```
+
+```python Strict — crash if missing
+import os
+
+# Raises KeyError if the variable doesn't exist
+# Use this when the variable is absolutely required
+api_key = os.environ["API_KEY"]
+```
+</CodeGroup>
+
+<Tip>
+  Use `os.environ.get("KEY", "default")` when a fallback makes sense (like a
+  default port number). Use `os.environ["KEY"]` when the variable is required
+  and you want the program to fail loudly if it's missing.
+</Tip>
+
+## Common environment variable names
+
+By convention, environment variable names are ALL_CAPS with underscores:
+
+```python
+import os
+
+# API credentials
+openai_key = os.environ.get("OPENAI_API_KEY")
+github_token = os.environ.get("GITHUB_TOKEN")
+
+# Database
+db_url = os.environ.get("DATABASE_URL", "sqlite:///local.db")
+redis_url = os.environ.get("REDIS_URL")
+
+# Application settings
+debug = os.environ.get("DEBUG", "False")
+port = int(os.environ.get("PORT", "8000"))
+log_level = os.environ.get("LOG_LEVEL", "INFO")
+
+# File paths
+log_dir = os.environ.get("LOG_DIR", "./logs")
+```
+
+## Important rules
+
+<CardGroup cols={2}>
+  <Card title="Always strings" icon="quote-left">
+    Environment variables are always strings — even numbers. If you need an
+    integer, cast it explicitly: `int(os.environ.get("PORT", "8000"))`.
+  </Card>
+  <Card title="UPPERCASE by convention" icon="arrow-up">
+    Environment variable names are conventionally uppercase. This distinguishes
+    them visually from regular Python variables.
+  </Card>
+  <Card title="No quotes in shell" icon="terminal">
+    When setting variables in the terminal, don't wrap values in quotes unless
+    the value itself contains spaces: `export KEY=myvalue` not
+    `export KEY="myvalue"`.
+  </Card>
+  <Card title="Not persistent by default" icon="clock">
+    Variables set with `export` or `set` in a terminal session disappear when
+    you close that terminal. Use `.env` files for persistent configuration.
+  </Card>
+</CardGroup>
+
+## What's next?
+
+Setting variables manually every session is tedious. The `.env` file approach automates this with one line of Python.
+
+<Card title=".env Files with python-dotenv" icon="file-lines" href="/tools/environment/dotenv">
+  Store all your project secrets in a `.env` file and load them automatically
+  with `python-dotenv`.
+</Card>

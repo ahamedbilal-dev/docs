@@ -1,0 +1,236 @@
+---
+title: "Python Loops: Repeat Code with for and while"
+sidebarTitle: "Loops"
+description: "Learn how to use Python for and while loops to repeat code efficiently, iterate over sequences, and avoid common looping mistakes."
+---
+
+Loops are one of the most powerful concepts in programming. Instead of copying and pasting the same line of code dozens of times, you write it once and tell Python to repeat it for you. Whether you're processing every item in a list, counting through numbers, or waiting for a condition to be met, loops make your programs concise, readable, and far easier to maintain.
+
+## Why Loops Exist
+
+Here's the difference loops make in practice:
+
+<CodeGroup>
+```python Without a loop
+print("Hello!")
+print("Hello!")
+print("Hello!")
+print("Hello!")
+print("Hello!")
+```
+
+```python With a loop
+for i in range(5):
+    print("Hello!")
+```
+</CodeGroup>
+
+Both produce exactly the same output — but the loop version scales. Need it 500 times? Just change one number.
+
+## For Loops
+
+The `for` loop is the most common loop in Python. It repeats a block of code for each item in a sequence.
+
+### Repeat a Specific Number of Times
+
+Use `range()` to loop a fixed number of times:
+
+```python
+for i in range(5):
+    print(i)
+
+# Output:
+# 0
+# 1
+# 2
+# 3
+# 4
+```
+
+<Note>
+  Python starts counting at **0**, not 1. This is called "zero-indexing". So `range(5)` gives you `0, 1, 2, 3, 4` — five numbers total, but the last one is `4`, not `5`.
+</Note>
+
+### Count from Different Starting Points
+
+`range()` accepts up to three arguments: `range(start, stop, step)`:
+
+```python
+# Count from 1 to 5
+for i in range(1, 6):
+    print(i)
+# Output: 1, 2, 3, 4, 5
+
+# Count by 2s
+for i in range(0, 10, 2):
+    print(i)
+# Output: 0, 2, 4, 6, 8
+
+# Count backwards
+for i in range(10, 0, -1):
+    print(i)
+# Output: 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+```
+
+### Loop Through Text
+
+You can iterate through every character in a string:
+
+```python
+name = "Python"
+for letter in name:
+    print(letter)
+
+# Output:
+# P
+# y
+# t
+# h
+# o
+# n
+```
+
+### Loop Through a List
+
+Looping over a list is one of the most common patterns in Python:
+
+```python
+colors = ["red", "blue", "green"]
+for color in colors:
+    print(f"I like {color}")
+
+# Output:
+# I like red
+# I like blue
+# I like green
+```
+
+<Tip>
+  When looping through a list, you can name the loop variable anything descriptive. `for color in colors` reads almost like plain English — that's intentional!
+</Tip>
+
+## While Loops
+
+A `while` loop keeps running **as long as a condition is true**. It's useful when you don't know ahead of time how many times you need to repeat something.
+
+```python
+count = 0
+while count < 5:
+    print(f"Count is {count}")
+    count = count + 1  # Increase count by 1
+
+# Output:
+# Count is 0
+# Count is 1
+# Count is 2
+# Count is 3
+# Count is 4
+```
+
+<Steps>
+  <Step title="Check the condition">
+    Python evaluates `count < 5`. If `True`, run the loop body.
+  </Step>
+  <Step title="Run the loop body">
+    Print the current count, then increment it by 1.
+  </Step>
+  <Step title="Repeat">
+    Go back to step 1 and check the condition again.
+  </Step>
+  <Step title="Exit">
+    When `count` reaches `5`, the condition is `False` and the loop ends.
+  </Step>
+</Steps>
+
+<Warning>
+  Always make sure your `while` loop will eventually stop! If the condition never becomes `False`, Python will run forever (an **infinite loop**). If this happens accidentally, press **Ctrl+C** to stop the program.
+
+  ```python
+  # Infinite loop — count never changes!
+  count = 0
+  while count < 5:
+      print("This runs forever...")
+      # Forgot: count = count + 1
+  ```
+</Warning>
+
+### For vs While — When to Use Each
+
+<CardGroup cols={2}>
+  <Card title="Use for when..." icon="list">
+    You know exactly how many times to loop, or you're iterating over a collection (list, string, range).
+    ```python
+    for item in my_list:
+        process(item)
+    ```
+  </Card>
+  <Card title="Use while when..." icon="rotate">
+    You're looping until some condition changes — like waiting for user input or a value to hit a threshold.
+    ```python
+    while not done:
+        check_status()
+    ```
+  </Card>
+</CardGroup>
+
+## Common Mistakes
+
+<Accordion title="Forgetting the colon">
+  Both `for` and `while` lines must end with a colon `:`.
+
+  ```python
+  # Wrong — SyntaxError
+  for i in range(5)
+      print(i)
+
+  # Right
+  for i in range(5):
+      print(i)
+  ```
+</Accordion>
+
+<Accordion title="Wrong indentation">
+  Code inside a loop must be indented. Un-indented code runs **after** the loop finishes.
+
+  ```python
+  # Wrong — print is outside the loop
+  for i in range(3):
+  print(i)       # IndentationError
+
+  # Right
+  for i in range(3):
+      print(i)   # Inside the loop
+  ```
+</Accordion>
+
+<Accordion title="Off-by-one errors">
+  Off-by-one errors are classic beginner mistakes. Remember that `range(n)` goes up to `n-1`, not `n`.
+
+  ```python
+  # Prints 0–4, NOT 1–5
+  for i in range(5):
+      print(f"Item {i}")
+
+  # If you want 1–5:
+  for i in range(1, 6):
+      print(f"Item {i}")
+  ```
+</Accordion>
+
+<Accordion title="Infinite while loops">
+  Always update the variable your `while` condition depends on, or the loop will never end.
+
+  ```python
+  # Wrong — never terminates
+  x = 0
+  while x < 10:
+      print(x)
+      # x never changes!
+
+  # Right
+  x = 0
+  while x < 10:
+      print(x)
+      x += 1
+  ```
+</Accordion>

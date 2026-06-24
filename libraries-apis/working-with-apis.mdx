@@ -1,0 +1,267 @@
+---
+title: "Connecting to APIs with Python: requests Library"
+sidebarTitle: "Working with APIs"
+description: "Learn what APIs are, install the requests library, make your first API call to a live weather service, parse JSON responses, and write reusable functions."
+---
+
+APIs are one of the most powerful tools in a Python developer's toolkit. They let your code reach out to the internet and pull in live data — weather forecasts, customer records, stock prices, AI-generated text — without you building any of the underlying systems yourself. Once you understand the pattern, connecting to any API is just a few lines of Python.
+
+## What Is an API?
+
+Think of an API (Application Programming Interface) as a **waiter at a restaurant**. You (the customer) don't go into the kitchen yourself — you tell the waiter what you want, and they bring it back. The API is the waiter: you tell it what data you need, and it fetches it from a server and delivers it to your code.
+
+But APIs do much more than just fetch information. They're the bridges that connect your Python code to the outside world:
+
+<CardGroup cols={2}>
+  <Card title="Business Data" icon="building">
+    Pull customer records from Salesforce or HubSpot, retrieve orders from Shopify or WooCommerce.
+  </Card>
+  <Card title="Communication" icon="message">
+    Send Slack messages, post to Teams, trigger email campaigns via SendGrid or Mailchimp.
+  </Card>
+  <Card title="AI Models" icon="robot">
+    Call OpenAI's GPT, Anthropic's Claude, or Google Gemini directly from your Python script.
+  </Card>
+  <Card title="Live Data" icon="chart-line">
+    Fetch weather forecasts, currency exchange rates, flight status, or social media feeds.
+  </Card>
+</CardGroup>
+
+In the context of AI projects, APIs are essential: they connect AI capabilities to real business data and real systems.
+
+## Installing the requests Library
+
+`requests` is the go-to Python library for making HTTP calls to APIs. Install it with:
+
+```bash
+pip install requests
+```
+
+Then import it at the top of your script:
+
+```python
+import requests
+```
+
+## Your First API Call
+
+Let's fetch live weather data using [Open-Meteo](https://open-meteo.com/) — a free, no-auth-required weather API, perfect for learning.
+
+<Steps>
+  <Step title="Build the URL">
+    APIs accept parameters in the URL. For Open-Meteo, we pass the coordinates of the city we want and what data we'd like back:
+
+    ```python
+    import requests
+
+    latitude  = 48.85   # Paris
+    longitude = 2.35
+
+    url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={latitude}&longitude={longitude}"
+        f"&current=temperature_2m"
+    )
+    print(url)
+    ```
+  </Step>
+  <Step title="Make the request">
+    Use `requests.get()` to send the request and receive a response:
+
+    ```python
+    response = requests.get(url)
+    print(response.status_code)   # 200 = success
+    ```
+
+    A status code of **200** means everything worked. Codes in the 400s mean client errors (bad URL, missing auth); 500s mean server errors.
+  </Step>
+  <Step title="Parse the JSON response">
+    Call `.json()` on the response to convert the raw JSON text into a Python dictionary:
+
+    ```python
+    data = response.json()
+    print(data)
+    ```
+
+    You'll see something like:
+
+    ```json
+    {
+        "latitude": 48.84,
+        "longitude": 2.36,
+        "timezone": "GMT",
+        "elevation": 46.0,
+        "current_units": {
+            "temperature_2m": "°C"
+        },
+        "current": {
+            "time": "2025-08-01T08:30",
+            "temperature_2m": 20.0
+        }
+    }
+    ```
+  </Step>
+  <Step title="Extract the data you need">
+    Navigate the dictionary like any Python dict. The temperature is nested inside `"current"`:
+
+    ```python
+    temperature = data["current"]["temperature_2m"]
+    print(f"Temperature in Paris: {temperature}°C")
+    # Output: Temperature in Paris: 20.0°C
+    ```
+  </Step>
+</Steps>
+
+## Understanding the JSON Response
+
+JSON (JavaScript Object Notation) is just a way to structure data — similar to CSV or Excel, but designed for nested, hierarchical information. It maps directly to Python types:
+
+| JSON type | Python type |
+|---|---|
+| `{}` object | `dict` |
+| `[]` array | `list` |
+| `"string"` | `str` |
+| `123` number | `int` or `float` |
+| `true` / `false` | `True` / `False` |
+| `null` | `None` |
+
+So after calling `.json()`, you navigate with the same `["key"]` and `.` notation you'd use on any Python dictionary:
+
+```python
+data = response.json()
+
+# Top-level key
+print(data["timezone"])               # "GMT"
+
+# Nested key
+print(data["current"]["temperature_2m"])  # 20.0
+
+# Check what keys are available at any level
+print(data.keys())
+print(data["current"].keys())
+```
+
+## Extracting Multiple Data Points
+
+Let's request more fields and extract them:
+
+```python
+import requests
+
+latitude  = 48.85
+longitude = 2.35
+
+# Ask for both temperature and wind speed
+url = (
+    f"https://api.open-meteo.com/v1/forecast"
+    f"?latitude={latitude}&longitude={longitude}"
+    f"&current=temperature_2m,wind_speed_10m"
+)
+
+response = requests.get(url)
+data = response.json()
+
+temperature = data["current"]["temperature_2m"]
+wind_speed  = data["current"]["wind_speed_10m"]
+units_temp  = data["current_units"]["temperature_2m"]
+units_wind  = data["current_units"]["wind_speed_10m"]
+
+print(f"Temperature: {temperature}{units_temp}")
+print(f"Wind speed:  {wind_speed} {units_wind}")
+```
+
+## A Reusable Function for Multiple Cities
+
+The real value of wrapping API calls in a function is reusability. Write it once; call it as many times as you need:
+
+```python
+import requests
+
+def get_current_weather(latitude, longitude):
+    """
+    Fetch the current temperature and wind speed for a location.
+
+    Args:
+        latitude:  Geographic latitude  (e.g. 48.85 for Paris)
+        longitude: Geographic longitude (e.g.  2.35 for Paris)
+
+    Returns:
+        dict with 'temperature' (°C) and 'wind_speed' (km/h),
+        or None if the request fails.
+    """
+    url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={latitude}&longitude={longitude}"
+        f"&current=temperature_2m,wind_speed_10m"
+    )
+
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        print(f"Error: received status {response.status_code}")
+        return None
+
+    data = response.json()
+    return {
+        "temperature": data["current"]["temperature_2m"],
+        "wind_speed":  data["current"]["wind_speed_10m"],
+    }
+
+
+# City coordinates
+cities = {
+    "Paris":   (48.85,  2.35),
+    "London":  (51.50, -0.12),
+    "Tokyo":   (35.68, 139.69),
+    "New York":(40.71, -74.01),
+    "Sydney":  (-33.87, 151.21),
+}
+
+print("Current weather around the world:")
+print("-" * 40)
+
+for city, (lat, lon) in cities.items():
+    weather = get_current_weather(lat, lon)
+    if weather:
+        print(
+            f"{city:<12} "
+            f"{weather['temperature']:>5.1f}°C  "
+            f"Wind: {weather['wind_speed']:>5.1f} km/h"
+        )
+```
+
+Example output:
+```
+Current weather around the world:
+----------------------------------------
+Paris          20.0°C  Wind:  12.5 km/h
+London         15.3°C  Wind:   8.2 km/h
+Tokyo          28.7°C  Wind:   6.1 km/h
+New York       22.1°C  Wind:  14.8 km/h
+Sydney         17.4°C  Wind:  19.3 km/h
+```
+
+## How It All Works
+
+<Steps>
+  <Step title="You send a request">
+    Your Python code calls `requests.get(url)` with the API's endpoint URL and any parameters (coordinates, filters, API keys, etc.).
+  </Step>
+  <Step title="The API processes it">
+    The API server receives your request, looks up the data, and prepares a response.
+  </Step>
+  <Step title="You receive JSON data">
+    The server sends back a JSON document. `response.json()` converts it into a Python dictionary or list.
+  </Step>
+  <Step title="You extract what you need">
+    Navigate the dictionary with standard Python indexing to pull out the specific values your code needs.
+  </Step>
+</Steps>
+
+<Tip>
+  This pattern — **request → response → extract → use** — is identical for every API you'll ever work with, whether it's a weather service, your company's CRM, or OpenAI's GPT. Master it once and you can connect to anything.
+</Tip>
+
+## What's Next
+
+Now that you can fetch data from APIs, the next step is combining API calls with pandas to analyse and visualise what you retrieve. The [Working with Data](/libraries-apis/working-with-data) page builds on this weather example to show you exactly how.

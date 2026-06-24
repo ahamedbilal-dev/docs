@@ -1,0 +1,167 @@
+---
+title: "Object-Oriented Programming in Python: Using Classes"
+sidebarTitle: "Classes Overview"
+description: "Learn what OOP is, how Python classes work as blueprints for objects, and how classes help you write cleaner, more scalable AI programs."
+---
+
+Object-oriented programming (OOP) is a way to organize code by grouping related data and functions together into reusable units called **objects**. Instead of having variables and functions scattered across your script, you bundle them into self-contained structures. As your programs grow — especially in AI and data engineering — this approach helps you manage complexity, avoid repetition, and write code that's much easier to maintain.
+
+## What is OOP?
+
+Think of organizing a toolbox: without OOP, your tools are scattered everywhere; with OOP, every tool has a labeled compartment and you always know where to find it. In code terms:
+
+- **Without OOP** — data and logic live separately, often repeating themselves
+- **With OOP** — related data and behavior live together inside a class
+
+<Note>
+Classes are a more advanced Python concept. Don't worry if they feel confusing at first — they'll click with practice. Many Python programs work perfectly fine without classes, and you should only reach for them when they genuinely help.
+</Note>
+
+## What is a Class?
+
+A class is a **blueprint** for creating objects. Every object created from a class (called an *instance*) carries:
+
+- **Attributes** — the data the object stores
+- **Methods** — the actions the object can perform
+
+```python
+# Without classes — data and functions are separate
+name = "OpenAI"
+model = "gpt-4o-mini"
+
+def generate_response(prompt):
+    # Process prompt...
+    return response
+
+# With classes — everything bundled together
+class OpenAIClient:
+    def __init__(self, name, model):
+        self.name = name
+        self.model = model
+
+    def generate_response(self, prompt):
+        # Process prompt...
+        return response
+```
+
+## Why Use Classes?
+
+Classes help your code scale gracefully. Here is the progression most Python developers follow:
+
+<Steps>
+  <Step title="Single-file scripts (where you started)">
+    Everything lives in one file — quick to write, hard to maintain as complexity grows.
+
+    ```python
+    # everything.py
+    api_key = "sk-..."
+    prompt = "Explain Python"
+    response = make_api_call(api_key, prompt)
+    print(response)
+    ```
+  </Step>
+
+  <Step title="Functions (where you are now)">
+    Logic is organised into named, reusable functions. This is already a big improvement.
+
+    ```python
+    # main.py
+    def setup_api(key):
+        return {"key": key, "base_url": "https://api.openai.com"}
+
+    def generate_response(api_config, prompt):
+        # Make API call
+        return response
+
+    api = setup_api("sk-...")
+    result = generate_response(api, "Explain Python")
+    ```
+  </Step>
+
+  <Step title="Multiple files (getting organised)">
+    Utilities move to their own modules, keeping each file focused.
+
+    ```python
+    # api_utils.py
+    def setup_api(key):
+        return {"key": key, "base_url": "https://api.openai.com"}
+
+    # main.py
+    from api_utils import setup_api
+    api = setup_api("sk-...")
+    ```
+  </Step>
+
+  <Step title="Classes (where we are now)">
+    Data and logic are fully encapsulated. You can create multiple independent instances, each with their own state.
+
+    ```python
+    # client.py
+    class OpenAIClient:
+        def __init__(self, api_key):
+            self.api_key = api_key
+            self.base_url = "https://api.openai.com"
+
+        def generate(self, prompt):
+            # All logic encapsulated here
+            return response
+
+    # main.py
+    from client import OpenAIClient
+    client = OpenAIClient("sk-...")
+    response = client.generate("Explain Python")
+    ```
+  </Step>
+</Steps>
+
+## Classes in an AI Context
+
+When building AI applications, you often need to manage API credentials, model configurations, request state, and retry logic all at once. Classes are the natural fit because they let you:
+
+- Build **clean, reusable interfaces** to external APIs
+- Manage **complex data pipelines** with shared state
+- Create **multiple independent instances** (e.g. a dev client and a prod client)
+- **Organise stateful operations** such as conversation history or token counting
+
+```python
+class OpenAIClient:
+    def __init__(self, api_key, model="gpt-4o-mini"):
+        self.api_key = api_key
+        self.model = model
+        self.request_count = 0
+
+    def generate(self, prompt):
+        self.request_count += 1
+        # Make API call with self.api_key and self.model
+        return response
+
+    def usage_summary(self):
+        return f"Total requests made: {self.request_count}"
+
+dev_client  = OpenAIClient("sk-dev-key")
+prod_client = OpenAIClient("sk-prod-key", model="gpt-4o")
+
+# Each client tracks its own state independently
+dev_client.generate("Test prompt")
+print(dev_client.usage_summary())   # Total requests made: 1
+print(prod_client.usage_summary())  # Total requests made: 0
+```
+
+## Explore Classes
+
+Work through the sub-pages in order to build a solid understanding of Python classes:
+
+<CardGroup cols={2}>
+  <Card title="Your First Class" icon="circle-1" href="/advanced/classes/first-class">
+    Learn the four-step pattern for creating classes, understand `__init__` and `self`, and build a practical `APIConfig` class.
+  </Card>
+  <Card title="Methods & Attributes" icon="circle-2" href="/advanced/classes/methods-attributes">
+    Deep-dive into instance attributes, instance methods, `__str__`, class methods, and static methods.
+  </Card>
+  <Card title="Inheritance" icon="circle-3" href="/advanced/classes/inheritance">
+    Build child classes that extend parent classes, use `super()`, and override methods for specialised behaviour.
+  </Card>
+  <Card title="When to Use Classes" icon="circle-4" href="/advanced/classes/when-to-use">
+    Use a practical decision guide to choose between classes and functions for any situation you encounter.
+  </Card>
+</CardGroup>

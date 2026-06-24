@@ -1,0 +1,280 @@
+---
+title: "Python Inheritance: Build on Existing Classes"
+sidebarTitle: "Inheritance"
+description: "Learn how Python inheritance lets child classes extend parent classes, reuse code with super(), and override methods for specialised behaviour."
+---
+
+Inheritance is one of the most powerful features in object-oriented programming, but it's also one you won't need every day. Most beginner programs work fine without it. The good news is that once you do need it, the concept is surprisingly intuitive: a child class automatically gets everything the parent class has, and can then add or change whatever it needs.
+
+<Note>
+  Focus on mastering basic classes first. Come back to inheritance when you find yourself writing two very similar classes and copying code between them — that's usually the signal that inheritance will help.
+</Note>
+
+## What is Inheritance?
+
+Inheritance models an **"is a"** relationship between classes:
+
+- A `Dog` *is an* `Animal` → `Dog` can inherit from `Animal`
+- A `TextModel` *is a* `BaseModel` → `TextModel` can inherit from `BaseModel`
+
+The **parent class** (also called a *base class* or *superclass*) defines shared behaviour. The **child class** (also called a *subclass*) inherits everything from the parent and can extend or override it.
+
+```python
+# Parent class — general behaviour
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def eat(self):
+        return f"{self.name} is eating"
+
+    def sleep(self):
+        return f"{self.name} is sleeping"
+
+# Child class — inherits Animal, adds dog-specific behaviour
+class Dog(Animal):
+    def bark(self):
+        return f"{self.name} says woof!"
+
+my_dog = Dog("Buddy")
+
+# Inherited methods work automatically
+print(my_dog.eat())    # Buddy is eating
+print(my_dog.sleep())  # Buddy is sleeping
+
+# Child-specific method
+print(my_dog.bark())   # Buddy says woof!
+```
+
+## Creating a Child Class
+
+To create a child class, put the parent class name in parentheses after the child class name:
+
+```python
+class ChildClass(ParentClass):
+    # Everything from ParentClass is available here
+    pass
+```
+
+If the child class needs its own `__init__`, you must explicitly call the parent's `__init__` using `super()` — otherwise the parent's setup code is skipped.
+
+## Using `super()`
+
+`super()` gives you access to the parent class. The most common use is calling `super().__init__()` to ensure the parent sets up its attributes before the child adds its own.
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name   = name
+        self.is_pet = True
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # run Animal's __init__ first
+        self.breed = breed      # then add Dog-specific attributes
+
+    def describe(self):
+        return f"{self.name} is a {self.breed}"
+
+golden = Dog("Buddy", "Golden Retriever")
+poodle = Dog(name="Max", breed="Poodle")
+
+print(golden.describe())  # Buddy is a Golden Retriever
+print(golden.is_pet)      # True  ← inherited from Animal
+```
+
+<Warning>
+  Forgetting `super().__init__()` is a common mistake. If you skip it, the parent's attributes (like `self.is_pet` above) are never created, and you'll get an `AttributeError` the moment you try to use them.
+</Warning>
+
+## Method Overriding
+
+A child class can **override** a parent method simply by defining a method with the same name. Python always calls the most specific version first.
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def make_sound(self):
+        return f"{self.name} makes a sound"
+
+class Dog(Animal):
+    def make_sound(self):       # overrides the parent version
+        return f"{self.name} barks: Woof!"
+
+class Cat(Animal):
+    def make_sound(self):       # overrides the parent version
+        return f"{self.name} meows: Meow!"
+
+generic = Animal(name="Something")
+dog     = Dog(name="Buddy")
+cat     = Cat(name="Whiskers")
+
+print(generic.make_sound())  # Something makes a sound
+print(dog.make_sound())      # Buddy barks: Woof!
+print(cat.make_sound())      # Whiskers meows: Meow!
+```
+
+You can override a method *and* still call the parent's version by using `super()`:
+
+```python
+class Dog(Animal):
+    def make_sound(self):
+        parent_output = super().make_sound()   # "Buddy makes a sound"
+        return f"{parent_output} — specifically: Woof!"
+```
+
+## Multiple Inheritance (Brief Overview)
+
+Python allows a class to inherit from more than one parent. This is a more advanced topic, but here is the basic syntax:
+
+```python
+class Flyable:
+    def fly(self):
+        return "I can fly"
+
+class Swimmable:
+    def swim(self):
+        return "I can swim"
+
+class Duck(Flyable, Swimmable):
+    pass
+
+duck = Duck()
+print(duck.fly())   # I can fly
+print(duck.swim())  # I can swim
+```
+
+<Note>
+  Multiple inheritance can get complicated quickly when parent classes define methods with the same name. Python resolves conflicts using the **Method Resolution Order (MRO)**. For most projects, sticking to single inheritance (or using composition instead) keeps things much simpler.
+</Note>
+
+## Practical Example: AI Client Hierarchy
+
+Here's a realistic pattern you'll see in AI codebases — a base client that handles shared concerns, with specialised subclasses for different models:
+
+```python
+class BaseAIClient:
+    """Handles authentication and request tracking for any AI API."""
+
+    def __init__(self, api_key, model_name):
+        self.api_key       = api_key
+        self.model_name    = model_name
+        self.request_count = 0
+
+    def _make_request(self, payload):
+        """Low-level HTTP call — shared by all subclasses."""
+        self.request_count += 1
+        # (actual HTTP call would go here)
+        return {"status": "ok", "payload": payload}
+
+    def usage(self):
+        return f"{self.model_name}: {self.request_count} request(s)"
+
+
+class ChatClient(BaseAIClient):
+    """Specialised for conversational models."""
+
+    def __init__(self, api_key, model="gpt-4o-mini"):
+        super().__init__(api_key, model)
+        self.conversation = []
+
+    def chat(self, message):
+        self.conversation.append({"role": "user", "content": message})
+        response = self._make_request({"messages": self.conversation})
+        return response
+
+
+class EmbeddingClient(BaseAIClient):
+    """Specialised for embedding models."""
+
+    def __init__(self, api_key, model="text-embedding-3-small"):
+        super().__init__(api_key, model)
+
+    def embed(self, text):
+        response = self._make_request({"input": text})
+        return response
+
+
+# Each subclass shares BaseAIClient's tracking, but adds its own interface
+chat_client      = ChatClient(api_key="sk-key")
+embedding_client = EmbeddingClient(api_key="sk-key")
+
+chat_client.chat("Hello!")
+embedding_client.embed("Python is great")
+
+print(chat_client.usage())       # gpt-4o-mini: 1 request(s)
+print(embedding_client.usage())  # text-embedding-3-small: 1 request(s)
+```
+
+## When to Use Inheritance
+
+<Tabs>
+  <Tab title="Good fit">
+    - You have a clear **"is a"** relationship (Dog *is an* Animal, ChatClient *is a* BaseAIClient)
+    - Child classes share **most** of the parent's behaviour and only need to extend or override a part of it
+    - You want to avoid duplicating common logic (auth, request tracking, error handling) across multiple classes
+  </Tab>
+  <Tab title="Poor fit">
+    - The relationship feels forced — you're inheriting just to reuse one or two methods (consider **composition** instead: give the class an attribute that is an instance of another class)
+    - The classes are only loosely related in concept
+    - You'd need to override most of what the parent provides anyway
+  </Tab>
+</Tabs>
+
+## Common Mistakes
+
+<Accordion title="Forgetting to call super().__init__()">
+  ```python
+  # Wrong — parent attributes never created
+  class Child(Parent):
+      def __init__(self, name):
+          self.name = name   # Parent's setup is skipped!
+
+  # Right
+  class Child(Parent):
+      def __init__(self, name):
+          super().__init__()
+          self.name = name
+  ```
+</Accordion>
+
+<Accordion title="Modelling the wrong relationship">
+  Only inherit if the relationship is genuinely "is a". Getting it backwards causes confusing bugs.
+
+  ```python
+  # Wrong — a Rectangle is NOT a Square
+  class Square:
+      def __init__(self, size):
+          self.size = size
+
+  class Rectangle(Square):   # doesn't make sense
+      def __init__(self, width, height):
+          self.width  = width
+          self.height = height
+
+  # Better — both are Shapes
+  class Shape:
+      pass
+
+  class Square(Shape):
+      def __init__(self, size):
+          self.size = size
+
+  class Rectangle(Shape):
+      def __init__(self, width, height):
+          self.width  = width
+          self.height = height
+  ```
+</Accordion>
+
+## What's Next?
+
+Now that you understand how to extend classes with inheritance, the last piece is knowing *when* to use a class at all versus just writing a function.
+
+<CardGroup cols={1}>
+  <Card title="When to Use Classes" icon="scale-balanced" href="/advanced/classes/when-to-use">
+    A practical decision guide: classes vs functions, common signs you need a class, and pitfalls to avoid.
+  </Card>
+</CardGroup>

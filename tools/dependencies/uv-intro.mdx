@@ -1,0 +1,177 @@
+---
+title: "Why uv Is the Best Python Package Manager"
+sidebarTitle: "Why uv"
+description: "Compare uv against pip with real speed benchmarks, learn why it's written in Rust, and install it on macOS, Windows, or Linux in one command."
+---
+
+Speed is the first thing you notice about uv, but it's not the only reason to switch. uv also simplifies the tooling landscape dramatically — instead of managing pip, venv, pip-tools, and pyenv separately, you learn one tool that does everything. This page explains why it's worth making the switch right now.
+
+## The speed difference is real
+
+The gap between pip and uv isn't marginal — it's transformative:
+
+<Tabs>
+  <Tab title="Installing a package">
+    ```bash
+    # With pip (traditional)
+    pip install pandas
+    # ⏱️  Takes 15–30 seconds
+
+    # With uv (modern)
+    uv add pandas
+    # ⚡ Takes 1–2 seconds
+    ```
+    That's a 10–30× speedup for a single package.
+  </Tab>
+  <Tab title="Setting up a full project">
+    <CodeGroup>
+    ```bash Traditional way (~45 seconds, 4+ commands)
+    python -m venv .venv
+    source .venv/bin/activate    # Mac/Linux
+    # .venv\Scripts\activate     # Windows
+    pip install requests pandas numpy
+    pip freeze > requirements.txt
+    ```
+
+    ```bash With uv (~3 seconds, 2 commands)
+    uv init my-project
+    uv add requests pandas numpy
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+## Why is uv so much faster?
+
+Four engineering decisions make uv dramatically faster than pip:
+
+<CardGroup cols={2}>
+  <Card title="Written in Rust" icon="bolt">
+    Rust is a compiled systems language. Unlike pip (written in Python), uv
+    starts instantly and executes without interpreter overhead.
+  </Card>
+  <Card title="Smart caching" icon="database">
+    uv caches downloaded packages globally. Install `requests` once and every
+    future project gets it instantly from the local cache.
+  </Card>
+  <Card title="Parallel downloads" icon="arrows-split-up-and-left">
+    pip downloads packages one at a time. uv downloads all of them
+    simultaneously.
+  </Card>
+  <Card title="Better algorithms" icon="diagram-project">
+    uv uses a modern dependency resolver that finds compatible versions faster
+    and with fewer conflicts.
+  </Card>
+</CardGroup>
+
+## One tool, not five
+
+The traditional Python toolchain requires learning and maintaining multiple separate tools:
+
+| Old tool | What it did | uv equivalent |
+|----------|-------------|---------------|
+| `pip` | Install packages | `uv add` |
+| `venv` | Create virtual environments | `uv init` / `uv venv` |
+| `pip-tools` | Lock dependency versions | Automatic `uv.lock` |
+| `pyenv` | Manage Python versions | `uv python install` |
+| `pipx` | Install global CLI tools | `uv tool install` |
+
+With uv you learn one mental model and one set of commands.
+
+## No more activation confusion
+
+One of the biggest frustrations for Python beginners is virtual environment activation:
+
+```bash
+# Old workflow — easy to forget
+source .venv/bin/activate    # Did I activate it?
+python script.py             # Which Python am I using?
+deactivate                   # Remember to deactivate!
+```
+
+With uv, just use `uv run`:
+
+```bash
+# New workflow — always correct
+uv run python script.py      # Always uses the right Python, no activation needed
+```
+
+uv automatically finds and uses the project's virtual environment.
+
+## Modern features you get for free
+
+<Accordion title="Lock files for reproducible installs">
+  `uv.lock` pins the exact version of every package (including transitive
+  dependencies). When a teammate runs `uv sync`, they get byte-for-byte
+  identical installs — no more "it works on my machine" problems.
+</Accordion>
+
+<Accordion title="pyproject.toml — one config file for everything">
+  uv uses `pyproject.toml` (the modern Python standard) instead of
+  `requirements.txt`. It stores your dependencies, Python version requirement,
+  project metadata, and tool configuration all in one place.
+</Accordion>
+
+<Accordion title="Python version management built in">
+  Install and switch Python versions without pyenv:
+  ```bash
+  uv python install 3.12
+  uv python install 3.11
+  uv python list    # see all available versions
+  ```
+</Accordion>
+
+## Installing uv
+
+One command — no Python required to install it:
+
+<Tabs>
+  <Tab title="macOS / Linux">
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+    After installation, restart your terminal so `uv` is on your PATH.
+  </Tab>
+  <Tab title="Windows">
+    Run this in PowerShell:
+    ```powershell
+    powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+    ```
+    After installation, restart your terminal.
+  </Tab>
+</Tabs>
+
+Verify the installation:
+
+```bash
+uv --version
+# uv 0.x.x (or similar)
+```
+
+## Should you switch right now?
+
+<Accordion title="Yes, switch if...">
+  - You're starting a new project
+  - You want faster installs and simpler commands
+  - You're learning Python and want modern habits from the start
+  - You're working solo or with a team open to modern tooling
+</Accordion>
+
+<Accordion title="Maybe wait if...">
+  - Your team has a well-established pip workflow and isn't ready to change
+  - You're maintaining a complex legacy project
+  - Your deployment infrastructure expects `requirements.txt` (uv can still
+    generate one)
+
+  Even then: uv is backwards compatible. It reads `requirements.txt` and can
+  work alongside traditional pip projects.
+</Accordion>
+
+## What's next?
+
+Let's create a real project with uv and see everything in action.
+
+<Card title="Create and Manage Projects with uv" icon="terminal" href="/tools/dependencies/virtual-env">
+  Learn `uv init`, `uv add`, `pyproject.toml`, and how to run your code with
+  `uv run`.
+</Card>

@@ -1,0 +1,237 @@
+---
+title: "Python Return Values: Get Results from Functions"
+sidebarTitle: "Return Values"
+description: "Learn how Python return values work — how to use the return statement, store and reuse results, return multiple values, and avoid common mistakes."
+---
+
+Functions become truly powerful when they don't just *do* something — they *give something back*. The `return` statement lets a function compute a result and hand it off to the code that called it. Instead of printing a number and losing it, you can store it, combine it with other values, pass it to another function, or check it in a condition. Understanding return values unlocks a whole new level of function design.
+
+## Return vs Print
+
+The difference between `return` and `print` is one of the most important concepts for new Python programmers:
+
+```python
+# This function only displays the result
+def add_print(a, b):
+    print(a + b)
+
+# This function returns the result so you can use it
+def add_return(a, b):
+    return a + b
+
+# With print — the value is shown but lost
+result = add_print(5, 3)    # Displays: 8
+print(result)               # None — nothing was returned!
+
+# With return — you can store and use the value
+result = add_return(5, 3)   # result = 8
+print(result + 10)          # 18
+```
+
+<CardGroup cols={2}>
+  <Card title="Use print when..." icon="terminal">
+    You only want to **display** information to the user. The value is shown but cannot be used further in your code.
+  </Card>
+  <Card title="Use return when..." icon="arrow-right-from-bracket">
+    You want to **use the result** — store it in a variable, pass it to another function, or include it in a calculation.
+  </Card>
+</CardGroup>
+
+## The Return Statement
+
+Use `return` to send a value back from a function:
+
+```python
+def calculate_area(width, height):
+    area = width * height
+    return area
+
+room_area = calculate_area(10, 12)
+print(f"Room size: {room_area} sq ft")   # Room size: 120 sq ft
+```
+
+<Warning>
+  When Python reaches a `return` statement, it **immediately exits the function**. Any code written after `return` in the same block will never run.
+
+  ```python
+  def get_status():
+      return "Done"
+      print("This never executes!")   # Unreachable code
+  ```
+</Warning>
+
+You can also use `return` early to exit a function when a condition is met:
+
+```python
+def check_age(age):
+    if age < 0:
+        return "Invalid age"
+    if age < 18:
+        return "Minor"
+    return "Adult"
+
+print(check_age(-1))    # Invalid age
+print(check_age(15))    # Minor
+print(check_age(25))    # Adult
+```
+
+## Using Returned Values
+
+Returned values are flexible — you can use them in any of these ways:
+
+```python
+def double(number):
+    return number * 2
+
+# Store in a variable
+result = double(5)           # result = 10
+
+# Use directly in an expression
+total = double(5) + double(3)   # 10 + 6 = 16
+
+# Pass directly to another function
+print(double(10))            # 20
+
+# Use in a condition
+if double(7) > 10:
+    print("Big number!")     # Prints: Big number!
+```
+
+<Tip>
+  You don't always have to store a returned value — you can use it directly inline. But if you need the same result more than once, store it in a variable to avoid calling the function twice.
+</Tip>
+
+## Returning Multiple Values
+
+Python functions can return more than one value by separating them with commas. Python bundles them into a tuple automatically:
+
+```python
+def get_min_max(numbers):
+    return min(numbers), max(numbers)
+
+# Unpack directly into separate variables
+minimum, maximum = get_min_max([5, 2, 8, 1, 9])
+print(f"Min: {minimum}, Max: {maximum}")   # Min: 1, Max: 9
+
+# Or capture as a single tuple
+result = get_min_max([5, 2, 8, 1, 9])
+print(result)   # (1, 9)
+```
+
+Returning multiple values is useful for functions that compute several related results:
+
+```python
+def analyze_text(text):
+    word_count = len(text.split())
+    char_count = len(text)
+    has_numbers = any(c.isdigit() for c in text)
+    return word_count, char_count, has_numbers
+
+words, chars, has_nums = analyze_text("Hello world 123")
+print(f"{words} words, {chars} chars, numbers: {has_nums}")
+# 3 words, 15 chars, numbers: True
+```
+
+## Functions Without Return (None)
+
+A function that has no `return` statement — or has a bare `return` with no value — returns `None` automatically. `None` is Python's way of representing "nothing":
+
+```python
+def greet(name):
+    print(f"Hello, {name}!")
+    # No return statement
+
+result = greet("Alice")   # Prints: Hello, Alice!
+print(result)             # None
+```
+
+<Note>
+  This is completely valid for functions whose purpose is a **side effect** (like printing, writing to a file, or updating a database) rather than computing a value. Just be careful not to try using `None` as if it were a number or string.
+</Note>
+
+## Common Mistakes
+
+<Accordion title="Forgetting to return">
+  Computing a value inside the function but not returning it is one of the most common beginner mistakes. The function does the work, but the result is thrown away.
+
+  ```python
+  # Wrong — calculates but discards the result
+  def calculate_total(items):
+      total = sum(items)
+      # Forgot: return total!
+
+  result = calculate_total([10, 20, 30])
+  print(result)   # None
+
+  # Right
+  def calculate_total(items):
+      total = sum(items)
+      return total
+  ```
+</Accordion>
+
+<Accordion title="Code after return">
+  Any code placed after a `return` statement is unreachable and will never execute.
+
+  ```python
+  # Wrong — last two lines never run
+  def get_status():
+      return "Done"
+      print("Finished!")    # Unreachable
+      log_result()          # Unreachable
+
+  # Right — do work before returning
+  def get_status():
+      print("Finishing up...")
+      return "Done"
+  ```
+</Accordion>
+
+<Accordion title="Printing instead of returning">
+  If you print a value instead of returning it, you can't use the result in further calculations.
+
+  ```python
+  # Wrong — prints the result but can't use it
+  def multiply(a, b):
+      print(a * b)
+
+  result = multiply(3, 4)    # Prints: 12
+  total = result + 10        # TypeError! result is None
+
+  # Right — return the value
+  def multiply(a, b):
+      return a * b
+
+  result = multiply(3, 4)    # result = 12
+  total = result + 10        # total = 22
+  ```
+</Accordion>
+
+<Accordion title="Ignoring the returned value">
+  Calling a function that returns a value without storing or using the result means you lose it.
+
+  ```python
+  def get_username():
+      return "alice123"
+
+  # Wrong — return value is discarded
+  get_username()
+
+  # Right — store or use the returned value
+  username = get_username()
+  print(username)   # "alice123"
+  ```
+</Accordion>
+
+<Accordion title="Expecting return to work like print across a call">
+  `return` sends the value back to the caller — it doesn't automatically print or store it anywhere. You have to do something with it.
+
+  ```python
+  def square(n):
+      return n * n
+
+  square(5)        # Result is computed but immediately discarded
+  print(square(5)) # Right — explicitly print it
+  x = square(5)    # Right — store it for later
+  ```
+</Accordion>

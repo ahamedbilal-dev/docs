@@ -1,0 +1,335 @@
+---
+title: "Data Analysis with pandas: Your First Steps"
+sidebarTitle: "Working with Data"
+description: "Get started with pandas — create DataFrames, load CSV files, inspect and filter data, add columns, compute aggregations, and save results."
+---
+
+pandas is the most widely used Python library for working with tabular data. Think of it as a supercharged spreadsheet that lives inside your Python script: you can load a CSV in one line, filter rows by any condition, compute statistics, reshape data, and save the results — all without opening Excel. This page walks you through the essential operations you'll use in almost every data project.
+
+## What Is pandas?
+
+pandas provides two core data structures:
+
+<CardGroup cols={2}>
+  <Card title="DataFrame" icon="table">
+    A two-dimensional table with labelled rows and columns — like a spreadsheet or SQL table. This is what you'll use 90% of the time.
+  </Card>
+  <Card title="Series" icon="list">
+    A single column (or row) of data with an index. A DataFrame is essentially a collection of Series sharing the same index.
+  </Card>
+</CardGroup>
+
+pandas is built on top of NumPy and is designed for performance: operations that would take dozens of lines in plain Python can be expressed in a single, readable line with pandas.
+
+## Installing pandas
+
+```bash
+pip install pandas
+```
+
+If you get a permission error, try `pip3 install pandas` or install through VS Code's integrated terminal with your virtual environment activated.
+
+## Creating a DataFrame
+
+You can create a DataFrame directly from a Python dictionary — each key becomes a column:
+
+```python
+import pandas as pd
+
+# Create a DataFrame from a dictionary
+data = {
+    "name":   ["Alice", "Bob", "Charlie", "Diana"],
+    "age":    [25, 30, 35, 28],
+    "city":   ["New York", "London", "Tokyo", "Paris"],
+    "salary": [75000, 82000, 91000, 78000],
+}
+
+df = pd.DataFrame(data)
+print(df)
+```
+
+Output:
+```
+      name  age      city  salary
+0    Alice   25  New York   75000
+1      Bob   30    London   82000
+2  Charlie   35     Tokyo   91000
+3    Diana   28     Paris   78000
+```
+
+## Reading CSV with `pd.read_csv`
+
+In practice you'll usually load data from a file rather than typing it by hand:
+
+```python
+import pandas as pd
+
+# Read a CSV file into a DataFrame
+df = pd.read_csv("data/sales.csv")
+
+# Useful options:
+df = pd.read_csv(
+    "data/sales.csv",
+    parse_dates=["date"],   # Convert date column automatically
+    dtype={"price": float}, # Force a specific data type
+)
+```
+
+<Tip>
+  Pass `parse_dates=["date"]` when your CSV has a date column. pandas will convert those strings into proper datetime objects, which unlocks date-based filtering and resampling.
+</Tip>
+
+## Inspecting Your Data
+
+Always start by getting a feel for the data before doing any analysis:
+
+<CodeGroup>
+```python Basic inspection
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+
+# First and last rows
+print(df.head())      # First 5 rows (default)
+print(df.head(10))    # First 10 rows
+print(df.tail(3))     # Last 3 rows
+
+# Shape and columns
+print(df.shape)       # (rows, columns) e.g. (8, 4)
+print(df.columns)     # Index of column names
+print(len(df))        # Number of rows
+```
+
+```python Data types and memory
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+
+# Data types of each column
+print(df.dtypes)
+# date        object
+# product     object
+# quantity     int64
+# price      float64
+
+# Memory usage
+print(df.info())
+# Shows dtypes, non-null counts, and memory footprint
+```
+
+```python Statistical summary
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+
+# Descriptive statistics for numeric columns
+print(df.describe())
+#        quantity       price
+# count   8.000000    8.000000
+# mean    3.250000  347.485000
+# std     3.105...  373.028...
+# min     1.000000   29.990000
+# 25%     2.000000   54.990000
+# 50%     2.500000  189.990000
+# 75%     4.250000  649.990000
+# max    10.000000  999.990000
+
+# Count unique values in a column
+print(df["product"].value_counts())
+```
+</CodeGroup>
+
+## Filtering Rows
+
+Select rows that match a condition using boolean expressions:
+
+```python
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+
+# Filter by a single condition
+laptops = df[df["product"] == "Laptop"]
+print(laptops)
+
+# Numeric comparison
+expensive = df[df["price"] > 100]
+
+# Multiple conditions — use & (and) and | (or) with parentheses
+high_value = df[(df["price"] > 100) & (df["quantity"] >= 2)]
+
+# Filter by a list of values
+tech = df[df["product"].isin(["Laptop", "Monitor"])]
+
+# Filter by string content
+contains_key = df[df["product"].str.contains("Key")]
+
+# Exclude rows (negation)
+not_laptop = df[df["product"] != "Laptop"]
+```
+
+<Note>
+  When combining multiple conditions, always wrap each condition in parentheses. Without parentheses, Python's operator precedence produces unexpected results.
+</Note>
+
+## Adding Columns
+
+Create new columns by assigning to a new column name:
+
+```python
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+
+# Simple arithmetic — operates on entire column at once
+df["total"] = df["quantity"] * df["price"]
+
+# String operations
+df["product_upper"] = df["product"].str.upper()
+
+# Apply a function to each row
+def discount(price):
+    return price * 0.9 if price > 500 else price
+
+df["discounted_price"] = df["price"].apply(discount)
+
+# Conditional column with numpy where
+import numpy as np
+df["category"] = np.where(df["price"] > 100, "Premium", "Budget")
+
+print(df[["product", "price", "total", "category"]].head())
+```
+
+## Basic Aggregations
+
+Compute summary statistics across the whole DataFrame or by group:
+
+<CodeGroup>
+```python Whole-DataFrame aggregations
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+df["total"] = df["quantity"] * df["price"]
+
+print(df["total"].sum())        # Grand total revenue
+print(df["quantity"].mean())    # Average units per transaction
+print(df["price"].max())        # Most expensive item
+print(df["price"].min())        # Least expensive item
+print(df["product"].nunique())  # Number of distinct products
+```
+
+```python Group by (split-apply-combine)
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+df["total"] = df["quantity"] * df["price"]
+
+# Total revenue per product
+by_product = df.groupby("product")["total"].sum()
+print(by_product)
+
+# Multiple aggregations at once
+summary = df.groupby("product").agg(
+    total_revenue=("total",    "sum"),
+    total_units  =("quantity", "sum"),
+    avg_price    =("price",    "mean"),
+    num_orders   =("date",     "count"),
+)
+print(summary.sort_values("total_revenue", ascending=False))
+```
+
+```python Sorting and ranking
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv")
+df["total"] = df["quantity"] * df["price"]
+
+# Sort by a column
+df_sorted = df.sort_values("total", ascending=False)
+print(df_sorted.head())
+
+# Sort by multiple columns
+df_multi = df.sort_values(["product", "date"])
+
+# Get top 3 rows
+top3 = df.nlargest(3, "total")
+print(top3[["product", "total"]])
+```
+</CodeGroup>
+
+## Saving to CSV
+
+Once you've processed your data, save the results:
+
+```python
+import pandas as pd
+import os
+
+df = pd.read_csv("data/sales.csv")
+df["total"] = df["quantity"] * df["price"]
+
+# Ensure the output directory exists
+os.makedirs("output", exist_ok=True)
+
+# Save to CSV
+df.to_csv("output/sales_with_totals.csv", index=False)
+print("Saved to output/sales_with_totals.csv")
+
+# Save as Excel (requires openpyxl)
+df.to_excel("output/sales_with_totals.xlsx", index=False)
+
+# Save as JSON
+df.to_json("output/sales_with_totals.json", orient="records", indent=2)
+```
+
+<Note>
+  `index=False` prevents pandas from writing the integer row index (0, 1, 2, …) as an extra column in your output file. Almost always what you want.
+</Note>
+
+## Putting It All Together
+
+Here's a complete mini-analysis that reads data, inspects it, adds calculated columns, aggregates, and saves results:
+
+```python
+import pandas as pd
+import os
+
+# 1. Load
+df = pd.read_csv("data/sales.csv")
+print(f"Loaded {df.shape[0]} rows, {df.shape[1]} columns")
+
+# 2. Inspect
+print("\nData types:")
+print(df.dtypes)
+print("\nSample:")
+print(df.head())
+
+# 3. Add calculated columns
+df["total"] = df["quantity"] * df["price"]
+df["category"] = df["price"].apply(
+    lambda p: "Premium" if p > 200 else "Budget"
+)
+
+# 4. Aggregate
+summary = df.groupby("product").agg(
+    total_revenue=("total",    "sum"),
+    total_units  =("quantity", "sum"),
+    avg_price    =("price",    "mean"),
+).sort_values("total_revenue", ascending=False)
+
+print("\nProduct Summary:")
+print(summary)
+print(f"\nGrand Total Revenue: ${df['total'].sum():,.2f}")
+
+# 5. Save
+os.makedirs("output", exist_ok=True)
+df.to_csv("output/sales_analysed.csv", index=False)
+summary.to_csv("output/product_summary.csv")
+print("\nResults saved to output/")
+```
+
+## Further Reading
+
+- [pandas documentation](https://pandas.pydata.org/docs/) — the official, comprehensive reference
+- [pandas Getting Started tutorials](https://pandas.pydata.org/docs/getting_started/index.html) — step-by-step guides for common tasks
+- [Real Python: pandas DataFrames](https://realpython.com/pandas-dataframe/) — in-depth tutorial with examples

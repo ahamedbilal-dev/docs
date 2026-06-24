@@ -1,0 +1,207 @@
+---
+title: "Python Code Formatting: Write Clean, Readable Code"
+sidebarTitle: "Formatting"
+description: "Learn the core formatting principles that make Python code clean and readable, from indentation to line length, with a preview of automatic formatting using Ruff."
+---
+
+Code formatting is about more than aesthetics. Well-formatted code is faster to read, easier to debug, and simpler for teammates to understand. Python has a strong culture around consistent style — most professional Python projects follow the same set of conventions, making it easy to pick up any codebase and understand it quickly.
+
+## Why Formatting Matters
+
+Imagine reading a book where paragraphs are random lengths, sentences run for pages, and punctuation appears at random. The *content* might be there, but reading it would be exhausting. Code is the same.
+
+<CardGroup cols={2}>
+  <Card title="Readability" icon="eye">
+    Consistent formatting lets you scan code quickly and spot logic at a glance.
+  </Card>
+  <Card title="Collaboration" icon="users">
+    Shared conventions mean any Python developer can read your code immediately.
+  </Card>
+  <Card title="Fewer Bugs" icon="bug">
+    Clear structure makes mistakes more visible — misplaced logic stands out in well-formatted code.
+  </Card>
+  <Card title="Professionalism" icon="star">
+    Clean code signals that you care about quality, not just making things work.
+  </Card>
+</CardGroup>
+
+## Basic Formatting Principles
+
+### 1. Indentation: 4 Spaces
+
+Always use **4 spaces** per indentation level — never tabs. This is the single most important rule in Python (and also enforced as syntax):
+
+<CodeGroup>
+```python Good
+def greet(name):
+    if name:
+        print(f"Hello, {name}!")
+    else:
+        print("Hello!")
+```
+
+```python Bad
+def greet(name):
+  if name:              # 2 spaces — inconsistent
+      print(f"Hello, {name}!")
+    else:               # wrong alignment
+        print("Hello!")
+```
+</CodeGroup>
+
+### 2. Spacing Around Operators
+
+Add a single space on each side of operators and after commas. This small habit dramatically improves readability:
+
+<CodeGroup>
+```python Good
+x = 1 + 2
+numbers = [1, 2, 3, 4]
+result = (a + b) * c
+```
+
+```python Bad
+x=1+2
+numbers=[1,2,3,4]
+result=(a+b)*c
+```
+</CodeGroup>
+
+### 3. Blank Lines to Separate Sections
+
+Use **two blank lines** between top-level definitions (functions, classes), and **one blank line** between logical sections inside a function:
+
+```python
+def calculate_price(quantity, unit_price):
+    subtotal = quantity * unit_price
+
+    tax_rate = 0.0625
+    tax = subtotal * tax_rate
+
+    return subtotal + tax
+
+
+def apply_discount(price, discount_percent):
+    discount = price * (discount_percent / 100)
+    return price - discount
+```
+
+<Note>
+  Blank lines are free — use them generously. A function with clearly separated logical blocks is much easier to follow than a dense wall of code.
+</Note>
+
+### 4. Line Length: 80–100 Characters
+
+Keep lines short enough to read without horizontal scrolling. The PEP 8 guideline is **79 characters**; many modern teams use 88 or 100. When a line gets too long, break it:
+
+<CodeGroup>
+```python Good — readable multiline string
+long_string = (
+    "This is a very long string that "
+    "spans multiple lines for readability."
+)
+
+# Long function calls can be broken across lines too
+result = some_function(
+    argument_one,
+    argument_two,
+    argument_three,
+)
+```
+
+```python Bad — too long to read comfortably
+long_string = "This is a very long string that spans multiple lines for readability but keeps going and going past what fits on screen"
+```
+</CodeGroup>
+
+## Formatting Principles at a Glance
+
+<Tabs>
+  <Tab title="Indentation">
+    ```python
+    # Always 4 spaces
+    if condition:
+        do_something()
+        if nested:
+            do_more()
+    ```
+  </Tab>
+  <Tab title="Spacing">
+    ```python
+    # Spaces around = and operators
+    x = 10
+    total = price + tax
+    items = [1, 2, 3]
+    ```
+  </Tab>
+  <Tab title="Blank Lines">
+    ```python
+    def function_one():
+        pass
+
+
+    def function_two():
+        step_one()
+
+        step_two()
+    ```
+  </Tab>
+  <Tab title="Line Length">
+    ```python
+    # Break long lines with parentheses
+    message = (
+        "Hello, " + first_name +
+        " " + last_name
+    )
+    ```
+  </Tab>
+</Tabs>
+
+## Automatic Formatting with Ruff
+
+You don't have to enforce all these rules manually. **Ruff** is a fast Python formatter and linter that automatically reformats your code to follow PEP 8 conventions with a single command.
+
+```bash
+# Install Ruff
+pip install ruff
+
+# Format a file automatically
+ruff format my_script.py
+
+# Check for style issues without changing the file
+ruff check my_script.py
+```
+
+<Tip>
+  Later in this course you'll get a full walkthrough of setting up Ruff in your editor so that your code is formatted automatically every time you save a file. For now, focus on building good habits manually — understanding the rules makes you a better programmer even when a tool handles enforcement for you.
+</Tip>
+
+## Good vs Bad: A Complete Example
+
+<CodeGroup>
+```python Well Formatted
+def calculate_order_total(items, tax_rate=0.08):
+    subtotal = sum(item["price"] for item in items)
+
+    tax = subtotal * tax_rate
+    total = subtotal + tax
+
+    return total
+
+
+def print_receipt(total):
+    print(f"Total due: ${total:.2f}")
+```
+
+```python Poorly Formatted
+def calculate_order_total(items,tax_rate=0.08):
+    subtotal=sum(item["price"] for item in items)
+    tax=subtotal*tax_rate
+    total=subtotal+tax
+    return total
+def print_receipt(total):
+    print(f"Total due: ${total:.2f}")
+```
+</CodeGroup>
+
+Both versions run correctly — but only one is easy to read, review, and maintain.

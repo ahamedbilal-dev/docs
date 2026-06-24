@@ -1,0 +1,184 @@
+---
+title: "What Is Version Control and Why You Need It"
+sidebarTitle: "Version Control"
+description: "Learn what Git version control is, how commits and branches work, and why every Python developer needs it from day one."
+---
+
+If you've ever saved files as `script_v2_FINAL_actually_final.py`, you already know the pain that version control solves. Git replaces the chaos of manual backups with a clean, structured history of every change you've made — so you can always go back, compare, and understand what changed and why.
+
+## The problem Git solves
+
+Working on a Python project without version control often ends up looking like this:
+
+```
+my_script.py
+my_script_v2.py
+my_script_v2_final.py
+my_script_v2_final_ACTUALLY_FINAL.py
+my_script_backup_before_breaking_everything.py
+```
+
+Git eliminates this mess by tracking changes properly inside one folder.
+
+## How Git works
+
+Think of Git as taking snapshots of your code at moments you choose:
+
+1. **You write code** — make changes to your files as normal
+2. **You save a snapshot** — called a "commit" in Git
+3. **Git remembers everything** — every snapshot, who made it, when, and why
+
+```python
+# Monday: Your code works
+def calculate_price(amount):
+    return amount * 1.20  # 20% markup
+
+# Tuesday: Boss wants 25% markup
+def calculate_price(amount):
+    return amount * 1.25  # Changed from 20% to 25%
+
+# Wednesday: "Actually, can we go back to 20%?"
+# With Git: easy — just go back to Monday's commit
+# Without Git: hope you still have that file somewhere...
+```
+
+## Key concepts
+
+You only need to understand these six terms to start using Git effectively.
+
+<Accordion title="Repository (repo)">
+  A project folder that Git is tracking. Your `python-for-ai` folder can be a
+  repository. Everything inside it — files, folders, history — is part of the
+  repo.
+</Accordion>
+
+<Accordion title="Staging">
+  Choosing which changes to include in your next snapshot. Think of it like
+  selecting items to put in a box before you seal and ship it.
+</Accordion>
+
+<Accordion title="Commit">
+  A saved snapshot of your code at a specific point in time. Like saving your
+  game — you can always load this save if something goes wrong later.
+</Accordion>
+
+<Accordion title="Push">
+  Upload your local commits to GitHub. This backs up your code online and makes
+  it visible to collaborators.
+</Accordion>
+
+<Accordion title="Pull">
+  Download commits from GitHub to your local machine. This is how you get
+  updates when working with others.
+</Accordion>
+
+<Accordion title="Clone">
+  Copy an entire project from GitHub to your computer. This is how you download
+  AI libraries, example projects, and course materials.
+</Accordion>
+
+## Install Git
+
+Before anything else, check whether Git is already installed on your machine:
+
+```bash
+git --version
+```
+
+If you see a version number, you're ready. If not, install it for your platform:
+
+<Tabs>
+  <Tab title="Windows">
+    <Steps>
+      <Step title="Download the installer">
+        Go to [git-scm.com/download/win](https://git-scm.com/download/win) and
+        download the latest installer.
+      </Step>
+      <Step title="Run the installer">
+        Double-click the `.exe` file. Accept all default settings throughout the
+        wizard.
+      </Step>
+      <Step title="Restart VS Code">
+        Close and reopen VS Code so it picks up the new `git` command in your
+        PATH.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="macOS">
+    <Steps>
+      <Step title="Try the built-in prompt">
+        Run `git --version` in your terminal. If Git is not found, macOS
+        will offer to install it automatically — click **Install** and wait a
+        few minutes.
+      </Step>
+      <Step title="Or use Homebrew">
+        If you have Homebrew installed, the fastest option is:
+        ```bash
+        brew install git
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Linux">
+    Install Git with your distribution's package manager:
+    ```bash
+    # Ubuntu/Debian
+    sudo apt update && sudo apt install git
+
+    # Fedora
+    sudo dnf install git
+
+    # Arch
+    sudo pacman -S git
+    ```
+  </Tab>
+</Tabs>
+
+## The simplest Git workflow
+
+Here are the three commands you'll use every single day. Run them in the VS Code terminal, not in a Python file.
+
+```bash
+# 0. One-time setup — initialize Git in your project folder
+git init
+
+# 1. Stage all changed files
+git add .
+
+# 2. Save a snapshot with a descriptive message
+git commit -m "Add price calculation function"
+
+# 3. Upload to GitHub (after connecting — see next pages)
+git push
+```
+
+<Note>
+  If you see **"fatal: not a git repository"**, you need to run `git init`
+  first. This only needs to be done once per project.
+</Note>
+
+## Common questions
+
+<Accordion title="Do I need to use the terminal?">
+  No! VS Code has buttons for every Git operation. We'll show you both
+  approaches, but you can stick to clicking if you prefer.
+</Accordion>
+
+<Accordion title="What if I mess up?">
+  Git is very forgiving. Every commit is stored permanently, so you can always
+  go back. It's actually harder to lose work *with* Git than without it.
+</Accordion>
+
+<Accordion title="Is Git the same as GitHub?">
+  No. Git is the tool that runs on your computer and tracks changes. GitHub is
+  the website that stores and shares your Git projects. You can use Git locally
+  without GitHub, but combining both gives you backups and collaboration.
+</Accordion>
+
+## What's next?
+
+Now that you understand the core concepts, let's create your GitHub account so you have somewhere to store your code.
+
+<Card title="GitHub Setup" icon="github" href="/tools/git/github-setup">
+  Create your account and configure Git with your identity in five minutes.
+</Card>

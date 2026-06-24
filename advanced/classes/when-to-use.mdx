@@ -1,0 +1,205 @@
+---
+title: "When to Use Classes vs Functions in Python"
+sidebarTitle: "When to Use"
+description: "A practical decision guide for choosing between Python classes and functions, with real AI project patterns and a simple rule of thumb."
+---
+
+One of the most common questions as you learn Python classes is: "Should I use a class here, or is a function enough?" The answer isn't always obvious, and the good news is that neither approach is wrong — they're just different tools. This page gives you a reliable framework for making that call.
+
+## Two Styles, Same Outcome
+
+Python supports both **functional programming** (chaining functions) and **object-oriented programming** (bundling data and behaviour in classes). Both can solve the same problems:
+
+<Tabs>
+  <Tab title="Use a Class">
+    Classes shine when you need to track state, create multiple independent instances, or bundle several related pieces of logic together.
+
+    ```python
+    class TextProcessor:
+        def __init__(self, text):
+            self.text = text
+
+        def clean(self):
+            self.text = self.text.strip().lower()
+            return self  # allows chaining
+
+        def remove_punctuation(self):
+            for char in ".,!?;:":
+                self.text = self.text.replace(char, "")
+            return self
+
+    processor = TextProcessor("  Hello, World!  ")
+    result = processor.clean().remove_punctuation().text
+    print(result)  # "hello world"
+    ```
+
+    **Use a class when you need to:**
+
+    - Keep track of **state** between operations (e.g. request counts, conversation history)
+    - Create **multiple independent instances** with similar behaviour (dev client, prod client)
+    - **Group related data and logic** that naturally belongs together
+    - Model a **real-world concept** (an API client, a data pipeline, a configuration)
+    - Provide a **clean public interface** that hides internal complexity
+  </Tab>
+  <Tab title="Use a Function">
+    Functions are simpler and often sufficient. If you don't need state or multiple instances, a function is usually the better choice.
+
+    ```python
+    def clean_text(text):
+        return text.strip().lower()
+
+    def remove_punctuation(text):
+        for char in ".,!?;:":
+            text = text.replace(char, "")
+        return text
+
+    raw = "  Hello, World!  "
+    result = remove_punctuation(clean_text(raw))
+    print(result)  # "hello world"
+    ```
+
+    **Use functions when you have:**
+
+    - Simple **input → output** transformations (one value in, one value out)
+    - **Stateless** operations (output depends only on input, nothing else)
+    - **One-off calculations** that don't need to persist
+    - **Small scripts** where adding a class would add ceremony without benefit
+  </Tab>
+</Tabs>
+
+<Tip>
+  Both examples above produce exactly the same result. Classes don't unlock new capabilities — they're a different way to **organise** code. Choose whichever makes your code clearer for the next person who reads it.
+</Tip>
+
+## Signs You Need a Class
+
+Here are the concrete signals that a class will help, rather than complicate, your code:
+
+<Accordion title="You're passing the same data to multiple functions">
+  If you find yourself writing `process_a(config, data)`, `process_b(config, data)`, `process_c(config, data)` — passing the same `config` everywhere — that's a strong sign `config` and those functions belong in a class.
+
+  ```python
+  # Before — config travels everywhere
+  def fetch_data(api_key, base_url, endpoint):
+      ...
+
+  def parse_response(api_key, response_format, raw):
+      ...
+
+  # After — class holds config, methods use it naturally
+  class APIClient:
+      def __init__(self, api_key, base_url):
+          self.api_key  = api_key
+          self.base_url = base_url
+
+      def fetch_data(self, endpoint):
+          ...
+
+      def parse_response(self, raw):
+          ...
+  ```
+</Accordion>
+
+<Accordion title="You need multiple independent instances">
+  If you need a `dev_client` and a `prod_client` with different settings, you need a class. Functions can't hold independent state.
+
+  ```python
+  dev_client  = APIClient("sk-dev-key",  model="gpt-3.5-turbo")
+  prod_client = APIClient("sk-prod-key", model="gpt-4o")
+
+  # Each tracks its own request count, history, etc.
+  ```
+</Accordion>
+
+<Accordion title="You need to maintain state across calls">
+  If you need to remember something between function calls (e.g. conversation history, retry counts, cached results), a class is the right tool.
+
+  ```python
+  class ConversationManager:
+      def __init__(self):
+          self.history = []
+
+      def add_message(self, role, content):
+          self.history.append({"role": role, "content": content})
+
+      def get_context(self):
+          return self.history
+  ```
+</Accordion>
+
+<Accordion title="You're modelling a real-world concept with its own behaviour">
+  Things like an API client, a data pipeline stage, a document parser, or a model configuration all naturally map to classes because they have both *identity* (their settings) and *behaviour* (their methods).
+</Accordion>
+
+## Signs Functions Are Enough
+
+<CardGroup cols={2}>
+  <Card title="Single transformation" icon="arrow-right">
+    The function takes an input, does something to it, and returns an output. No state, no side effects.
+  </Card>
+  <Card title="One-off utility" icon="function">
+    You need it in one place, once. A standalone function keeps it simple.
+  </Card>
+  <Card title="No shared state needed" icon="square-xmark">
+    Each call is completely independent — nothing needs to be remembered between calls.
+  </Card>
+  <Card title="Small scripts" icon="scroll">
+    Short automation scripts or data processing pipelines often work best as a sequence of functions.
+  </Card>
+</CardGroup>
+
+## Common Patterns in AI Projects
+
+| Scenario | Use |
+|----------|-----|
+| Wrapping an API (OpenAI, Anthropic, etc.) | **Class** — state (key, model, history), multiple environments |
+| Cleaning or transforming a single text string | **Function** — pure transformation |
+| Managing a RAG pipeline with multiple steps | **Class** — complex state, reuse |
+| Calculating token count from a string | **Function** — stateless utility |
+| Handling multiple database connections | **Class** — each connection has its own state |
+| One-off data export script | **Functions** — simple, sequential, no reuse needed |
+
+## Common Pitfalls
+
+<Accordion title="Over-engineering with classes">
+  A class with only one method is almost always better as a plain function. Don't add ceremony where it's not needed.
+
+  ```python
+  # Overkill
+  class TextCleaner:
+      def clean(self, text):
+          return text.strip().lower()
+
+  # Better
+  def clean_text(text):
+      return text.strip().lower()
+  ```
+</Accordion>
+
+<Accordion title="God objects that do too much">
+  A class that handles API calls, data parsing, file writing, logging, *and* UI rendering is doing too much. Each class should have a single, clear responsibility.
+</Accordion>
+
+<Accordion title="A class where all methods are static">
+  If none of your methods use `self` or `cls`, you don't need a class. Put those functions in a module instead.
+
+  ```python
+  # Unnecessary class wrapper
+  class Utils:
+      @staticmethod
+      def clean(text): ...
+
+      @staticmethod
+      def tokenise(text): ...
+
+  # Better — just a module (utils.py)
+  def clean(text): ...
+  def tokenise(text): ...
+  ```
+</Accordion>
+
+## The Rule of Thumb
+
+> **Start with functions. Add a class when you find yourself maintaining state or creating multiple instances with the same structure.**
+
+Functions are simpler to read, simpler to test, and simpler to debug. Only introduce a class when the complexity of managing state across multiple functions makes a class the clearer option.

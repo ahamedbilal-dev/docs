@@ -1,0 +1,203 @@
+---
+title: "Python Booleans: True and False Values"
+sidebarTitle: "Booleans"
+description: "Learn how Python boolean values work, how to create them from comparisons, and how to avoid the capitalization and assignment mistakes that trip up beginners."
+---
+
+Booleans are Python's simplest data type — a value that can only ever be one of two things: `True` or `False`. Despite their simplicity, booleans are the backbone of every decision your program makes. Every `if` statement, every loop condition, every filter — they all depend on boolean logic.
+
+## What Are Booleans?
+
+Think of booleans as yes/no answers. Is the user logged in? Is the score above 60? Is today a weekend? Every one of these questions has exactly two possible answers.
+
+```python
+is_logged_in = True
+is_admin = False
+has_permission = True
+account_active = False
+```
+
+<Warning>
+  Boolean values in Python are `True` and `False` — with a **capital first letter**. Writing `true`, `false`, `TRUE`, or `FALSE` will cause a `NameError` because Python will look for variables with those names instead.
+</Warning>
+
+## Creating Booleans
+
+### Direct Assignment
+
+You can assign `True` or `False` directly to a variable:
+
+```python
+is_ready = True
+is_complete = False
+```
+
+### From Comparisons
+
+More often, booleans are produced automatically as the result of a comparison:
+
+```python
+age = 18
+can_vote = age >= 18    # True — 18 is greater than or equal to 18
+
+score = 75
+passed = score > 60     # True — 75 is greater than 60
+
+name = "Alice"
+is_alice = name == "Alice"   # True
+is_bob = name == "Bob"       # False
+```
+
+This is where booleans become powerful: you can store the result of any comparison and use it later in your code.
+
+## All Comparison Operators
+
+Comparison operators evaluate a relationship between two values and always return a boolean:
+
+```python
+age = 25
+
+# Equality and inequality
+print(age == 25)     # True  — equals
+print(age != 30)     # True  — not equals
+
+# Greater and less than
+print(age > 20)      # True  — greater than
+print(age < 30)      # True  — less than
+print(age >= 25)     # True  — greater than or equal to
+print(age <= 25)     # True  — less than or equal to
+```
+
+<Note>
+  Comparison operators work with numbers, strings, and many other Python types. String comparisons are alphabetical: `"apple" < "banana"` returns `True`.
+</Note>
+
+## The `=` vs `==` Distinction
+
+This single distinction trips up beginners more than almost anything else in Python:
+
+<CodeGroup>
+```python = (Assignment)
+# Stores the value 25 into the variable age
+age = 25
+```
+
+```python == (Comparison)
+# Checks whether age equals 25 — returns True or False
+is_twenty_five = age == 25
+```
+</CodeGroup>
+
+```python
+# Full example showing both
+age = 25                    # assignment — age now holds 25
+print(age == 25)            # comparison — prints True
+print(age == 30)            # comparison — prints False
+```
+
+<Warning>
+  Using `=` inside an `if` condition is a `SyntaxError` in Python:
+
+  ```python
+  # Wrong — SyntaxError
+  if age = 25:
+      print("Hello!")
+
+  # Right — use == to compare
+  if age == 25:
+      print("Hello!")
+  ```
+</Warning>
+
+## Booleans in Conditions
+
+Booleans exist to drive decisions. Here's how they flow into `if` statements:
+
+```python
+is_logged_in = True
+score = 85
+
+# Using a boolean variable directly
+if is_logged_in:
+    print("Welcome back!")
+
+# Using a comparison that produces a boolean
+if score >= 90:
+    print("Excellent work!")
+elif score >= 70:
+    print("Good job!")
+else:
+    print("Keep practicing!")
+```
+
+## Common Mistakes
+
+<Accordion title="Wrong capitalization">
+  `True` and `False` must be capitalised exactly. All-lowercase or all-uppercase versions are not Python keywords — they're just undefined variable names.
+
+  ```python
+  # Wrong — NameError: name 'true' is not defined
+  is_ready = true
+  is_done = TRUE
+  IS_ACTIVE = false
+
+  # Right
+  is_ready = True
+  is_done = False
+  IS_ACTIVE = False
+  ```
+</Accordion>
+
+<Accordion title="Redundant comparisons with True or False">
+  Because a boolean variable *is already* `True` or `False`, comparing it to `True` is redundant and considered bad style.
+
+  ```python
+  is_logged_in = True
+
+  # Works but redundant — comparing True to True
+  if is_logged_in == True:
+      print("Welcome")
+
+  # Better — the boolean speaks for itself
+  if is_logged_in:
+      print("Welcome")
+
+  # Checking for False — use `not`
+  if not is_logged_in:
+      print("Please log in")
+  ```
+</Accordion>
+
+<Accordion title="Using = instead of == in comparisons">
+  Assignment inside a condition is always a bug. Python catches it at the syntax level, but it's important to understand why it's wrong.
+
+  ```python
+  # Wrong — SyntaxError in Python
+  if is_logged_in = True:
+      print("Welcome")
+
+  # Right
+  if is_logged_in == True:    # works but redundant
+      print("Welcome")
+
+  if is_logged_in:             # best
+      print("Welcome")
+  ```
+</Accordion>
+
+<Accordion title="Expecting bool() to always return True for non-empty values">
+  Python has the concept of "truthy" and "falsy" values — every object evaluates to either `True` or `False` in a boolean context. Empty containers, zero, and `None` are falsy; everything else is truthy.
+
+  ```python
+  print(bool(0))      # False — zero is falsy
+  print(bool(""))     # False — empty string is falsy
+  print(bool([]))     # False — empty list is falsy
+  print(bool(None))   # False
+
+  print(bool(1))      # True
+  print(bool("hi"))   # True
+  print(bool([1]))    # True
+  ```
+
+  This is useful shorthand, but be deliberate about when you rely on it.
+</Accordion>

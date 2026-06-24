@@ -1,0 +1,229 @@
+---
+title: "Create and Manage Python Projects with uv"
+sidebarTitle: "Using uv"
+description: "Use uv init, uv add, and uv run to create Python projects, install packages, and manage dependencies through pyproject.toml and uv.lock."
+---
+
+Now that you know why uv is worth using, let's put it into practice. This page walks through the commands you'll use on every project: initializing a new project, adding packages, understanding `pyproject.toml`, and running your code. By the end you'll have a complete mental model of the uv workflow.
+
+## Creating a new project
+
+```bash
+# Create a new project folder and enter it
+uv init ai-assistant
+cd ai-assistant
+```
+
+uv generates a clean starting structure:
+
+```
+ai-assistant/
+├── .gitignore       # Pre-configured to ignore .venv, .env, __pycache__
+├── .python-version  # Pins the Python version for this project
+├── pyproject.toml   # Project configuration (replaces requirements.txt)
+├── README.md        # Project description
+└── main.py          # Example entry point
+```
+
+<Note>
+  The `.venv` folder and `uv.lock` file are created automatically the first
+  time you run `uv add`. You don't create them manually.
+</Note>
+
+## Understanding pyproject.toml
+
+This single file replaces `requirements.txt`, `setup.py`, `setup.cfg`, and multiple other config files that used to clutter Python projects:
+
+```toml
+[project]
+name = "ai-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+```
+
+As you add packages, uv updates the `dependencies` list automatically.
+
+## Adding packages
+
+Use `uv add` instead of `pip install`:
+
+```bash
+# Add a single package
+uv add requests
+
+# Add multiple packages at once
+uv add pandas numpy matplotlib
+
+# Add a development-only dependency
+uv add --dev pytest ruff
+```
+
+After adding packages, `pyproject.toml` updates automatically:
+
+```toml
+[project]
+name = "ai-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.32.0",
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "matplotlib>=3.8.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+]
+```
+
+## The lock file
+
+When you add packages, uv also generates `uv.lock`. This file records the exact version of every package (including all transitive dependencies):
+
+```toml
+# uv.lock (auto-generated — don't edit by hand)
+version = 1
+requires-python = ">=3.12"
+
+[[package]]
+name = "requests"
+version = "2.32.3"
+dependencies = [
+    { name = "certifi" },
+    { name = "charset-normalizer" },
+    { name = "idna" },
+    { name = "urllib3" },
+]
+```
+
+<Tip>
+  Commit `uv.lock` to Git. When a teammate (or your deployment server) runs
+  `uv sync`, they get byte-for-byte identical installs. This eliminates the
+  classic "it works on my machine" problem.
+</Tip>
+
+## Running your code
+
+Three ways to run Python with uv:
+
+<Tabs>
+  <Tab title="uv run (recommended)">
+    ```bash
+    uv run python main.py
+    ```
+    This always uses the correct virtual environment for the project — no
+    activation step required. This is the recommended approach.
+  </Tab>
+  <Tab title="Activate venv">
+    ```bash
+    # Mac/Linux
+    source .venv/bin/activate
+    python main.py
+
+    # Windows
+    .venv\Scripts\activate
+    python main.py
+    ```
+    The traditional approach. Works fine, but you must remember to activate
+    before running.
+  </Tab>
+  <Tab title="Direct path">
+    ```bash
+    # Mac/Linux
+    .venv/bin/python main.py
+
+    # Windows
+    .venv\Scripts\python.exe main.py
+    ```
+    Useful in scripts and CI/CD pipelines where you want an explicit path.
+  </Tab>
+</Tabs>
+
+## Complete command reference
+
+```bash
+# Project setup
+uv init project-name        # Create a new project
+uv sync                     # Install all dependencies from uv.lock
+
+# Package management
+uv add package-name         # Add a runtime dependency
+uv add --dev package-name   # Add a dev-only dependency
+uv remove package-name      # Remove a package
+uv add --upgrade package    # Upgrade to the latest version
+uv pip list                 # Show all installed packages
+
+# Running code
+uv run python script.py     # Run with the project's Python
+uv run pytest               # Run any installed tool
+
+# Python version management
+uv python install 3.12      # Install a Python version
+uv python list              # List available versions
+```
+
+## Working with existing projects
+
+Got a project that uses `requirements.txt`? uv handles it:
+
+```bash
+# Install from requirements.txt (no migration needed)
+uv pip install -r requirements.txt
+
+# Or migrate: convert requirements.txt to pyproject.toml
+uv add -r requirements.txt
+```
+
+## Tips and tricks
+
+<Accordion title="Install global CLI tools with uv tool">
+  Instead of installing tools like Ruff or mypy into every project, install them globally:
+
+  ```bash
+  uv tool install ruff
+  uv tool install mypy
+
+  # Run them anywhere
+  ruff check .
+  mypy script.py
+  ```
+</Accordion>
+
+<Accordion title="Add custom run scripts">
+  You can define shortcut commands in `pyproject.toml`:
+
+  ```toml
+  [project.scripts]
+  start = "ai_assistant.main:run"
+  ```
+
+  Then run with `uv run start`.
+</Accordion>
+
+<Accordion title="VS Code integration">
+  VS Code detects uv's `.venv` automatically. When you open a uv project,
+  the Python extension should select the correct interpreter without any
+  manual configuration. If it doesn't, press `Ctrl/Cmd + Shift + P` → **Python:
+  Select Interpreter** → choose `.venv/bin/python`.
+</Accordion>
+
+## What's next?
+
+Now let's put everything together — uv, Git, and environment variables — in a complete end-to-end project setup.
+
+<Card
+  title="Complete Project Setup with uv"
+  icon="rocket"
+  href="/tools/dependencies/complete-setup"
+>
+  Follow a step-by-step checklist to create, configure, and push a real Python
+  project from scratch.
+</Card>

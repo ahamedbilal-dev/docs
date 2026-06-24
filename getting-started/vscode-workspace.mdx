@@ -1,0 +1,140 @@
+---
+title: "Create a Python Workspace in VS Code"
+sidebarTitle: "Workspace"
+description: "Set up a dedicated project folder, open it in VS Code, and save it as a .code-workspace file to keep your settings and interpreter persistent."
+---
+
+VS Code always thinks in terms of folders, not individual files. Opening a folder as a workspace gives the editor full context about your project — where your files are, which Python interpreter to use, and what settings to apply. Taking five minutes to set this up properly means every time you return to a project, VS Code opens exactly where you left off.
+
+<Steps>
+  <Step title="Create Your Projects Folder">
+    Start by creating a single home for all your Python work. This keeps your computer organised and makes it trivial to find code later.
+
+    <Tabs>
+      <Tab title="Windows">
+        Create a folder called `PythonProjects` inside your **Documents** folder:
+
+        ```
+        C:\Users\YourName\Documents\PythonProjects\
+        ```
+
+        Then create a sub-folder for this course:
+
+        ```
+        C:\Users\YourName\Documents\PythonProjects\python-for-ai\
+        ```
+      </Tab>
+      <Tab title="macOS">
+        Create a folder in your home directory:
+
+        ```
+        /Users/YourName/PythonProjects/
+        ```
+
+        Then the course sub-folder:
+
+        ```
+        /Users/YourName/PythonProjects/python-for-ai/
+        ```
+      </Tab>
+      <Tab title="Linux">
+        Create the folders from your terminal:
+
+        ```bash
+        mkdir -p ~/PythonProjects/python-for-ai
+        ```
+      </Tab>
+    </Tabs>
+
+    <Tip>
+      Use lowercase letters and hyphens for project folder names — e.g. `python-for-ai`, not `Python For AI`. This style (called **kebab-case**) matches how projects appear on GitHub and avoids path issues on case-sensitive file systems.
+    </Tip>
+  </Step>
+
+  <Step title="Open the Folder in VS Code">
+    Now bring the folder into VS Code using whichever method feels most natural:
+
+    **Method 1 — From inside VS Code:**
+    1. Go to **File → Open Folder** (or press `Ctrl/Cmd + O`).
+    2. Navigate to your `python-for-ai` folder.
+    3. Click **Select Folder** (Windows) or **Open** (macOS/Linux).
+
+    **Method 2 — From your file explorer:**
+    - **Windows:** Right-click the folder → **Open with Code**
+    - **macOS:** Drag the folder onto the VS Code icon in the Dock
+    - **Linux:** Right-click the folder → **Open with Code**
+
+    **Method 3 — From a terminal:**
+    ```bash
+    cd ~/PythonProjects/python-for-ai
+    code .
+    ```
+
+    <Note>
+      VS Code may ask "Do you trust the authors of this folder?" — click **Yes, I trust the authors**. This security prompt appears the first time you open any folder.
+    </Note>
+  </Step>
+
+  <Step title="Explore the Interface with Your New Folder">
+    With the folder open you'll notice:
+
+    - The **Explorer sidebar** (left) shows your folder name at the top — currently empty.
+    - The **status bar** (bottom-right) will show the Python interpreter once you select one.
+    - The **title bar** shows the folder name so you always know which project is active.
+
+    VS Code understanding your folder structure is what enables features like auto-import suggestions, "go to definition", and project-wide search (`Ctrl/Cmd + Shift + F`).
+  </Step>
+
+  <Step title="Save as a Workspace File">
+    A `.code-workspace` file is a persistent bookmark for your project. It remembers settings, open files, and your interpreter choice.
+
+    1. With `python-for-ai` open, click **File → Save Workspace As…**
+    2. Navigate to your `python-for-ai` folder (save it *inside* the project).
+    3. Name it `python-for-ai.code-workspace`.
+    4. Click **Save**.
+
+    Your project structure now looks like this:
+
+    ```
+    PythonProjects/
+    └── python-for-ai/
+        └── python-for-ai.code-workspace
+    ```
+
+    <Note>
+      The `.code-workspace` file is a small JSON file. You can open it in a text editor to see (and manually edit) your workspace settings — but for now, just let VS Code manage it.
+    </Note>
+  </Step>
+
+  <Step title="Test That the Workspace Opens Correctly">
+    Make sure everything is wired up properly:
+
+    1. **Close VS Code completely.**
+    2. Navigate to your `python-for-ai` folder in your file explorer.
+    3. **Double-click** `python-for-ai.code-workspace`.
+    4. VS Code opens directly into your project — no hunting for folders.
+
+    <Tip>
+      Create a shortcut or pin the `.code-workspace` file to your taskbar / Dock for one-click access to your project. This becomes invaluable once you have multiple projects.
+    </Tip>
+  </Step>
+</Steps>
+
+## Why Workspaces Are Worth It
+
+<CardGroup cols={2}>
+  <Card title="Persistent Interpreter" icon="python">
+    VS Code saves your virtual environment selection per workspace. Open the project and your `.venv` is already active — no manual activation needed.
+  </Card>
+  <Card title="Per-Project Settings" icon="gear">
+    Settings in a `.code-workspace` file override your global VS Code settings only for that project. Different projects can use different formatters, linters, or Python versions without conflict.
+  </Card>
+  <Card title="Instant Return" icon="clock-rotate-left">
+    Double-clicking the workspace file restores your last open files and editor layout exactly as you left them — even after restarting your computer.
+  </Card>
+  <Card title="Safe to Share" icon="share-nodes">
+    Committing the `.code-workspace` file to Git means every team member gets the same project structure and recommended settings automatically.
+  </Card>
+</CardGroup>
+
+Now that your workspace is ready, it's time to write your first Python file.

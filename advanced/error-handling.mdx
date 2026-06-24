@@ -1,0 +1,115 @@
+---
+title: "Python Error Handling: Build Resilient Programs"
+sidebarTitle: "Error Handling"
+description: "Learn what error handling is, where errors come from, the difference between syntax and runtime errors, and why handling them matters."
+---
+
+Errors are a normal part of programming — not a sign that you're doing something wrong. Files get deleted, networks drop, users enter unexpected input, and APIs return data in formats you didn't anticipate. Error handling is what separates programs that crash ungracefully from programs that respond intelligently when something goes wrong.
+
+## Where Do Errors Come From?
+
+There are two broad categories of errors you'll encounter:
+
+<Tabs>
+  <Tab title="Errors you make">
+    These are mistakes in your own code. They're fully within your control and go away once you fix them.
+
+    - **Typos and syntax mistakes** — your editor (VS Code) usually highlights these before you even run the code
+    - **Logic errors** — your code runs but produces wrong results, like accidentally dividing by zero
+    - **Using variables before defining them** — referencing a name that doesn't exist yet
+    - **Calling methods that don't exist** — misremembering an API or making a typo in a method name
+
+    ```python
+    # Syntax error — Python can't even parse this
+    if x > 5  # Missing colon
+        print("Big number")
+
+    # Logic error — runs, but crashes at runtime
+    result = 10 / 0  # ZeroDivisionError
+    ```
+  </Tab>
+  <Tab title="Errors beyond your control">
+    These happen because of the environment, the user, or external systems. Perfect code still needs to handle them.
+
+    - **User enters unexpected data** — types "abc" when you need a number
+    - **Files that existed when the program started get deleted**
+    - **Network connections drop** during an API call
+    - **External services return unexpected responses** — rate limits, downtime, schema changes
+
+    ```python
+    # User input you can't control
+    age = int(input("Enter your age: "))  # What if they type "twenty"?
+
+    # File system you can't control
+    with open("data.txt", "r") as f:      # What if the file was moved?
+        content = f.read()
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  You might think "why not just write correct code?" But even flawless code needs error handling, because the world around your code is unpredictable. Users do unexpected things, networks fail, and files disappear. Handling errors is part of writing professional-grade programs.
+</Note>
+
+## Types of Errors
+
+Python errors fall into two main categories:
+
+<CardGroup cols={2}>
+  <Card title="Syntax Errors" icon="code">
+    Python can't understand your code at all. These are caught *before* your program runs — your editor will usually highlight them. They're always your fault and must be fixed before running.
+  </Card>
+  <Card title="Runtime Errors (Exceptions)" icon="triangle-exclamation">
+    The code is syntactically valid, but something goes wrong *while* it runs. These are the ones you handle with `try/except`.
+  </Card>
+</CardGroup>
+
+```python
+# Syntax error — Python won't run the file at all
+def greet(name)  # Missing colon
+    print(f"Hello, {name}")
+
+# Runtime errors — only discovered when the line executes
+result = 10 / 0          # ZeroDivisionError
+print(undefined_var)     # NameError
+"hello" + 5              # TypeError
+```
+
+## Why Handle Errors?
+
+The difference between a program that crashes and one that handles errors gracefully is significant, especially in production or when building tools others will use.
+
+<CodeGroup>
+  ```python Without error handling
+  # This crashes completely if the file doesn't exist
+  with open("data.txt", "r") as f:
+      content = f.read()
+
+  print("Processing complete!")  # Never reached if file is missing
+  ```
+
+  ```python With error handling
+  # This keeps running even if the file doesn't exist
+  try:
+      with open("data.txt", "r") as f:
+          content = f.read()
+  except FileNotFoundError:
+      print("Could not find data.txt — using defaults")
+      content = "default data"
+
+  print("Processing complete!")  # Always reached
+  ```
+</CodeGroup>
+
+The second version tells the user what went wrong, provides a fallback, and continues running. That's the difference error handling makes.
+
+## Explore Error Handling
+
+<CardGroup cols={2}>
+  <Card title="Try / Except" icon="shield-check" href="/advanced/error-handling/try-except">
+    Learn the full `try/except/else/finally` structure, how to catch specific errors, and best practices for writing robust error handling.
+  </Card>
+  <Card title="Common Errors" icon="bug" href="/advanced/error-handling/common-errors">
+    A reference guide to the most frequent Python errors — what causes them, example code, and how to fix each one.
+  </Card>
+</CardGroup>

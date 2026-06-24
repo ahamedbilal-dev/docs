@@ -1,0 +1,206 @@
+---
+title: "Build Your First Python Class: A Practical Guide"
+sidebarTitle: "First Class"
+description: "Learn how to create a Python class step by step — from the basic structure to __init__, self, and a real-world APIConfig example."
+---
+
+Creating your first class can feel a little mysterious — what's `self`? Why are there double underscores everywhere? This page walks you through the four steps you'll use every time you write a class, demystifies the common syntax, and finishes with a real-world example you'll recognise from AI projects.
+
+## How Classes Work
+
+Working with classes follows a repeatable four-step pattern:
+
+<Steps>
+  <Step title="Define the class">
+    Use the `class` keyword followed by a name in **PascalCase** (each word capitalised, no underscores).
+
+    ```python
+    class Dog:  # PascalCase for class names
+        pass    # Empty class — valid Python
+    ```
+  </Step>
+
+  <Step title="Add an __init__ method">
+    The `__init__` method runs automatically every time you create a new object. Use it to set up the object's initial data.
+
+    ```python
+    class Dog:
+        def __init__(self, name, breed):
+            self.name = name
+            self.breed = breed
+    ```
+
+    <Note>
+      Those double underscores are called **dunder** methods (short for *double underscore*). `__init__` is Python's built-in way of saying "this is the setup method". You'll need to type it exactly — after a few times it becomes second nature.
+    </Note>
+  </Step>
+
+  <Step title="Create instances">
+    Call the class like a function to create individual objects (instances). Each call creates a brand-new, independent object.
+
+    ```python
+    dog1 = Dog("Buddy", "Golden Retriever")
+    dog2 = Dog("Max", "Beagle")
+
+    # Named arguments work too — often clearer
+    dog3 = Dog(name="Charlie", breed="Poodle")
+    ```
+  </Step>
+
+  <Step title="Access the data">
+    Use dot notation (`object.attribute`) to read or update the data stored on an instance.
+
+    ```python
+    print(dog1.name)   # Buddy
+    print(dog2.breed)  # Beagle
+    ```
+  </Step>
+</Steps>
+
+## Understanding `self`
+
+`self` is how an object refers to *itself*. When Python calls a method on an object, it automatically passes the object as the first argument — that's `self`. You must include it in every method signature, but you never pass it manually when calling the method.
+
+```python
+class Dog:
+    def __init__(self, name):
+        self.name = name  # self.name belongs to this specific dog
+
+dog1 = Dog("Buddy")
+dog2 = Dog(name="Max")
+
+# Each object has its own copy of self.name
+print(dog1.name)  # Buddy
+print(dog2.name)  # Max
+```
+
+<Tip>
+  Think of `self` as the object saying "store this on *me*, not somewhere else." Without `self.name = name`, the value would just be a temporary local variable that disappears when `__init__` finishes.
+</Tip>
+
+## Class vs Instance
+
+Before going further, it helps to be clear on two terms:
+
+| Term | What it is | Analogy |
+|------|-----------|---------|
+| **Class** | The blueprint | A cake recipe |
+| **Instance / Object** | What you create from the class | A cake baked from that recipe |
+
+```python
+# APIConfig is the CLASS (the blueprint)
+# config1 and config2 are INSTANCES (individual objects)
+
+config1 = APIConfig(api_key="key1", max_tokens=50)
+config2 = APIConfig(api_key="key2", max_tokens=200)
+
+# Each instance holds its own data
+print(config1.max_tokens)  # 50
+print(config2.max_tokens)  # 200
+
+# Changing one does NOT affect the other
+config1.max_tokens = 75
+print(config1.max_tokens)  # 75
+print(config2.max_tokens)  # 200  ← unchanged
+```
+
+## Real-World Example: APIConfig
+
+Here is a practical class you might write in an AI project. It stores configuration for different API environments and provides sensible defaults:
+
+```python
+class APIConfig:
+    def __init__(self, api_key, model="gpt-3.5-turbo", max_tokens=100):
+        self.api_key    = api_key
+        self.model      = model
+        self.max_tokens = max_tokens
+        self.base_url   = "https://api.openai.com/v1"  # always the same
+
+# Required arg positional, optional args by name — very common pattern
+dev_config  = APIConfig("sk-dev-key", max_tokens=50)
+
+# All named arguments — maximally explicit
+prod_config = APIConfig(api_key="sk-prod-key", model="gpt-4", max_tokens=1000)
+
+print(dev_config.model)        # gpt-3.5-turbo  (default)
+print(prod_config.model)       # gpt-4
+print(prod_config.max_tokens)  # 1000
+print(prod_config.base_url)    # https://api.openai.com/v1
+```
+
+Notice that `base_url` is set directly inside `__init__` without being passed as a parameter — it's the same for every config, so there's no reason to make it an argument.
+
+## Common Mistakes
+
+<Accordion title="Forgetting self in __init__">
+  Every method in a class must have `self` as its first parameter.
+
+  ```python
+  # Wrong — missing self
+  class Dog:
+      def __init__(name):       # TypeError when called!
+          self.name = name
+
+  # Right
+  class Dog:
+      def __init__(self, name):
+          self.name = name
+  ```
+</Accordion>
+
+<Accordion title="Not using self. for attributes">
+  Without the `self.` prefix, you create a local variable that disappears when the method returns — the object stores nothing.
+
+  ```python
+  # Wrong — local variable only
+  class Dog:
+      def __init__(self, name):
+          name = name           # vanishes after __init__ exits
+
+  # Right — instance attribute
+  class Dog:
+      def __init__(self, name):
+          self.name = name      # stored on the object
+  ```
+</Accordion>
+
+<Accordion title="Forgetting parentheses when creating an instance">
+  Without `()`, you get a reference to the *class itself*, not a new object.
+
+  ```python
+  # Wrong — assigns the class, not an instance
+  my_config = APIConfig          # <class 'APIConfig'>
+
+  # Right — creates an instance
+  my_config = APIConfig(api_key="sk-...")
+  ```
+</Accordion>
+
+<Accordion title="Using a class attribute for mutable data">
+  Class-level attributes are shared across every instance. This is almost never what you want for things like lists or counts.
+
+  ```python
+  # Wrong — all Counter objects share one count
+  class Counter:
+      count = 0
+
+  c1 = Counter()
+  c1.count += 1
+  print(Counter.count)  # Might surprise you!
+
+  # Right — each instance gets its own count
+  class Counter:
+      def __init__(self):
+          self.count = 0
+  ```
+</Accordion>
+
+## What's Next?
+
+Now that you can create classes and store data in them, the next step is adding **behaviour** with different types of methods.
+
+<CardGroup cols={1}>
+  <Card title="Methods & Attributes" icon="wrench" href="/advanced/classes/methods-attributes">
+    Learn instance methods, class methods, static methods, and how to control how your objects display themselves.
+  </Card>
+</CardGroup>

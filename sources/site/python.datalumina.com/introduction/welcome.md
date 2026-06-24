@@ -1,0 +1,27 @@
+# Source: https://python.datalumina.com/introduction/welcome
+
+## 
+
+[​](https://python.datalumina.com/#welcome-to-python-for-ai)
+
+Welcome to Python for AI
+
+I’m [Dave Ebbelaar](https://www.youtube.com/@daveebbelaar?sub_confirmation=1), and I’ll be your guide on this journey into Python and AI development. I started learning Python in 2013 when I began my bachelor’s in Artificial Intelligence. Today, I have over a decade of Python experience and have taught this language to over 30,000 students through my courses and YouTube channel. But it didn’t start smoothly. I actually _failed_ my first Python class in uni. That experience taught me something crucial: there are two parts to learning Python. First, there’s the syntax - how to write the code. Python is quite easy here; you can almost write it like plain English, and AI assistants can help with any syntax questions. The second part is what most courses skip: your workflow. What tools do you use? How do you set them up? How do you start projects, save files, debug code, and structure your work? These skills are just as important as the code itself. When you understand your workflow, your learning accelerates dramatically. Combine that with AI tools, and you’ll progress faster than ever before.
+
+This is the course I wish I had 12 years ago. After running an AI software development company for five years and completing over 50 projects across industries, I’m bringing all that experience to help you learn effectively.
+
+## 
+
+[​](https://python.datalumina.com/#what’s-next)
+
+What’s next?
+
+## Is this for you?
+
+Find out if this course matches your goals
+
+[Suggest edits](https://github.com/daveebbelaar/python-course/edit/main/introduction/welcome.mdx)
+
+[Introduction](https://python.datalumina.com/) [Is this for you?](https://python.datalumina.com/introduction/is-this-for-you)
+
+⌘I

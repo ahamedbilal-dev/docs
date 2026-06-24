@@ -1,0 +1,96 @@
+---
+title: "VS Code Interface Tour for Python Beginners"
+sidebarTitle: "VS Code Interface"
+description: "Learn every panel in the VS Code interface — Explorer, editor, terminal, status bar, and Command Palette — and navigate like a pro from day one."
+---
+
+Before writing a single line of Python, it pays to understand the tool you're working in. VS Code's interface is clean and logical, but knowing the name and purpose of each area will make every tutorial, every error message, and every shortcut click into place much faster. This page gives you a complete mental map of the editor.
+
+## Why VS Code for Python?
+
+VS Code is the world's most popular code editor for Python, and it's completely free with no limitations or trial periods. Millions of developers — from beginners to senior engineers at major tech companies — rely on it every day. More importantly for this course, popular AI coding tools like **Cursor** and **Windsurf** are built directly on VS Code. Every skill, shortcut, and extension habit you build here transfers to those tools instantly.
+
+<CardGroup cols={2}>
+  <Card title="Explorer Sidebar" icon="folder-open">
+    **Located:** far-left panel (folder icon)
+
+    The Explorer shows every file and folder in your open project. Click any file to open it in the editor. Right-click to create new files or folders, rename, or delete. Think of it as a live file browser that always reflects your project structure.
+
+    **Shortcut:** `Ctrl/Cmd + Shift + E` to focus the Explorer.
+  </Card>
+  <Card title="Editor Area" icon="code">
+    **Located:** centre of the screen
+
+    This is where you write code. VS Code opens each file in its own **tab** at the top of the editor area. You can split the editor into multiple columns (`Ctrl/Cmd + \`) to view two files side by side — handy when referencing one file while editing another.
+
+    A dot next to a file name in the tab bar means the file has **unsaved changes**. Press `Ctrl/Cmd + S` to save.
+  </Card>
+  <Card title="Integrated Terminal" icon="terminal">
+    **Located:** bottom panel
+
+    A full terminal built right into VS Code — the same as your system terminal, but you never have to leave the editor. Use it to run Python files, install packages with pip, and manage your project. Toggle it with `` Ctrl + ` `` (Windows/Linux) or `` Cmd + ` `` (macOS).
+
+    You can open multiple terminal instances by clicking the **+** button, which is useful when you want to run a script and keep a separate shell for pip commands.
+  </Card>
+  <Card title="Status Bar" icon="bars">
+    **Located:** very bottom of the window
+
+    The status bar packs a surprising amount of useful information into one thin strip:
+
+    - **Python interpreter** (bottom-right) — click to switch between Python versions or virtual environments
+    - **Line & column number** — shows your cursor's exact position
+    - **File encoding and line endings** — relevant when sharing code across OSes
+    - **Errors and warnings count** — click to open the Problems panel
+  </Card>
+  <Card title="Activity Bar" icon="sidebar">
+    **Located:** the narrow strip of icons on the far left
+
+    The Activity Bar switches between VS Code's major views. The icons from top to bottom are typically: Explorer, Search, Source Control (Git), Run & Debug, and Extensions. Click any icon to open that panel in the sidebar, or click the currently-open icon again to collapse it and reclaim screen space.
+  </Card>
+  <Card title="Command Palette" icon="magnifying-glass">
+    **Located:** triggered anywhere with `Ctrl/Cmd + Shift + P`
+
+    The Command Palette is VS Code's superpower. Type any action in plain English and execute it — no need to hunt through menus. Common uses in this course:
+
+    - `Python: Select Interpreter` — switch Python version
+    - `Python: Create Environment` — create a virtual environment
+    - `Developer: Reload Window` — fix extension glitches
+    - `Keyboard Shortcuts` — browse and reassign shortcuts
+
+    Start typing a few letters and VS Code fuzzy-matches commands instantly.
+  </Card>
+</CardGroup>
+
+## The Bottom Panel in Detail
+
+The bottom panel (where the terminal lives) has multiple tabs worth knowing:
+
+| Tab | Purpose |
+|-----|---------|
+| **Terminal** | Run commands, install packages, execute scripts |
+| **Problems** | See all errors and warnings in your project at a glance |
+| **Output** | Logs from VS Code extensions and background processes |
+| **Debug Console** | Interactive console that appears when you run the debugger |
+
+Toggle the entire bottom panel with `Ctrl/Cmd + J`.
+
+## Efficient Navigation Tips
+
+<CardGroup cols={2}>
+  <Card title="Quick File Open" icon="bolt">
+    Press `Ctrl/Cmd + P` and start typing a filename. VS Code fuzzy-searches all files in your project — far faster than clicking through the Explorer for large projects.
+  </Card>
+  <Card title="Go to Line" icon="arrow-right">
+    Press `Ctrl/Cmd + G` (or `Ctrl + P` then type `:42`) to jump directly to a specific line number — useful when an error message tells you "line 42".
+  </Card>
+  <Card title="Split Editor" icon="table-columns">
+    Press `Ctrl/Cmd + \` to split the editor vertically. Drag any tab to either side. Great for comparing two files or keeping documentation open while coding.
+  </Card>
+  <Card title="Zen Mode" icon="expand">
+    Press `Ctrl/Cmd + K Z` to enter Zen Mode — full screen with all panels hidden. Press `Escape` twice to exit. Perfect when you need to focus.
+  </Card>
+</CardGroup>
+
+<Tip>
+  The first time you open VS Code, spend five minutes clicking every icon in the Activity Bar and every tab in the bottom panel. Exploring the interface once deliberately means nothing will feel mysterious when you need it later.
+</Tip>

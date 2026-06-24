@@ -1,0 +1,203 @@
+---
+title: "Python Code Quality with Ruff: Format and Lint Automatically"
+sidebarTitle: "Code Quality"
+description: "Install the Ruff extension in VS Code to automatically format and lint your Python code on every save, following PEP 8 without memorizing any rules."
+---
+
+Writing code that works is step one. Writing code that's readable, consistent, and free of common mistakes is step two — and with the right tooling it requires zero extra effort. Ruff is a single, blazing-fast tool that replaces the entire old stack of formatters and linters, and integrating it with VS Code means your code is cleaned up automatically every time you save a file.
+
+## What is Ruff?
+
+Ruff is a modern Python linter and formatter written in Rust. It's:
+
+- **Extremely fast** — 10–100× faster than alternatives like flake8 or pylint
+- **All-in-one** — replaces Black (formatter), isort (import sorter), and flake8/pylint (linters) in a single tool
+- **Beginner-friendly** — clear error messages that explain what the issue is and how to fix it
+- **Widely adopted** — used by major projects including FastAPI, Pandas, and Pydantic
+
+<Note>
+  A **linter** reads your code and points out style issues, potential bugs, and
+  anti-patterns. A **formatter** automatically rewrites your code to fix those
+  issues. Ruff does both.
+</Note>
+
+## Install the Ruff VS Code extension
+
+<Steps>
+  <Step title="Open the Extensions panel">
+    Press `Ctrl+Shift+X` on Windows/Linux or `Cmd+Shift+X` on macOS.
+  </Step>
+  <Step title="Search for Ruff">
+    Type **Ruff** in the search box. Look for the official extension published
+    by **Astral** (the same team that builds uv).
+  </Step>
+  <Step title="Click Install">
+    Click the **Install** button. The extension is ready to use immediately.
+  </Step>
+</Steps>
+
+<Tip>
+  The Ruff extension replaces Pylint, Black, and isort all at once. If you have
+  those older extensions installed, you can disable or uninstall them to avoid
+  conflicts.
+</Tip>
+
+## Enable format on save
+
+The most powerful setting: make VS Code automatically format your file every time you press `Ctrl/Cmd+S`.
+
+<Steps>
+  <Step title="Open VS Code settings">
+    Press `Ctrl+,` on Windows/Linux or `Cmd+,` on macOS.
+  </Step>
+  <Step title="Enable Format on Save">
+    Search for **format on save** and check the box for **Editor: Format On
+    Save**.
+  </Step>
+  <Step title="Set Ruff as the default formatter">
+    Search for **default formatter** and set the Python formatter to **Ruff**.
+  </Step>
+</Steps>
+
+From now on, every time you save a Python file Ruff formats it automatically.
+
+## See it in action
+
+Here's the same code before and after Ruff:
+
+<CodeGroup>
+```python Before (messy)
+import os
+def   calculate_total(items):
+    total=0
+    for item in items:
+        total+=item['price']*item['quantity']
+    return total
+
+shopping_cart=[{'name':'apple','price':0.5,'quantity':6},{'name':'banana','price':0.3,'quantity':8}]
+print(calculate_total(shopping_cart))
+```
+
+```python After (Ruff-formatted, on save)
+import os
+
+
+def calculate_total(items):
+    total = 0
+    for item in items:
+        total += item["price"] * item["quantity"]
+    return total
+
+
+shopping_cart = [
+    {"name": "apple", "price": 0.5, "quantity": 6},
+    {"name": "banana", "price": 0.3, "quantity": 8},
+]
+print(calculate_total(shopping_cart))
+```
+</CodeGroup>
+
+Ruff automatically fixed:
+- Missing spaces around operators
+- Inconsistent quote style (single → double)
+- Proper spacing between functions (two blank lines)
+- The long single-line list formatted for readability
+- Indentation and alignment
+
+You didn't have to do any of that manually.
+
+## What formatting rules does Ruff follow?
+
+Ruff enforces Python's official style guide, [PEP 8](https://peps.python.org/pep-0008/). The most important rules:
+
+| Rule | Example |
+|------|---------|
+| 4 spaces for indentation | `    return x` |
+| Spaces around operators | `x = 1 + 2`, not `x=1+2` |
+| Two blank lines between functions | Standard visual separation |
+| Max line length of 88 characters | Ruff wraps long lines |
+| Double quotes for strings | `"hello"` not `'hello'` |
+| Imports at the top, sorted | `import os` before `import sys` |
+
+You don't need to memorize any of these — Ruff handles them for you.
+
+## Understanding linting warnings
+
+Beyond formatting, Ruff underlines code that has potential issues. Hover over any underlined code to see the explanation:
+
+```python
+# Ruff will warn: F401 — 'sys' imported but unused
+import os
+import sys
+
+print("Hello")   # only os would be used here
+```
+
+Common linting rules Ruff enforces:
+
+<Accordion title="F401 — Unused import">
+  You imported a module but never used it. Remove the import to keep your code
+  clean. Ruff can often fix this automatically.
+</Accordion>
+
+<Accordion title="E501 — Line too long">
+  A line exceeds 88 characters. Ruff will reformat it on save.
+</Accordion>
+
+<Accordion title="F841 — Local variable assigned but never used">
+  ```python
+  def greet(name):
+      message = f"Hello, {name}"   # assigned but never returned or used
+      print("Done")
+  ```
+  This often indicates a bug — you meant to use the variable but forgot.
+</Accordion>
+
+<Accordion title="E711 — Comparison to None">
+  ```python
+  # Wrong
+  if value == None:
+
+  # Correct (Ruff will suggest this)
+  if value is None:
+  ```
+</Accordion>
+
+<Warning>
+  Don't ignore linting warnings. Ruff's rules exist because they catch real
+  bugs and bad habits. When you see an underline, hover over it, read the
+  explanation, and fix it — your code will be better for it.
+</Warning>
+
+## Run Ruff from the terminal
+
+You can also run Ruff as a command-line tool using uv:
+
+```bash
+# Add Ruff to your project
+uv add --dev ruff
+
+# Check for linting issues
+uv run ruff check .
+
+# Automatically fix issues
+uv run ruff check --fix .
+
+# Format all Python files
+uv run ruff format .
+```
+
+This is useful in CI/CD pipelines and pre-commit hooks to enforce code quality automatically on every push.
+
+## What's next?
+
+With Ruff configured, your code always looks professional and consistent — automatically. You're ready to put all these tools together in a complete project workflow.
+
+<Card
+  title="Complete Project Setup"
+  icon="rocket"
+  href="/tools/dependencies/complete-setup"
+>
+  Combine uv, Git, environment variables, and Ruff in a step-by-step project
+  setup guide.
+</Card>

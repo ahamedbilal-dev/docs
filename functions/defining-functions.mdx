@@ -1,0 +1,264 @@
+---
+title: "Defining Python Functions: Write Reusable Code Blocks"
+sidebarTitle: "Defining Functions"
+description: "Learn how to define and call Python functions, follow naming conventions, understand variable scope, and write clean reusable code blocks."
+---
+
+Functions are one of the most important building blocks in programming. A function is a named block of code that performs a specific task — you write it once and call it as many times as you need. Instead of copying and pasting the same logic throughout your program, functions let you package that logic in one place and reuse it with a single line. Well-named functions also make your code readable, almost like plain English instructions.
+
+## Your First Function
+
+Here's the simplest possible function:
+
+```python
+def greet():
+    print("Hello, world!")
+    print("Welcome to Python!")
+
+# Call the function
+greet()
+```
+
+The `def` keyword tells Python you're defining a function. After that comes the name, parentheses, a colon, and then an indented block of code — the function body.
+
+## Function Syntax
+
+Every function follows this structure:
+
+```python
+def function_name():
+    # Code goes here
+    # Must be indented
+    pass
+```
+
+<Steps>
+  <Step title="def keyword">
+    `def` signals the start of a function definition.
+  </Step>
+  <Step title="Function name">
+    Choose a descriptive name that explains what the function does.
+  </Step>
+  <Step title="Parentheses ()">
+    Required even when there are no parameters. Parameters go inside these.
+  </Step>
+  <Step title="Colon :">
+    Ends the `def` line and begins the function body.
+  </Step>
+  <Step title="Indented body">
+    All code belonging to the function must be indented (4 spaces is standard).
+  </Step>
+</Steps>
+
+## Naming Functions
+
+Good function names make code self-documenting. Follow these conventions:
+
+<CodeGroup>
+```python Good names
+def calculate_total():
+    pass
+
+def send_email():
+    pass
+
+def validate_password():
+    pass
+
+def get_user_by_id():
+    pass
+```
+
+```python Bad names
+def func1():       # Not descriptive
+    pass
+
+def Calculate():   # Should be lowercase
+    pass
+
+def x():           # Too short, unclear
+    pass
+```
+</CodeGroup>
+
+<Tip>
+  Use **lowercase letters** and **underscores** between words (`snake_case`). Choose verbs that describe what the function does: `calculate_`, `send_`, `validate_`, `get_`, `check_`, `update_`.
+</Tip>
+
+## Calling Functions
+
+To run a function, write its name followed by parentheses:
+
+```python
+def say_goodbye():
+    print("Goodbye!")
+    print("See you later!")
+
+# Call it once
+say_goodbye()
+
+# Call it again — same result, no code duplication
+say_goodbye()
+say_goodbye()
+```
+
+The real power of functions: write the logic once, run it as many times as you need. The above prints 6 lines with just 3 function calls.
+
+## Functions with Logic
+
+Functions can contain any Python code — conditionals, loops, calculations:
+
+```python
+def check_weather():
+    temperature = 25
+    if temperature > 30:
+        print("It's hot outside!")
+    elif temperature > 20:
+        print("Nice weather!")
+    else:
+        print("A bit chilly today.")
+
+check_weather()
+```
+
+## Variable Scope: Local vs Global
+
+Every variable in Python has a **scope** — the part of the program where it can be accessed. Understanding scope is essential to writing correct functions.
+
+### Local Variables
+
+Variables created **inside** a function exist only within that function. They're created when the function runs and disappear when it finishes:
+
+```python
+def calculate_price():
+    price = 100         # Local variable
+    tax = price * 0.1
+    print(f"Total: {price + tax}")
+
+calculate_price()   # Total: 110.0
+
+# This fails — price only exists inside the function
+print(price)   # NameError: name 'price' is not defined
+```
+
+### Global Variables
+
+Variables created **outside** all functions are global — they can be read from anywhere:
+
+```python
+discount_rate = 0.15   # Global variable
+
+def apply_discount(price):
+    discount = price * discount_rate   # Reading the global is fine
+    return price - discount
+
+result = apply_discount(100)
+print(result)   # 85.0
+```
+
+### Modifying Global Variables
+
+To **change** a global variable from inside a function, use the `global` keyword:
+
+```python
+counter = 0   # Global variable
+
+def increment():
+    global counter   # Declare intent to modify the global
+    counter += 1
+
+increment()
+increment()
+print(counter)   # 2
+```
+
+<Warning>
+  Using `global` makes code harder to understand and debug. It's generally considered bad practice. Whenever possible, pass data in through parameters and return results instead.
+</Warning>
+
+### Best Practice: Parameters and Return Values
+
+```python
+# Bad — relies on global state
+total = 0
+
+def add_to_total(amount):
+    global total
+    total += amount
+
+# Good — self-contained, no side effects
+def add_amounts(current_total, amount):
+    return current_total + amount
+
+total = 0
+total = add_amounts(total, 10)
+total = add_amounts(total, 20)
+print(total)   # 30
+```
+
+<Tip>
+  When a local and global variable share the same name, the local variable **shadows** the global one inside the function. Python always uses the local version first. Avoid naming conflicts by keeping your variable names distinct.
+</Tip>
+
+## Common Mistakes
+
+<Accordion title="Forgetting parentheses when calling">
+  Writing the function name without `()` refers to the function object — it doesn't execute it.
+
+  ```python
+  def greet():
+      print("Hello")
+
+  # Wrong — doesn't call the function
+  greet   # Nothing happens
+
+  # Right — parentheses are required
+  greet()   # Prints: Hello
+  ```
+</Accordion>
+
+<Accordion title="Forgetting the colon">
+  The colon at the end of the `def` line is required.
+
+  ```python
+  # Wrong — SyntaxError
+  def greet()
+      print("Hello")
+
+  # Right
+  def greet():
+      print("Hello")
+  ```
+</Accordion>
+
+<Accordion title="Forgetting to indent the function body">
+  All code inside the function must be indented. Un-indented code is outside the function and runs immediately.
+
+  ```python
+  # Wrong — IndentationError
+  def greet():
+  print("Hello")
+
+  # Right
+  def greet():
+      print("Hello")
+  ```
+</Accordion>
+
+<Accordion title="Defining and calling in the wrong order">
+  You must define a function before you call it. Calling it before the `def` statement raises a `NameError`.
+
+  ```python
+  # Wrong
+  greet()      # NameError — not defined yet
+
+  def greet():
+      print("Hello")
+
+  # Right
+  def greet():
+      print("Hello")
+
+  greet()      # Works fine
+  ```
+</Accordion>

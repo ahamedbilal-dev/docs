@@ -1,0 +1,219 @@
+---
+title: "Install Python on macOS: Step-by-Step Guide"
+sidebarTitle: "macOS"
+description: "Install the latest Python 3 on macOS using the official installer or Homebrew, with verification steps and troubleshooting for common issues."
+---
+
+macOS ships with a system Python, but it's an older version reserved for internal use. For this course you'll install the latest Python 3 from the official source so you have full control over your development environment. The process takes just a few minutes.
+
+<Steps>
+
+  <Step title="Check Your Existing Python">
+    Before installing, see what version of Python is already on your system:
+
+    1. Open **Terminal**:
+       - Press `Cmd + Space` to open Spotlight
+       - Type **Terminal** and press Enter
+       - Or navigate to **Applications > Utilities > Terminal**
+
+    2. Run this command:
+
+    ```bash
+    python3 --version
+    ```
+
+    If you already see a recent Python 3 version (3.11 or newer), you may be ready to go. If not — or if you want the latest version — continue with the steps below.
+
+    <Note>
+      On macOS, always use `python3`. The `python` command may point to an older system Python or may not exist at all, depending on your macOS version.
+    </Note>
+  </Step>
+
+  <Step title="Download Python">
+    1. Go to [python.org/downloads](https://www.python.org/downloads/)
+    2. The site detects macOS and displays the latest stable release
+    3. Click the **Download Python** button to download the `.pkg` installer
+
+    <Tip>
+      Download only from **python.org** to ensure you get the official, signed installer.
+    </Tip>
+  </Step>
+
+  <Step title="Run the Installer">
+    1. Open the downloaded `.pkg` file from your Downloads folder
+    2. The Python installer wizard opens — click **Continue** through the introduction and readme screens
+    3. Click **Agree** to accept the software license
+    4. Click **Install** — you'll be prompted to enter your Mac password
+    5. Wait for the installation to complete
+    6. Click **Close** when you see *"The installation was successful"*
+  </Step>
+
+  <Step title="Verify the Installation">
+    Open a **new** Terminal window — this is important so it picks up the updated PATH — then run:
+
+    ```bash
+    python3 --version
+    ```
+
+    You should see the version you just installed, for example:
+
+    ```
+    Python 3.13.5
+    ```
+
+    <Warning>
+      Make sure to open a **new** Terminal window after installation. An existing window may not reflect the updated Python path.
+    </Warning>
+  </Step>
+
+  <Step title="Test Python Interactive Mode">
+    Confirm Python works end-to-end by launching the interactive interpreter:
+
+    1. In Terminal, type:
+
+    ```bash
+    python3
+    ```
+
+    2. You'll see the Python prompt:
+
+    ```
+    Python 3.13.5 (v3.13.5:0fa1754080, Jul 29 2025, 09:45:56) [Clang 15.0.0] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    ```
+
+    3. Run your first Python command:
+
+    ```python
+    print("Hello from Python!")
+    ```
+
+    4. You should see:
+
+    ```
+    Hello from Python!
+    ```
+
+    5. Exit the interpreter:
+
+    ```python
+    exit()
+    ```
+
+    Or press `Ctrl + D`.
+  </Step>
+
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="'python3' command not found after installation">
+    The Terminal session may not have picked up the new PATH yet.
+
+    **Solution 1** — Close Terminal completely and open a fresh window.
+
+    **Solution 2** — Check whether Python is installed but not in PATH:
+
+    ```bash
+    ls /Library/Frameworks/Python.framework/Versions/
+    ```
+
+    **Solution 3** — Add Python to your PATH manually:
+
+    ```bash
+    echo 'export PATH="/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+  </Accordion>
+
+  <Accordion title="'python' command doesn't work (only python3 does)">
+    This is normal and expected on macOS. You have three options:
+
+    **Option 1** — Always use `python3` (recommended for clarity).
+
+    **Option 2** — Create a shell alias so `python` maps to `python3`:
+
+    ```bash
+    echo 'alias python=python3' >> ~/.zshrc
+    echo 'alias pip=pip3' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+
+    **Option 3** — Check if the installer already created a `python` symlink:
+
+    ```bash
+    which python
+    ```
+  </Accordion>
+
+  <Accordion title="SSL certificate errors when using pip or urllib">
+    You likely skipped the certificate installation step. Fix it by running the install script that ships with Python:
+
+    ```bash
+    /Applications/Python\ 3.*/Install\ Certificates.command
+    ```
+
+    Or install the `certifi` package directly:
+
+    ```bash
+    pip3 install --upgrade certifi
+    ```
+  </Accordion>
+
+  <Accordion title="Managing multiple Python versions">
+    If you have several Python versions installed, you can target them explicitly.
+
+    **List all Python binaries:**
+
+    ```bash
+    ls -la /usr/local/bin/python*
+    ```
+
+    **Run a specific version:**
+
+    ```bash
+    python3.13 --version
+    python3.12 --version
+    ```
+
+    **Set a default version** by updating the symlink (example for 3.13):
+
+    ```bash
+    ln -s -f /usr/local/bin/python3.13 /usr/local/bin/python3
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Alternative: Install with Homebrew
+
+If you prefer managing software through a package manager, Homebrew is a popular option among macOS developers.
+
+<Steps>
+  <Step title="Install Homebrew">
+    Paste this command into Terminal and press Enter:
+
+    ```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    ```
+
+    Follow the on-screen prompts to complete the Homebrew installation.
+  </Step>
+
+  <Step title="Install Python via Homebrew">
+    ```bash
+    brew install python@3
+    ```
+  </Step>
+
+  <Step title="Verify">
+    ```bash
+    python3 --version
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Homebrew installs Python to a different path than the official installer (`/opt/homebrew/` on Apple Silicon, `/usr/local/` on Intel). Both approaches work equally well for this course.
+</Note>

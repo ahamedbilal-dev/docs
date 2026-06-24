@@ -1,0 +1,163 @@
+---
+title: "Using AI Assistants to Learn Python Faster"
+sidebarTitle: "AI Assistants"
+description: "Learn how to use ChatGPT, Claude, GitHub Copilot, and Cursor as a personal Python tutor — including a ready-to-use custom system prompt."
+---
+
+AI tools have fundamentally changed what it means to learn to code. When you're stuck, you no longer have to wait for a forum reply or dig through documentation for hours. You have access to an infinitely patient tutor, available 24/7, that can explain concepts at exactly the level you need, debug your specific code, and show you multiple ways to solve the same problem. This page shows you how to use these tools effectively — and gives you a system prompt that turns any AI assistant into a personalised Python tutor.
+
+## Best tools for learning
+
+There are many AI tools available today. The one you choose matters less than how you use it. Start with whatever you already have access to.
+
+<CardGroup cols={2}>
+  <Card title="ChatGPT" icon="comment" href="https://chat.openai.com">
+    The most widely used AI assistant. Excellent for general coding help, concept explanations, and debugging. Free tier available; GPT-4 access requires ChatGPT Plus ($20/month). Supports custom GPTs for a persistent tutor setup.
+  </Card>
+  <Card title="Claude" icon="robot" href="https://claude.ai">
+    Particularly strong at complex problem solving, long code analysis, and detailed explanations. Free tier available; Projects feature (for persistent system prompts) requires Claude Pro ($20/month).
+  </Card>
+  <Card title="GitHub Copilot" icon="github" href="https://github.com/features/copilot">
+    Integrates directly into VS Code and completes your code as you type. No copy-pasting required — it sees exactly what you're working on. Paid subscription required; free tier available for students.
+  </Card>
+  <Card title="Cursor" icon="arrow-pointer" href="https://cursor.sh">
+    An AI-native code editor built on top of VS Code. You can chat with your entire codebase, ask it to make changes across files, and get context-aware completions. Free tier available with usage limits.
+  </Card>
+</CardGroup>
+
+<Info>
+  You don't need to pay for any of these tools to follow this course. Free tiers of ChatGPT and Claude are more than sufficient for learning. Paid options give you higher usage limits and more powerful models, but they're optional.
+</Info>
+
+## How to ask for help
+
+The quality of the answer you get from an AI assistant is almost entirely determined by the quality of your question. Here's the difference in practice:
+
+<CodeGroup>
+```text Bad prompt
+My code is not working, plz fix
+```
+
+```text Good prompt
+I'm learning Python and trying to create a list of numbers from 1 to 10.
+
+Here's my code:
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+This works, but is there a more efficient way to do this in Python?
+I want to understand if there's a built-in approach I'm missing.
+```
+</CodeGroup>
+
+The good prompt includes: what you're trying to do, the actual code, what's happening (or what you want to know), and what level of explanation you're looking for. The bad prompt gives the AI almost nothing to work with.
+
+## Effective strategies
+
+<Steps>
+  <Step title="Ask for explanations, not just answers">
+    Ask the AI to explain concepts in terms that match your background: *"Explain Python functions as if I've never programmed before."* or *"Why does Python use indentation instead of curly braces?"* Understanding the *why* makes everything else stick better.
+  </Step>
+  <Step title="Debug with full context">
+    When you hit an error, share everything: your code, the exact error message, what you were trying to do, and what you've already tried. The more context you give, the more targeted and useful the explanation will be.
+  </Step>
+  <Step title="Request multiple approaches">
+    Ask *"Show me 3 different ways to solve this problem"* rather than settling for the first solution. Seeing multiple approaches teaches you more about the language and helps you understand which tools to reach for in different situations.
+  </Step>
+  <Step title="Verify your understanding">
+    Don't just accept what the AI gives you. Test its suggestions, then ask follow-up questions: *"Why does this version work but mine didn't?"* or *"What would happen if I changed X to Y?"* Active engagement turns AI help into genuine learning.
+  </Step>
+</Steps>
+
+<Warning>
+  AI assistants occasionally make mistakes, especially with newer libraries or edge cases. Always test the code suggestions you receive, and treat explanations as a starting point rather than ground truth.
+</Warning>
+
+## Create your personal Python tutor
+
+The most powerful way to use AI for this course is to set it up with a system prompt that shapes every response. This custom prompt turns ChatGPT or Claude into a tutor that follows the Learn Python for AI curriculum, explains things at the right level, and focuses on building your understanding rather than just fixing your code.
+
+```text Python Tutor System Prompt
+You are a patient Python tutor specializing in teaching beginners Python for AI development. 
+
+Follow these guidelines:
+
+TEACHING APPROACH:
+- Explain concepts simply, as if to someone who has never coded before
+- Focus on practical understanding over theoretical knowledge
+- Use everyday analogies to explain programming concepts
+- Build confidence by celebrating small wins
+
+RESPONSE STRUCTURE:
+1. First, acknowledge what the student is trying to do
+2. Explain any errors in simple terms
+3. Provide a corrected solution with clear comments
+4. Explain why this approach works
+5. Suggest one next step to build on their learning
+
+CODE STYLE:
+- Write clean, simple Python code
+- Add comments explaining what each line does
+- Use descriptive variable names
+- Keep examples under 10 lines when possible
+
+IMPORTANT RULES:
+- Never provide solutions without explanations
+- If asked to "just fix it," still explain what was wrong and why
+- Encourage students to understand errors as learning opportunities
+- When students are stuck, guide them with questions rather than immediate answers
+
+Remember: The goal is understanding, not just working code. Every interaction should build the student's confidence and skills.
+```
+
+## Setting up your Python tutor
+
+Choose the method that matches the tools you have available:
+
+<Tabs>
+  <Tab title="ChatGPT Plus">
+    **Requirements:** ChatGPT Plus ($20/month)
+
+    Creating a custom GPT gives you a persistent tutor you can return to any time without re-pasting the system prompt.
+
+    1. Open ChatGPT and click **Explore GPTs** in the sidebar
+    2. Click **Create** in the top right
+    3. Switch to the **Configure** tab
+    4. Paste the system prompt above into the **Instructions** field
+    5. Name it **Python Tutor** and add a short description
+    6. Set visibility to **Only me**
+    7. Click **Save**
+
+    Your tutor will now appear in your GPT list and remember its instructions across every conversation.
+
+    [View official documentation →](https://help.openai.com/en/articles/8554397-creating-a-gpt)
+  </Tab>
+  <Tab title="Claude Pro">
+    **Requirements:** Claude Pro ($20/month)
+
+    Claude Projects let you set persistent instructions that apply to every conversation within the project.
+
+    1. Click **Projects** in the Claude sidebar
+    2. Click **Create project**
+    3. Name it **Python Tutor** and click **Create project**
+    4. Click the project settings and find **Set project instructions**
+    5. Paste the system prompt above
+    6. Save — all future conversations in this project will follow the tutor guidelines
+
+    [View official documentation →](https://support.anthropic.com/en/articles/9517075-what-are-projects)
+  </Tab>
+  <Tab title="Free (No subscription)">
+    **No subscription required**
+
+    You can use the system prompt without any paid plan — you'll just need to include it at the start of each new conversation.
+
+    1. Open ChatGPT (free) or Claude (free)
+    2. Start a new conversation
+    3. Paste the entire system prompt from above
+    4. Add your Python question immediately after the prompt
+    5. The AI will follow the tutor guidelines for the rest of that conversation
+
+    <Note>
+      You'll need to paste the prompt at the start of each new conversation since free tiers don't support persistent system instructions. Keep the prompt saved somewhere easy to access — a notes app or text file works perfectly.
+    </Note>
+  </Tab>
+</Tabs>

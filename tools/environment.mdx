@@ -1,0 +1,71 @@
+---
+title: "Keep Your API Keys and Secrets Safe in Python"
+sidebarTitle: "Secrets Overview"
+description: "Learn why hardcoding API keys in Python is dangerous and how environment variables and .env files keep your secrets out of your code."
+---
+
+Every AI application you build will need at least one secret — an OpenAI API key, a database password, a third-party token. The most common beginner mistake is pasting those secrets directly into Python code. That makes them visible to anyone who reads your code, anyone who clones your repo, and — if you push to a public GitHub repository — the entire internet. This section shows you the right way to handle secrets from day one.
+
+## Why hardcoding secrets is dangerous
+
+```python
+# ❌ NEVER do this
+api_key = "sk-1234567890abcdef"      # Anyone reading your code can see this!
+db_password = "super_secret_pass"   # This ends up on GitHub if you push
+```
+
+The problems compound quickly:
+
+- Secrets are visible to every collaborator
+- They're committed to Git history — even after deletion
+- Different environments (laptop, server, CI) need different values
+- You can't share code publicly without first scrubbing secrets
+
+## The solution: environment variables
+
+Environment variables let you keep secrets in a separate location that's outside your codebase entirely. Your Python code reads the value at runtime — it never stores the secret itself.
+
+```python
+import os
+
+# ✅ Read the secret from the environment — not from code
+api_key = os.environ.get("OPENAI_API_KEY")
+```
+
+## Two approaches — start with .env files
+
+<CardGroup cols={2}>
+  <Card
+    title="Environment Variables"
+    icon="terminal"
+    href="/tools/environment/variables"
+  >
+    Understand what environment variables are, how to set them in your shell,
+    and how to read them in Python with `os.environ` and `os.getenv`.
+  </Card>
+  <Card
+    title=".env Files"
+    icon="file-lines"
+    href="/tools/environment/dotenv"
+  >
+    The practical approach: store secrets in a local `.env` file and load them
+    automatically with `python-dotenv`. The standard pattern for local
+    development.
+  </Card>
+</CardGroup>
+
+<Note>
+  Most Python projects use `.env` files for local development — they're simple,
+  widely understood, and supported by virtually every framework. Start with the
+  `.env` file approach and you'll be following industry best practice immediately.
+</Note>
+
+## The golden rule
+
+<Warning>
+  Add `.env` to your `.gitignore` file **before** your first commit. If a secret
+  is ever pushed to GitHub — even briefly — treat it as compromised and regenerate
+  it immediately.
+</Warning>
+
+Work through both pages in order. The first page explains the concept; the second shows you the workflow you'll use on every project.

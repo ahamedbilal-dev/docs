@@ -1,0 +1,212 @@
+---
+title: "Python Lists: Store and Manage Collections of Data"
+sidebarTitle: "Lists"
+description: "Learn how to create, access, modify, and work with Python lists — the most versatile built-in data structure for storing ordered collections."
+---
+
+Lists are Python's most versatile and widely used data structure. They act like containers that can hold multiple items in a specific order — think of a shopping list, a playlist, or a to-do list. Unlike variables that store one value at a time, a list lets you group related values together, loop over them, sort them, and manipulate them with a rich set of built-in methods.
+
+## What Are Lists?
+
+A list is an ordered, mutable (changeable) collection of items. You can store any type of data inside a list — numbers, strings, booleans, even other lists. Real-world analogies include:
+
+- A **shopping list** — milk, eggs, bread (items in order)
+- A **playlist** — songs in sequence
+- A **to-do list** — tasks you can add, remove, or reorder
+
+## Creating Lists
+
+```python
+# Empty list
+my_list = []
+
+# List with items
+fruits = ["apple", "banana", "orange"]
+numbers = [1, 2, 3, 4, 5]
+mixed = ["hello", 42, True, 3.14]  # Different types OK!
+```
+
+<Note>
+  Lists use square brackets `[]` and items are separated by commas. You can mix different data types in the same list — Python doesn't restrict you.
+</Note>
+
+## Accessing Items
+
+Lists are indexed starting at **0**. You can also use negative indexes to count from the end.
+
+```python
+fruits = ["apple", "banana", "orange"]
+
+# Positive indexing (from the start)
+print(fruits[0])    # "apple"   — first item
+print(fruits[1])    # "banana"
+print(fruits[2])    # "orange"  — last item
+
+# Negative indexing (from the end)
+print(fruits[-1])   # "orange"  — last item
+print(fruits[-2])   # "banana"  — second to last
+```
+
+### Slicing
+
+Extract a portion of a list using `[start:end]` — the result includes `start` but excludes `end`:
+
+```python
+fruits = ["apple", "banana", "orange", "mango", "grape"]
+
+print(fruits[0:2])   # ["apple", "banana"]
+print(fruits[1:])    # ["banana", "orange", "mango", "grape"]
+print(fruits[:3])    # ["apple", "banana", "orange"]
+print(fruits[-2:])   # ["mango", "grape"]
+```
+
+## Changing Lists
+
+Lists are **mutable** — you can change them after creation. This is one of the key differences between lists and tuples.
+
+```python
+fruits = ["apple", "banana", "orange"]
+
+# Change an item by index
+fruits[0] = "mango"
+print(fruits)  # ["mango", "banana", "orange"]
+```
+
+<Tabs>
+  <Tab title="Adding items">
+    ```python
+    fruits = ["apple", "banana"]
+
+    fruits.append("grape")       # Add to the end
+    fruits.insert(1, "kiwi")     # Insert at index 1
+
+    print(fruits)
+    # ["apple", "kiwi", "banana", "grape"]
+    ```
+  </Tab>
+  <Tab title="Removing items">
+    ```python
+    fruits = ["apple", "kiwi", "banana", "grape"]
+
+    fruits.remove("banana")      # Remove by value
+    last = fruits.pop()          # Remove and return last item
+    del fruits[0]                # Remove by index
+
+    print(fruits)   # ["kiwi"]
+    print(last)     # "grape"
+    ```
+  </Tab>
+</Tabs>
+
+## List Methods
+
+Python's list methods let you query and transform your data in powerful ways:
+
+```python
+numbers = [3, 1, 4, 1, 5, 9]
+
+# Information
+print(len(numbers))          # 6  — total items
+print(numbers.count(1))      # 2  — how many times 1 appears
+print(numbers.index(4))      # 2  — index of value 4
+
+# Sorting
+numbers.sort()               # Sort ascending, in place
+print(numbers)               # [1, 1, 3, 4, 5, 9]
+
+numbers.reverse()            # Reverse the order, in place
+print(numbers)               # [9, 5, 4, 3, 1, 1]
+
+# Copy
+new_list = numbers.copy()    # Create an independent copy
+```
+
+<CardGroup cols={3}>
+  <Card title="len()" icon="ruler">
+    Returns the number of items in the list.
+  </Card>
+  <Card title=".count()" icon="hashtag">
+    Counts how many times a value appears.
+  </Card>
+  <Card title=".index()" icon="magnifying-glass">
+    Returns the index of the first occurrence of a value.
+  </Card>
+  <Card title=".sort()" icon="arrow-up-a-z">
+    Sorts the list in place (modifies the original).
+  </Card>
+  <Card title=".reverse()" icon="arrow-right-arrow-left">
+    Reverses the list in place.
+  </Card>
+  <Card title=".copy()" icon="copy">
+    Creates an independent copy of the list.
+  </Card>
+</CardGroup>
+
+## Checking Lists
+
+```python
+fruits = ["apple", "banana", "orange"]
+
+# Check if an item exists
+if "apple" in fruits:
+    print("Found apple!")
+
+# Check if the list is empty
+if fruits:
+    print("List has items")
+else:
+    print("List is empty")
+```
+
+<Tip>
+  In Python, an empty list `[]` is "falsy" — it evaluates to `False` in a boolean context. A list with items is "truthy". This makes `if my_list:` a clean way to check whether a list has anything in it.
+</Tip>
+
+## Common Mistakes
+
+<Accordion title="Index out of range">
+  Accessing an index that doesn't exist raises an `IndexError`. Always make sure the index is within bounds.
+
+  ```python
+  # Wrong
+  fruits = ["apple", "banana"]
+  print(fruits[2])   # IndexError! Index 2 doesn't exist.
+
+  # Right — check length first
+  if len(fruits) > 2:
+      print(fruits[2])
+  ```
+</Accordion>
+
+<Accordion title="Modifying a list while looping">
+  Adding or removing items from a list while iterating over it can cause unpredictable behavior. Build a new list instead.
+
+  ```python
+  # Wrong — changes list size during iteration
+  numbers = [1, 2, 3, 4]
+  for num in numbers:
+      if num == 2:
+          numbers.remove(num)  # Dangerous!
+
+  # Right — use a list comprehension
+  numbers = [num for num in numbers if num != 2]
+  ```
+</Accordion>
+
+<Accordion title="Shallow copy issues">
+  Assigning a list to a new variable doesn't create a copy — both variables point to the **same** list in memory.
+
+  ```python
+  # Wrong — list1 and list2 share the same list
+  list1 = [1, 2, 3]
+  list2 = list1
+  list2.append(4)
+  print(list1)   # [1, 2, 3, 4] — list1 was changed!
+
+  # Right — use .copy() to make an independent copy
+  list1 = [1, 2, 3]
+  list2 = list1.copy()
+  list2.append(4)
+  print(list1)   # [1, 2, 3] — unchanged
+  ```
+</Accordion>

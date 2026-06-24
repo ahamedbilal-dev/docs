@@ -1,0 +1,153 @@
+---
+title: "Set Up VS Code for Python Development"
+sidebarTitle: "VS Code Setup"
+description: "Download and install VS Code on Windows, macOS, or Linux, then configure the Python extension and essential settings for AI development."
+---
+
+Visual Studio Code is a free, professional-grade code editor that runs on every major operating system. Setting it up correctly from the start — with the right extensions and a key configuration tweak — will save you from frustrating path errors and give you a smooth Python workflow throughout this course.
+
+<Steps>
+  <Step title="Download and Install VS Code">
+    Head to [code.visualstudio.com](https://code.visualstudio.com/) and download the installer for your operating system.
+
+    <Tabs>
+      <Tab title="Windows">
+        1. Click the big **Download for Windows** button — it auto-detects your OS.
+        2. Run the downloaded installer.
+        3. **Important:** Check all of these options during setup:
+           - ✅ Add "Open with Code" action to Windows Explorer file context menu
+           - ✅ Add "Open with Code" action to Windows Explorer directory context menu
+           - ✅ Register Code as an editor for supported file types
+           - ✅ Add to PATH
+        4. Click **Next** and then **Install**, then **Finish** when complete.
+
+        <Tip>
+          Checking "Add to PATH" lets you open any folder in VS Code by typing `code .` in a terminal — a huge time-saver.
+        </Tip>
+      </Tab>
+      <Tab title="macOS">
+        1. Click the **Download for macOS** button.
+        2. Open the downloaded `.zip` file — it extracts the app automatically.
+        3. Drag **Visual Studio Code** into your **Applications** folder.
+        4. Optional but recommended: right-click VS Code in your Dock → **Options** → **Keep in Dock**.
+
+        <Note>
+          On first launch macOS may warn that VS Code is from an unidentified developer. Go to **System Preferences → Security & Privacy** and click **Open Anyway**.
+        </Note>
+      </Tab>
+      <Tab title="Linux">
+        Choose the method that suits your distribution:
+
+        **Ubuntu / Debian (recommended):**
+        ```bash
+        # Download the .deb package
+        wget -O vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
+
+        # Install it
+        sudo apt install ./vscode.deb
+        ```
+
+        **Snap (works on most distributions):**
+        ```bash
+        sudo snap install code --classic
+        ```
+
+        **Other distributions:** visit [code.visualstudio.com](https://code.visualstudio.com/) and choose your package format (`.rpm`, `.tar.gz`, etc.).
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Verify the Installation">
+    Open VS Code using your OS's standard method:
+
+    | OS | How to open |
+    |----|-------------|
+    | **Windows** | Search "Visual Studio Code" in the Start menu |
+    | **macOS** | Open Applications or press `Cmd + Space` and search |
+    | **Linux** | Type `code` in a terminal or find it in your apps menu |
+
+    You should see the **Welcome** tab and a clean, modern interface. If it opens, you're good to go.
+  </Step>
+
+  <Step title="Install the Python Extension">
+    VS Code needs Microsoft's Python extension to understand Python files.
+
+    1. Click the **Extensions** icon in the left sidebar (four squares).
+    2. Search for **Python**.
+    3. Find the one published by **Microsoft** (it has tens of millions of downloads).
+    4. Click **Install** and wait for it to finish.
+
+    <Note>
+      The Python extension adds syntax highlighting, IntelliSense code completion, linting, debugging support, and interpreter management. It is essential — do not skip this step.
+    </Note>
+  </Step>
+
+  <Step title="Configure Python Terminal Execute In File Dir">
+    This one setting prevents the most common beginner error: "file not found" when your script reads a local file.
+
+    1. Open Settings with `Ctrl + ,` (Windows/Linux) or `Cmd + ,` (macOS).
+    2. Search for **Python Terminal Execute In File Dir**.
+    3. Check the box to enable it.
+
+    <Tip>
+      With this setting on, VS Code runs each script from its own folder. So `open('data.csv')` looks in the same directory as your `.py` file — which is almost always what you want. Without it, Python looks in the workspace root and throws a confusing error.
+    </Tip>
+  </Step>
+
+  <Step title="Install Additional Recommended Extensions">
+    The Python extension alone is powerful, but two extras are worth adding now:
+
+    <CardGroup cols={2}>
+      <Card title="Pylance" icon="wand-magic-sparkles">
+        Published by Microsoft. Provides faster, smarter code completion and real-time error detection. Works alongside the Python extension automatically — just install and it activates.
+      </Card>
+      <Card title="Jupyter" icon="notebook">
+        Published by Microsoft. Enables **Interactive Python mode** (covered later in this course). Essential for data science and AI work where you want to run code cell-by-cell and inspect results instantly.
+      </Card>
+    </CardGroup>
+
+    Search for each by name in the Extensions panel and click **Install**.
+  </Step>
+
+  <Step title="Customize Appearance (Optional)">
+    These are personal preferences I've used for years — easy on the eyes during long coding sessions.
+
+    <Tabs>
+      <Tab title="Theme">
+        1. Search for **Atom One Dark Theme** in Extensions and install it.
+        2. Press `Ctrl/Cmd + K`, then `Ctrl/Cmd + T` to open the theme picker.
+        3. Select **Atom One Dark** from the list.
+      </Tab>
+      <Tab title="File Icons">
+        1. Search for **Material Icon Theme** by Philipp Kief and install it.
+        2. VS Code will prompt you to activate it — click **Set File Icon Theme**.
+        3. Different file types now display distinctive icons, making the Explorer much easier to navigate.
+      </Tab>
+      <Tab title="Tree Indentation">
+        1. Open Settings (`Ctrl/Cmd + ,`).
+        2. Search for **tree indent**.
+        3. Change the value from `8` to `20`.
+
+        This makes nested folder structures much clearer in the Explorer sidebar.
+      </Tab>
+    </Tabs>
+
+    <Tip>
+      To browse and customize keyboard shortcuts, open the Command Palette (`Ctrl/Cmd + Shift + P`) and search for **Keyboard Shortcuts**. Click the pencil icon next to any command to reassign it.
+    </Tip>
+  </Step>
+
+  <Step title="Check Python Detection">
+    Confirm VS Code can find your Python installation:
+
+    1. Press `Ctrl + Shift + P` (Windows/Linux) or `Cmd + Shift + P` (macOS) to open the **Command Palette**.
+    2. Type **Python: Select Interpreter** and press Enter.
+    3. You should see your Python version listed (e.g., `Python 3.13.x`).
+
+    <Warning>
+      If no Python interpreter appears, Python may not be installed or may not be on your PATH. Complete the Python installation steps first and then reload VS Code.
+    </Warning>
+
+    If Python is detected, you're fully set up and ready to create your first project workspace.
+  </Step>
+</Steps>

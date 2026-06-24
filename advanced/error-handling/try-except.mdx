@@ -1,0 +1,304 @@
+---
+title: "Python try/except: Catch and Handle Errors Gracefully"
+sidebarTitle: "Try / Except"
+description: "Master the full try/except/else/finally structure, catch specific errors, and learn best practices for writing robust Python error handling."
+---
+
+The `try/except` block is Python's primary mechanism for handling runtime errors. It lets you wrap code that might fail, respond to specific problems, and keep your program running smoothly rather than crashing with an unhelpful stack trace. This page covers the full structure — from the basics through to best practices.
+
+## Basic `try/except` Structure
+
+The `try` block contains code that *might* fail. If an error occurs, Python stops executing the `try` block and immediately jumps to the matching `except` block.
+
+```python
+try:
+    result = 10 / 0          # This raises ZeroDivisionError
+    print("No error!")       # Never reached
+except ZeroDivisionError:
+    print("Cannot divide by zero")   # This runs instead
+
+print("Program continues...")        # Always reached
+```
+
+<Warning>
+  Avoid using a bare `except:` with no error type specified. It silently catches *every* error — including keyboard interrupts, memory errors, and bugs you want to know about. Always name the specific error type you expect.
+</Warning>
+
+## Catching Specific Errors
+
+Different errors call for different responses. Name the exact error type you want to handle after the `except` keyword:
+
+```python
+try:
+    age = int(input("Enter your age: "))
+    print(f"In 10 years you'll be {age + 10}")
+except ValueError:
+    print("Please enter a whole number, not text")
+```
+
+You can also capture the error object itself using `as e`, which gives you access to the error message:
+
+```python
+try:
+    value = int("not-a-number")
+except ValueError as e:
+    print(f"Conversion failed: {e}")
+    # Conversion failed: invalid literal for int() with base 10: 'not-a-number'
+```
+
+## Multiple Error Types
+
+Handle different errors in different ways by stacking `except` clauses. Python checks them in order and runs the first one that matches.
+
+```python
+try:
+    with open("number.txt", "r") as f:
+        text = f.read()
+    number = int(text)
+    result = 100 / number
+    print(f"Result: {result}")
+except FileNotFoundError:
+    print("Could not find number.txt")
+except ValueError:
+    print("The file doesn't contain a valid integer")
+except ZeroDivisionError:
+    print("The number in the file is zero — cannot divide by zero")
+```
+
+You can also catch multiple error types in a single `except` clause using a tuple:
+
+```python
+try:
+    process_input(user_data)
+except (ValueError, TypeError) as e:
+    print(f"Invalid input: {e}")
+```
+
+## The `else` Clause
+
+Code in the `else` block runs **only if no exception occurred** in the `try` block. Use it for logic that should happen on success but that you don't want inside the `try` block (keeping the `try` block small and focused).
+
+```python
+try:
+    with open("data.txt", "r") as f:
+        data = f.read()
+except FileNotFoundError:
+    print("File not found — cannot process")
+else:
+    # Only runs if the file was opened successfully
+    print(f"Loaded {len(data)} characters")
+    process(data)
+```
+
+<Tip>
+  Keeping the `try` block as small as possible (just the risky operation) makes it clearer what you're protecting against and avoids accidentally suppressing errors from your processing logic.
+</Tip>
+
+## The `finally` Clause
+
+Code in the `finally` block **always runs**, whether or not an exception occurred. Use it for cleanup — closing files, releasing locks, closing database connections.
+
+```python
+try:
+    file = open("data.txt", "r")
+    data = file.read()
+    result = process(data)
+except FileNotFoundError:
+    print("File not found")
+    result = None
+finally:
+    # Runs regardless — close the file if it was opened
+    if "file" in locals() and not file.closed:
+        file.close()
+    print("Cleanup complete")
+```
+
+<Note>
+  In practice, the `with` statement handles file cleanup automatically, so you rarely need `finally` just for files. `finally` is most useful when you're managing resources like database connections, network sockets, or locks that aren't context managers.
+</Note>
+
+## Full Structure at a Glance
+
+```python
+try:
+    # Code that might raise an exception
+    risky_operation()
+
+except SpecificError as e:
+    # Runs if SpecificError (or a subclass) is raised
+    print(f"Handled: {e}")
+
+except (AnotherError, YetAnotherError):
+    # Runs if either of these errors is raised
+    print("One of two things went wrong")
+
+else:
+    # Runs only if NO exception was raised in try
+    print("Everything succeeded")
+
+finally:
+    # ALWAYS runs — use for cleanup
+    cleanup()
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Always catch specific error types">
+    Name the exact error you expect. This makes your intention clear and avoids masking unexpected bugs.
+
+    ```python
+    # Bad — catches everything, including bugs you want to see
+    try:
+        process_data()
+    except:
+        pass
+
+    # Good — specific and intentional
+    try:
+        process_data()
+    except ValueError:
+        print("Invalid data format")
+    ```
+  </Step>
+
+  <Step title="Never silently swallow errors">
+    Even if you can't fix an error, at minimum log it. Silent failures are extremely hard to debug later.
+
+    ```python
+    # Bad — error disappears completely
+    try:
+        risky_operation()
+    except ValueError:
+        pass
+
+    # Good — at least tell someone something went wrong
+    try:
+        risky_operation()
+    except ValueError as e:
+        print(f"Warning: Invalid value encountered — {e}")
+    ```
+  </Step>
+
+  <Step title="Re-raise critical errors">
+    If an error is severe enough that your program can't continue safely, catch it to log the context, then re-raise it to let it propagate.
+
+    ```python
+    try:
+        critical_operation()
+    except Exception as e:
+        print(f"Critical failure during startup: {e}")
+        raise   # re-raises the same exception
+    ```
+  </Step>
+
+  <Step title="Keep try blocks small">
+    Only wrap the specific line(s) that might fail. A large `try` block makes it unclear exactly what you're guarding against.
+
+    ```python
+    # Bad — which line might fail?
+    try:
+        data   = load_data()
+        result = process(data)
+        save(result)
+    except Exception:
+        print("Something failed")
+
+    # Good — pinpoint the risky operation
+    try:
+        data = load_data()
+    except FileNotFoundError:
+        data = []
+
+    result = process(data)   # these don't need protection
+    save(result)
+    ```
+  </Step>
+</Steps>
+
+## Common Mistakes
+
+<Accordion title="Catching too broad an exception">
+  ```python
+  # Bad — hides every possible problem
+  try:
+      process_data()
+  except Exception:
+      print("Something went wrong")
+
+  # Good — be specific
+  try:
+      process_data()
+  except (ValueError, KeyError) as e:
+      print(f"Data error: {e}")
+  ```
+</Accordion>
+
+<Accordion title="Empty except blocks (silent failure)">
+  ```python
+  # Bad — error is completely ignored
+  try:
+      connect_to_database()
+  except ConnectionError:
+      pass
+
+  # Good — inform the user or caller
+  try:
+      connect_to_database()
+  except ConnectionError as e:
+      print(f"Database connection failed: {e}")
+      use_cache_instead()
+  ```
+</Accordion>
+
+<Accordion title="Not re-raising critical errors">
+  ```python
+  # Bad — swallows everything, including bugs
+  try:
+      critical_startup_check()
+  except Exception as e:
+      print(f"Error: {e}")
+      # Program continues in a broken state
+
+  # Good — log it and let it propagate
+  try:
+      critical_startup_check()
+  except Exception as e:
+      print(f"Startup failed: {e}")
+      raise
+  ```
+</Accordion>
+
+<Accordion title="Putting too much code in the try block">
+  ```python
+  # Bad — too broad, any line could be the culprit
+  try:
+      data   = read_file("input.csv")
+      rows   = parse_csv(data)
+      totals = calculate_totals(rows)
+      write_file("output.csv", totals)
+  except Exception as e:
+      print(f"Error: {e}")
+
+  # Good — guard only the risky call
+  try:
+      data = read_file("input.csv")
+  except FileNotFoundError:
+      print("input.csv not found")
+      return
+
+  rows   = parse_csv(data)
+  totals = calculate_totals(rows)
+  write_file("output.csv", totals)
+  ```
+</Accordion>
+
+## What's Next?
+
+Now that you understand how to structure error handling, see the most common Python errors you'll encounter and exactly how to fix them.
+
+<CardGroup cols={1}>
+  <Card title="Common Errors" icon="bug" href="/advanced/error-handling/common-errors">
+    NameError, TypeError, ValueError, IndexError, KeyError and more — with causes, examples, and fixes.
+  </Card>
+</CardGroup>

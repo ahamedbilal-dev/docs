@@ -1,0 +1,157 @@
+---
+title: "Using Git Inside VS Code: Stage, Commit, and Push"
+sidebarTitle: "Git in VS Code"
+description: "Use VS Code's built-in Source Control panel to stage files, write commit messages, push to GitHub, and track changes without the terminal."
+---
+
+VS Code has Git built in — no extensions required. Every operation you'd run in the terminal has a clickable equivalent in the Source Control panel. Whether you prefer typing commands or clicking buttons, both approaches work perfectly and produce the same result.
+
+## The Source Control panel
+
+Find the Source Control icon in the left sidebar — it looks like a branching tree. Click it to open the panel. You'll see:
+
+- All files you've changed since your last commit
+- A text box to type your commit message
+- Action buttons for staging, committing, and syncing
+
+<Tip>
+  The Source Control icon shows a blue badge with the number of changed files.
+  Glance at it anytime to know whether you have uncommitted work.
+</Tip>
+
+## Basic workflow
+
+<Steps>
+  <Step title="See your changes">
+    Open the Source Control panel. Changed files appear under **Changes**. Click
+    any file to open a diff view — green lines are additions, red lines are
+    deletions.
+  </Step>
+  <Step title="Stage the files you want to commit">
+    Hover over a file and click the **+** icon to stage it. To stage every
+    changed file at once, click the **+** icon next to the "Changes" heading.
+  </Step>
+  <Step title="Write a commit message and commit">
+    Type a short, descriptive message in the text box at the top of the panel
+    (e.g. "Add OpenAI API integration"). Press `Ctrl/Cmd + Enter` or click the
+    **✓ Commit** button.
+  </Step>
+  <Step title="Push to GitHub">
+    Click the **…** menu → **Push**, or click the sync arrows in the bottom
+    status bar. Your commits are now on GitHub.
+  </Step>
+</Steps>
+
+## Terminal vs. UI comparison
+
+Both approaches do exactly the same thing. Use whichever feels more natural.
+
+| Task | Terminal command | VS Code UI |
+|------|-----------------|-----------|
+| Stage all files | `git add .` | Click **+** next to "Changes" |
+| Stage one file | `git add filename.py` | Click **+** next to that file |
+| Commit | `git commit -m "message"` | Type message + `Ctrl/Cmd+Enter` |
+| Push | `git push` | Click sync icon or **…** → Push |
+| Pull | `git pull` | Click sync icon or **…** → Pull |
+
+## Common tasks in VS Code
+
+<Accordion title="Initialize a new repository">
+  1. Open your project folder in VS Code
+  2. Open the Source Control panel
+  3. Click **Initialize Repository**
+
+  Git is now tracking your project. No terminal needed.
+</Accordion>
+
+<Accordion title="Clone a repository">
+  1. Press `Ctrl/Cmd + Shift + P` to open the Command Palette
+  2. Type **Git: Clone** and press Enter
+  3. Paste the GitHub URL
+  4. Choose a local folder
+  5. VS Code opens the cloned project automatically
+</Accordion>
+
+<Accordion title="Discard changes">
+  Made a mistake and want to go back to the last commit?
+
+  1. In the Source Control panel, right-click the file
+  2. Select **Discard Changes**
+  3. Confirm the prompt
+
+  Your file is restored to its last committed state.
+</Accordion>
+
+<Accordion title="Create a .gitignore">
+  1. Create a new file named `.gitignore` in your project root
+  2. VS Code may suggest common patterns automatically
+  3. Add the essential Python entries:
+
+  ```
+  .venv/
+  .env
+  __pycache__/
+  *.pyc
+  .vscode/
+  .DS_Store
+  ```
+</Accordion>
+
+## The status bar sync button
+
+The bottom status bar in VS Code shows a sync button with arrow indicators:
+
+- **↓ 3** means there are 3 commits on GitHub you haven't downloaded yet — click to pull
+- **↑ 2** means you have 2 local commits that haven't been pushed — click to push
+- A circular arrows icon means you're fully in sync
+
+Clicking the sync button pulls any remote changes first, then pushes your local commits.
+
+## Inline change indicators
+
+When you edit a file that's tracked by Git, VS Code shows colored bars in the left gutter of the editor:
+
+- **Blue bar** — line was modified
+- **Green bar** — line was added
+- **Red triangle** — line was deleted
+
+Click any bar to see the original content or revert just that section.
+
+## Tips for better Git habits
+
+<CardGroup cols={2}>
+  <Card title="Commit often" icon="clock">
+    Small, frequent commits are easier to understand and revert than large,
+    infrequent ones. Commit after every meaningful change.
+  </Card>
+  <Card title="Write clear messages" icon="pencil">
+    "Fix login bug" is useful. "changes" is not. Future you will thank present
+    you for descriptive commit messages.
+  </Card>
+  <Card title="Pull before starting" icon="arrow-down">
+    If you work across multiple machines or with collaborators, always pull
+    latest changes before writing new code.
+  </Card>
+  <Card title="Guard your secrets" icon="lock">
+    Never commit `.env` files or API keys. Always add them to `.gitignore`
+    before your first `git add .`.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Committing a secret (API key, password, token) to a public repo is a serious
+  security risk. Once pushed, treat the secret as compromised and rotate it
+  immediately. Prevention is far easier — keep `.env` in your `.gitignore`.
+</Warning>
+
+## What's next?
+
+You now have everything you need to use Git and GitHub in your daily workflow. Up next: keeping your API keys and passwords safe with environment variables.
+
+<Card
+  title="Keep Your API Keys Safe"
+  icon="key"
+  href="/tools/environment"
+>
+  Learn to manage secrets with environment variables and .env files.
+</Card>

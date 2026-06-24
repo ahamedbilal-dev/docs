@@ -1,0 +1,225 @@
+---
+title: "Clone Repos and Create New Git Projects"
+sidebarTitle: "Clone & Create"
+description: "Learn to clone any GitHub repository to your computer and create your own Git projects with the correct .gitignore from the start."
+---
+
+There are two things you'll do constantly as a Python developer: download existing projects from GitHub, and push your own projects up to it. Both are simple once you know the commands. This page shows you exactly how to do both.
+
+## Cloning a repository
+
+Cloning copies a project — all files and its full history — from GitHub to your local machine.
+
+<Tabs>
+  <Tab title="HTTPS (Recommended)">
+    ```bash
+    # Navigate to where you want the project
+    cd ~/Documents           # Mac/Linux
+    cd C:\Users\YourName\Documents  # Windows
+
+    # Clone the repository
+    git clone https://github.com/openai/openai-quickstart-python.git
+
+    # Enter the project folder
+    cd openai-quickstart-python
+
+    # Open in VS Code
+    code .
+    ```
+  </Tab>
+  <Tab title="SSH">
+    ```bash
+    # Navigate to where you want the project
+    cd ~/Documents           # Mac/Linux
+    cd C:\Users\YourName\Documents  # Windows
+
+    # Clone using the SSH URL
+    git clone git@github.com:openai/openai-quickstart-python.git
+
+    # Enter the project folder
+    cd openai-quickstart-python
+
+    # Open in VS Code
+    code .
+    ```
+  </Tab>
+  <Tab title="VS Code UI">
+    <Steps>
+      <Step title="Open the Command Palette">
+        Press `Ctrl/Cmd + Shift + P`
+      </Step>
+      <Step title="Run Git: Clone">
+        Type **Git: Clone** and press Enter.
+      </Step>
+      <Step title="Paste the URL">
+        Paste the GitHub repository URL and choose a local folder to save it in.
+        VS Code opens the project automatically.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<Tip>
+  Instead of using `cd` to navigate: on **macOS**, right-click a folder in
+  Finder → **Services → New Terminal at Folder**. On **Windows**, right-click a
+  folder in File Explorer → **Open in Terminal**. This opens the terminal
+  already pointing at that folder.
+</Tip>
+
+After cloning you have the full project locally — all files, all history. You can run it, modify it, and learn from it straight away.
+
+## Creating your own repository
+
+Follow these steps to put an existing project (like your `python-for-ai` folder) on GitHub.
+
+### Step 0: Create a .gitignore file first
+
+<Warning>
+  Always create a `.gitignore` before your first commit. The `.venv` folder can
+  be several gigabytes — uploading it will cause your push to fail and wastes
+  everyone's bandwidth.
+</Warning>
+
+Create a file called `.gitignore` in your project root with these contents:
+
+```
+# .gitignore
+.venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+```
+
+### Step 1: Create the repo on GitHub
+
+<Steps>
+  <Step title="Open GitHub">
+    Go to [github.com](https://github.com) and click the green **New** button
+    (or click the **+** icon → **New repository**).
+  </Step>
+  <Step title="Fill in the details">
+    - **Repository name**: `python-for-ai`
+    - **Description**: "Learning Python for AI development"
+    - **Visibility**: Private for now (you can change this later)
+    - **Do not** add a README, .gitignore, or license — you already have them
+  </Step>
+  <Step title="Create the repository">
+    Click **Create repository**. GitHub shows you the commands for the next
+    step.
+  </Step>
+</Steps>
+
+### Step 2: Connect and push your local project
+
+<Tabs>
+  <Tab title="HTTPS">
+    ```bash
+    # Navigate to your project folder
+    cd ~/Documents/python-for-ai   # Mac/Linux
+    cd C:\Users\YourName\Documents\python-for-ai  # Windows
+
+    # Initialize Git
+    git init
+
+    # Stage all files
+    git add .
+
+    # First commit
+    git commit -m "Initial commit"
+
+    # Rename branch to main
+    git branch -M main
+
+    # Connect to GitHub (replace YOUR-USERNAME)
+    git remote add origin https://github.com/YOUR-USERNAME/python-for-ai.git
+
+    # Push
+    git push -u origin main
+    ```
+  </Tab>
+  <Tab title="SSH">
+    ```bash
+    # Navigate to your project folder
+    cd ~/Documents/python-for-ai   # Mac/Linux
+    cd C:\Users\YourName\Documents\python-for-ai  # Windows
+
+    # Initialize Git
+    git init
+
+    # Stage all files
+    git add .
+
+    # First commit
+    git commit -m "Initial commit"
+
+    # Rename branch to main
+    git branch -M main
+
+    # Connect to GitHub using SSH (replace YOUR-USERNAME)
+    git remote add origin git@github.com:YOUR-USERNAME/python-for-ai.git
+
+    # Push
+    git push -u origin main
+    ```
+  </Tab>
+</Tabs>
+
+## The daily workflow
+
+Once your project is on GitHub, your day-to-day routine is just three commands:
+
+```bash
+# Make changes to your code...
+
+# Stage everything
+git add .
+
+# Commit with a clear message
+git commit -m "Add API key loading from .env"
+
+# Push to GitHub
+git push
+```
+
+That's 90% of what you'll do with Git every day.
+
+## Common tasks
+
+<Accordion title="Private vs. public repositories">
+  - **Private**: Only you can see it. Great for learning projects and work in progress.
+  - **Public**: Anyone can view it. Ideal for portfolio projects and sharing with the community.
+
+  You can switch between private and public at any time in the repository's **Settings** tab on GitHub.
+</Accordion>
+
+<Accordion title="The .gitignore file explained">
+  Git uses `.gitignore` to decide which files to skip. Common entries for Python projects:
+
+  ```
+  .venv/        # virtual environment (can be gigabytes)
+  .env          # secrets — never commit this
+  __pycache__/  # compiled Python bytecode
+  *.pyc         # compiled files
+  .DS_Store     # macOS metadata
+  ```
+
+  Add this file before your first `git add .` and you'll never accidentally commit a secret or bloat your repo.
+</Accordion>
+
+<Accordion title="Practice exercise">
+  Try these three things to solidify your skills:
+
+  1. Clone any Python project that interests you from GitHub
+  2. Create a new repository for one of your practice scripts
+  3. Make a change, write a commit message, and push
+</Accordion>
+
+## What's next?
+
+VS Code makes all of this even easier with a visual interface. Let's explore it.
+
+<Card title="Git in VS Code" icon="laptop-code" href="/tools/git/vscode-git">
+  Stage, commit, and push without ever typing a terminal command.
+</Card>

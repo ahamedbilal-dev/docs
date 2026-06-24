@@ -1,0 +1,159 @@
+---
+title: "Python Numbers: Integers and Floats Explained"
+sidebarTitle: "Numbers"
+description: "Learn the difference between Python integers and floats, how to perform math operations, and the common mistakes that trip up beginners."
+---
+
+Numbers are one of the most fundamental data types in Python. Whether you're counting items in a list, calculating a price, or processing sensor readings, you'll work with numbers constantly. Python keeps things simple with just two core numeric types: integers for whole numbers and floats for decimals.
+
+## Two Types of Numbers
+
+<Tabs>
+  <Tab title="Integers (int)">
+    Whole numbers — no decimal point. Can be positive, negative, or zero.
+
+    ```python
+    age = 25
+    score = -10
+    items_in_cart = 0
+    year = 2024
+    ```
+  </Tab>
+  <Tab title="Floats (float)">
+    Numbers with a decimal point. Used for measurements, prices, and precise calculations.
+
+    ```python
+    price = 19.99
+    temperature = -5.5
+    pi = 3.14159
+    percentage = 0.85
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Python uses a dot (`.`) as the decimal separator — not a comma. Writing `3,14` does **not** create the number 3.14; it creates a tuple with two values: `3` and `14`. This is a common mistake for programmers coming from European locales.
+</Note>
+
+### Why Two Types?
+
+Computers work with whole numbers faster and more precisely than decimals. Python separates the two types for efficiency. In practice, you rarely need to think about this — just use whole numbers for counting things and decimals for measurements. Python handles conversions automatically when needed.
+
+```python
+# Python can tell you what type a value is
+print(type(25))       # <class 'int'>
+print(type(19.99))    # <class 'float'>
+```
+
+## Basic Math Operations
+
+Numbers work just like a calculator:
+
+```python
+# Addition and subtraction
+total = 10 + 5      # 15
+change = 20 - 7     # 13
+
+# Multiplication and division
+area = 6 * 4        # 24
+half = 10 / 2       # 5.0  ← always returns float
+
+# Exponentiation (powers)
+squared = 5 ** 2    # 25
+cubed = 2 ** 3      # 8
+```
+
+## Integer vs Float Division
+
+Division in Python comes in two forms — and choosing the right one matters:
+
+```python
+# Regular division (/) — always returns a float
+result = 10 / 3     # 3.3333333333333335
+result = 10 / 2     # 5.0  (still a float, even though it divides evenly)
+
+# Floor division (//) — rounds down to the nearest integer
+result = 10 // 3    # 3
+result = 10 // 2    # 5
+
+# Modulo (%) — returns the remainder
+result = 10 % 3     # 1  (10 = 3×3 + 1)
+result = 10 % 2     # 0  (10 divides evenly by 2)
+```
+
+<Tip>
+  **Modulo is surprisingly useful.** Use `number % 2` to check if a number is even (result is `0`) or odd (result is `1`). Use `count % n` to cycle through a fixed range of values.
+</Tip>
+
+### Practical Example: Dividing Items Evenly
+
+```python
+total_students = 25
+group_size = 4
+
+full_groups = total_students // group_size   # 6 complete groups
+leftover = total_students % group_size       # 1 student without a full group
+
+print(f"{full_groups} groups, {leftover} student(s) left over")
+# 6 groups, 1 student(s) left over
+```
+
+## Readable Large Numbers
+
+Python lets you use underscores as visual separators in large numbers — they're ignored by the interpreter but make the number much easier to read:
+
+```python
+# Hard to read
+population = 8000000000
+national_debt = 33000000000000
+
+# Easy to read — same values
+population = 8_000_000_000
+national_debt = 33_000_000_000_000
+```
+
+## Common Mistakes
+
+<Accordion title="Division always returns a float">
+  Even when the division is exact and produces a whole number, `/` returns a float. Use `//` if you need an integer.
+
+  ```python
+  result = 10 / 2
+  print(result)        # 5.0 — not 5
+  print(type(result))  # <class 'float'>
+
+  # To get an integer:
+  result = 10 // 2     # 5
+  print(type(result))  # <class 'int'>
+  ```
+</Accordion>
+
+<Accordion title="Commas in numbers create tuples, not large numbers">
+  Commas have a special meaning in Python — they separate items in a tuple. Never use them as thousands separators.
+
+  ```python
+  # Wrong — creates a tuple (3, 14) not the number 3.14
+  price = 3,14
+
+  # Wrong — creates a tuple (1, 000, 000)
+  million = 1,000,000
+
+  # Right — use underscores for readability
+  million = 1_000_000
+  ```
+</Accordion>
+
+<Accordion title="Floating-point precision surprises">
+  Due to how computers store decimals in binary, floating-point arithmetic can produce unexpected tiny rounding errors.
+
+  ```python
+  print(0.1 + 0.2)    # 0.30000000000000004 (not exactly 0.3)
+  ```
+
+  For most everyday work this doesn't matter. When precision is critical (e.g., financial calculations), use Python's built-in `decimal` module.
+
+  ```python
+  from decimal import Decimal
+  print(Decimal("0.1") + Decimal("0.2"))   # 0.3
+  ```
+</Accordion>

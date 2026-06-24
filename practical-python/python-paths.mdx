@@ -1,0 +1,316 @@
+---
+title: "Python File Paths: Navigate Your File System"
+sidebarTitle: "File Paths"
+description: "Master absolute vs relative paths, os.path utilities, modern pathlib, and how to fix the most common file-not-found errors in Python."
+---
+
+Understanding file paths is probably the most confusing part of starting with Python — and it trips up almost everyone at some point. When your script can't find a file, it's rarely a typo in the filename; it's almost always a path or working-directory issue. This page gives you the mental model and practical tools to navigate your file system with confidence.
+
+## The Mental Model
+
+Before looking at any code, internalise these two questions:
+
+1. **Where am I?** — What folder is Python currently running from (the *working directory*)?
+2. **Where do I want to go?** — What file or module do I need to reach?
+
+Once you know the answers, navigation is straightforward:
+
+```
+# From script.py, accessing different locations:
+"data/sales.csv"        # ⬇ Down into a subfolder
+"../config.json"        # ⬆ Up one level to the parent
+"helper.py"             # ↔ Same folder — just the filename
+
+# For Python imports (use dots, not slashes):
+import helper             # Same folder — no path needed
+import data.processor     # Down into a subfolder
+```
+
+<Note>
+  Regular files (CSV, JSON, TXT) use **slashes** in paths. Python modules use **dots** in import statements. Mixing these up is a very common mistake.
+</Note>
+
+## Absolute vs Relative Paths
+
+<Tabs>
+  <Tab title="Relative Paths">
+    A relative path is measured **from the current working directory**. It's shorter and more portable — as long as the project structure stays the same, it works anywhere.
+
+    ```python
+    import os
+
+    # All relative to wherever Python is running from
+    open("data/sales.csv")          # subfolder
+    open("../shared/config.json")   # parent folder
+    open("output/report.json")      # another subfolder
+
+    # Always check where you are first
+    print("Current directory:", os.getcwd())
+    ```
+
+    **When to use:** Inside a project where you control the folder structure. The script and data files move together.
+
+    <Warning>
+      Relative paths **break** if you run the script from a different directory. Always verify with `os.getcwd()` when troubleshooting.
+    </Warning>
+  </Tab>
+  <Tab title="Absolute Paths">
+    An absolute path starts from the filesystem root and uniquely identifies a file no matter where your script runs from.
+
+    ```python
+    # macOS / Linux
+    open("/Users/alice/projects/sales-analysis/data/sales.csv")
+
+    # Windows
+    open("C:\\Users\\alice\\projects\\sales-analysis\\data\\sales.csv")
+
+    # Cross-platform absolute path using pathlib
+    from pathlib import Path
+    file = Path("/Users/alice/projects/sales-analysis/data/sales.csv")
+    ```
+
+    **When to use:** For configuration files, shared resources, or when you truly need a fixed location. Avoid hard-coding absolute paths in shared code — they won't work on another machine.
+  </Tab>
+</Tabs>
+
+## Two Ways to Work with Paths
+
+Python gives you two tools for path manipulation: the classic `os.path` module and the modern `pathlib` library. Both work, but `pathlib` is generally preferred for new code because it's more readable and object-oriented.
+
+<Tabs>
+  <Tab title="os.path (Classic)">
+    `os.path` has been part of Python forever. Every function takes strings and returns strings.
+
+    ```python
+    import os
+
+    # Join path components (works on Windows AND Mac/Linux)
+    path = os.path.join("data", "sales.csv")
+    print(path)           # data/sales.csv  (or data\sales.csv on Windows)
+
+    # Check if a file or folder exists
+    if os.path.exists("data/sales.csv"):
+        print("File found!")
+
+    # Get just the directory part
+    script_dir = os.path.dirname("/projects/app/script.py")
+    print(script_dir)     # /projects/app
+
+    # Get just the filename
+    filename = os.path.basename("/projects/app/script.py")
+    print(filename)       # script.py
+
+    # Split into (directory, filename)
+    head, tail = os.path.split("/projects/app/script.py")
+
+    # Get absolute path from a relative one
+    abs_path = os.path.abspath("data/sales.csv")
+    print(abs_path)       # /full/path/to/data/sales.csv
+    ```
+
+    **Common `os.path` functions:**
+
+    | Function | What it does |
+    |---|---|
+    | `os.path.join(a, b)` | Join path parts safely |
+    | `os.path.exists(p)` | Check if path exists |
+    | `os.path.dirname(p)` | Get parent directory |
+    | `os.path.basename(p)` | Get filename |
+    | `os.path.abspath(p)` | Convert to absolute path |
+    | `os.path.isfile(p)` | Check it's a file (not a folder) |
+    | `os.path.isdir(p)` | Check it's a directory |
+  </Tab>
+  <Tab title="pathlib (Modern)">
+    `pathlib` (Python 3.4+) treats paths as objects with methods. It's more readable and handles cross-platform differences automatically.
+
+    ```python
+    from pathlib import Path
+
+    # Create a Path object
+    data_dir = Path("data")
+    file_path = data_dir / "sales.csv"   # Use / operator to join!
+    print(file_path)                      # data/sales.csv
+
+    # Check existence
+    if file_path.exists():
+        print("File found!")
+
+    # Get parts of the path
+    p = Path("/projects/app/script.py")
+    print(p.parent)     # /projects/app
+    print(p.name)       # script.py
+    print(p.stem)       # script  (name without extension)
+    print(p.suffix)     # .py
+
+    # Read and write files directly
+    content = file_path.read_text()
+    file_path.write_text("new content")
+
+    # Create directories
+    output = Path("output")
+    output.mkdir(exist_ok=True)
+
+    # List all CSV files in a folder
+    for csv_file in Path("data").glob("*.csv"):
+        print(csv_file)
+
+    # Convert to absolute path
+    abs_path = file_path.resolve()
+    print(abs_path)
+    ```
+
+    **Why pathlib is preferred:**
+    - The `/` operator makes joining paths readable
+    - Methods like `.exists()`, `.read_text()`, `.mkdir()` are on the object itself
+    - Works seamlessly on Windows, macOS, and Linux
+  </Tab>
+</Tabs>
+
+## Using `__file__` to Locate Your Script
+
+A particularly useful trick is using `__file__` — a built-in variable that always holds the path of the **currently running script**. This lets you build paths relative to the script's own location, regardless of where Python is run from:
+
+```python
+import os
+from pathlib import Path
+
+# The path of THIS script
+print(__file__)
+
+# --- Using os.path ---
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_path   = os.path.join(script_dir, "data", "sales.csv")
+print(data_path)   # /absolute/path/to/script/data/sales.csv
+
+# --- Using pathlib (cleaner) ---
+script_dir = Path(__file__).parent.resolve()
+data_path  = script_dir / "data" / "sales.csv"
+print(data_path)
+```
+
+<Tip>
+  Building paths from `__file__` is the most robust technique for projects that get shared or run from different locations. The data folder always travels with the script.
+</Tip>
+
+## How Python Finds Modules
+
+Regular files and Python modules are handled differently. Python searches for importable modules in a list of directories called `sys.path`:
+
+```python
+import sys
+
+# See everywhere Python looks for modules
+print(sys.path)
+```
+
+The list typically includes:
+1. The folder containing your script
+2. Python's standard library folders
+3. All installed packages (your virtual environment's `site-packages`)
+
+If Python can't find a module, you can add a folder to the search path:
+
+```python
+import sys
+import os
+
+# Add a custom folder to Python's module search path
+sys.path.append("/path/to/my/folder")
+import mymodule   # now Python can find it
+
+# Common pattern: import from the parent folder
+parent = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(parent)
+```
+
+## Common Path Pitfalls
+
+<Accordion title="FileNotFoundError: No such file or directory">
+  Python can't find your file. The path is wrong, or you're running the script from a different directory than expected.
+
+  ```python
+  # Debug it immediately:
+  import os
+  print("Running from:", os.getcwd())
+  print("Files here:",   os.listdir("."))
+  print("Files in data:", os.listdir("data"))
+  ```
+
+  **Fix:** Correct the path, or use `__file__`-based paths so it always works.
+</Accordion>
+
+<Accordion title="ModuleNotFoundError: No module named 'X'">
+  Python can't find the module. It's either not installed or not in `sys.path`.
+
+  ```python
+  import sys
+  print("Python searches in:", sys.path)
+  ```
+
+  **Fix:** Install the package (`pip install package-name`), make sure your virtual environment is activated, or add the relevant folder to `sys.path`.
+</Accordion>
+
+<Accordion title="Mixing up files and modules (SyntaxError)">
+  Regular files use slashes in path strings. Python modules use dots in import statements. Never swap them.
+
+  ```python
+  # ❌ Wrong:
+  import data/helpers     # SyntaxError!
+
+  # ✅ Right:
+  import data.helpers     # For data/helpers.py
+  open("data/file.csv")   # For a regular file
+  ```
+</Accordion>
+
+<Accordion title="Backslashes on Windows">
+  Windows uses backslashes (`\`) natively, but they cause escape-sequence problems in Python strings. Forward slashes work on all platforms, as does `os.path.join()` or the `pathlib` `/` operator.
+
+  ```python
+  # ❌ Windows-only (and needs escaping):
+  open("data\\sales.csv")
+
+  # ✅ Works everywhere:
+  open("data/sales.csv")
+  Path("data") / "sales.csv"
+  os.path.join("data", "sales.csv")
+  ```
+</Accordion>
+
+<Accordion title="Running from the wrong folder">
+  Your script works via the VS Code play button but fails in the terminal? You're probably in a different directory in the terminal.
+
+  ```python
+  import os
+  print("Running from:", os.getcwd())
+  ```
+
+  **Fix:** `cd` into the project folder before running, or use the VS Code play button (which automatically sets the working directory to the script's location).
+</Accordion>
+
+## Quick Reference
+
+```python
+import os
+from pathlib import Path
+
+# Where am I?
+os.getcwd()
+Path.cwd()
+
+# Build a path safely
+os.path.join("data", "sales.csv")
+Path("data") / "sales.csv"
+
+# Does this exist?
+os.path.exists("data/sales.csv")
+Path("data/sales.csv").exists()
+
+# Locate relative to THIS script
+base = Path(__file__).parent
+data = base / "data" / "sales.csv"
+
+# Make a directory (no error if it exists)
+os.makedirs("output", exist_ok=True)
+Path("output").mkdir(exist_ok=True)
+```

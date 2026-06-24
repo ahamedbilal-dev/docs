@@ -1,0 +1,180 @@
+---
+title: "Install Python Packages with pip"
+sidebarTitle: "Packages & pip"
+description: "Use pip to install packages from PyPI into your virtual environment, learn the essential pip commands, and fix the most common installation errors."
+---
+
+One of Python's greatest strengths is its enormous ecosystem of ready-made libraries. Instead of writing code to make HTTP requests, analyse spreadsheets, or call an AI model from scratch, you install a package that already does it — and you're up and running in minutes. This page walks you through installing your first package and gives you the pip commands you'll reach for every day.
+
+## What Are Packages?
+
+**Packages** are collections of Python code that solve a specific problem, written and maintained by developers around the world. Here are some you'll use in this course:
+
+| Package | What it does |
+|---------|--------------|
+| `requests` | Download web pages and call APIs |
+| `pandas` | Work with tabular data (like spreadsheets) |
+| `numpy` | Fast mathematical operations on arrays |
+| `openai` | Connect to OpenAI's AI models |
+| `beautifulsoup4` | Extract data from HTML pages |
+
+Each package is like a specialised toolbox — you only bring it to the job site when you need it.
+
+## What Is pip?
+
+**pip** (*Pip Installs Packages*) is Python's built-in package manager. It:
+
+- Connects to **PyPI** (the Python Package Index at [pypi.org](https://pypi.org)) — a repository of over 500,000 packages
+- Downloads the package files to your machine
+- Installs them into your active Python environment
+- Manages version constraints and dependencies automatically
+
+pip ships with Python, so you already have it. When your virtual environment is active, you have a project-specific pip that installs only into `.venv` — never into system Python.
+
+<Steps>
+  <Step title="Open the Terminal and Confirm Your Environment">
+    Open the integrated terminal in VS Code:
+    - **Keyboard:** `` Ctrl + ` `` (Windows/Linux) or `` Cmd + ` `` (macOS)
+    - **Menu:** View → Terminal
+
+    Check for the `(.venv)` prefix in your prompt:
+
+    ```bash
+    (.venv) PS C:\...\python-for-ai>
+    ```
+
+    <Warning>
+      If you don't see `(.venv)`, your virtual environment is not active. Go back to the Virtual Environments page, select `.venv` as your interpreter, and open a fresh terminal. **Never run `pip install` without an active virtual environment.**
+    </Warning>
+  </Step>
+
+  <Step title="Install Your First Package">
+    Let's install `requests` — a package for making HTTP requests:
+
+    ```bash
+    pip install requests
+    ```
+
+    Press Enter. pip connects to PyPI, downloads the package, and installs it along with any dependencies it needs. You'll see output like this:
+
+    ```
+    Collecting requests
+      Downloading requests-2.31.0-py3-none-any.whl (62 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.0/62.0 kB 1.2 MB/s eta 0:00:00
+    Collecting charset-normalizer<4,>=2 (from requests)
+      Downloading charset_normalizer-3.3.2-cp313-cp313-win_amd64.whl
+    Collecting idna<4,>=2.5 (from requests)
+    Collecting urllib3<3,>=1.21.1 (from requests)
+    Collecting certifi>=2017.4.17 (from requests)
+    Installing collected packages: certifi, idna, charset-normalizer, urllib3, requests
+    Successfully installed certifi-2024.2.2 charset-normalizer-3.3.2 idna-3.6
+      requests-2.31.0 urllib3-2.2.0
+    ```
+
+    <Note>
+      Notice that installing `requests` also installed four other packages (`certifi`, `idna`, `charset-normalizer`, `urllib3`). These are `requests`'s own dependencies — pip resolves and installs them automatically.
+    </Note>
+  </Step>
+
+  <Step title="Use the Installed Package in Code">
+    Create a new file called `test_requests.py` and add:
+
+    ```python
+    import requests
+
+    # Make an HTTP GET request to GitHub's API
+    response = requests.get("https://api.github.com")
+
+    print(response.status_code)  # 200 means success
+    print(response.headers["content-type"])
+    ```
+
+    Run it with `Shift + Enter` (interactive mode) or `Ctrl + F5`. You should see `200` printed in the output — confirming the package is installed and working.
+
+    Without `requests`, making this HTTP call would require dozens of lines using Python's lower-level `http.client` module. The package turns it into two readable lines.
+  </Step>
+</Steps>
+
+## Common pip Commands
+
+Keep this reference handy — these are the commands you'll use in almost every project:
+
+<CodeGroup>
+```bash Install
+# Install a package (always run with .venv active)
+pip install requests
+
+# Install a specific version
+pip install requests==2.31.0
+
+# Install a minimum version
+pip install requests>=2.28.0
+
+# Install multiple packages at once
+pip install requests pandas numpy
+```
+
+```bash List & Check
+# See all installed packages and their versions
+pip list
+
+# Check if a specific package is installed and what version
+pip show requests
+
+# See what's outdated
+pip list --outdated
+```
+
+```bash Update & Remove
+# Upgrade a package to the latest version
+pip install --upgrade requests
+
+# Uninstall a package
+pip uninstall requests
+
+# pip asks for confirmation before removing
+```
+
+```bash Requirements File
+# Save all installed packages to a file (for sharing your project)
+pip freeze > requirements.txt
+
+# Install everything from a requirements file
+pip install -r requirements.txt
+```
+</CodeGroup>
+
+## Where Packages Come From
+
+pip downloads from **PyPI** — [pypi.org](https://pypi.org) — which hosts over 500,000 packages. Anyone can publish a package there. Before installing an unfamiliar package, it's worth checking:
+
+- **Download count** — popular packages have millions of downloads per month
+- **Last updated date** — abandoned packages may have security vulnerabilities
+- **GitHub link** — active repositories with recent commits are a good sign
+
+<Tip>
+  The exact package name on PyPI is not always what you'd expect. Search [pypi.org](https://pypi.org) when in doubt. For example: "Beautiful Soup" is installed as `beautifulsoup4`, and "OpenAI Python library" is just `openai`.
+</Tip>
+
+## Common Issues and Fixes
+
+<CardGroup cols={1}>
+  <Card title="pip: command not found" icon="circle-xmark">
+    Your virtual environment is probably not active. Check for `(.venv)` in your terminal prompt. If it's missing, open the Command Palette and run **Python: Select Interpreter**, choose `.venv`, then open a fresh terminal.
+  </Card>
+  <Card title="Permission denied" icon="lock">
+    You're likely trying to install into system Python. **Never use `sudo pip install`** — it modifies your system Python and can break OS tools. Always activate your virtual environment first.
+  </Card>
+  <Card title="Package not found / No matching distribution" icon="magnifying-glass">
+    Double-check the package name at [pypi.org](https://pypi.org). Common mistakes:
+
+    - `beautifulsoup` → correct name is `beautifulsoup4`
+    - `sklearn` → correct name is `scikit-learn`
+    - `cv2` → correct name is `opencv-python`
+  </Card>
+  <Card title="Dependency conflict / Incompatible version" icon="triangle-exclamation">
+    Two packages need conflicting versions of a shared dependency. The safest fix is to create a fresh virtual environment for the project and install packages from scratch with compatible versions. Tools like `pip-tools` or `poetry` can help manage complex dependency trees.
+  </Card>
+</CardGroup>
+
+With packages and pip under your belt, you have everything you need to install the `ipykernel` package and unlock the final piece of your Python development setup: interactive mode.

@@ -1,0 +1,215 @@
+---
+title: "Python Sets: Work with Unique Collections of Items"
+sidebarTitle: "Sets"
+description: "Learn how Python sets store unique unordered values, how to add and remove items, perform set operations, and use sets for fast membership testing."
+---
+
+Sets are Python's go-to data structure when you care about **uniqueness**. Unlike lists, sets automatically discard duplicate values — if you add the same item twice, it only appears once. They're also unordered, meaning you can't rely on items being in a specific position. What sets lack in ordering, they make up for in speed: checking whether an item exists in a set is dramatically faster than checking a list, especially at large scale.
+
+## What Are Sets?
+
+A set is an **unordered collection of unique values**. Key characteristics:
+
+- **No duplicates** — every value appears at most once
+- **Unordered** — items have no guaranteed position or index
+- **Mutable** — you can add and remove items after creation
+- **Fast membership testing** — checking `if x in my_set` is very efficient
+
+Think of sets like:
+- A **bag of unique marbles** — shake it up, no order, no repeats
+- A **guest list** — each person appears only once
+- A collection of **unique tags** or **categories**
+
+## Creating Sets
+
+```python
+# Empty set — MUST use set(), not {}
+empty_set = set()
+
+# Set from literal values
+numbers = {1, 2, 3, 4, 5}
+fruits = {"apple", "banana", "orange"}
+
+# Set from a list (removes duplicates automatically)
+scores = [85, 90, 85, 92, 90]
+unique_scores = set(scores)
+print(unique_scores)   # {85, 90, 92}
+```
+
+<Warning>
+  **Never use `{}` to create an empty set!** Empty curly braces create an empty **dictionary**, not a set. Always use `set()` for an empty set.
+
+  ```python
+  empty_dict = {}      # <class 'dict'>
+  empty_set = set()    # <class 'set'> ✓
+  ```
+</Warning>
+
+## Adding and Removing Items
+
+```python
+colors = {"red", "blue"}
+
+# Add a single item
+colors.add("green")
+print(colors)   # {'red', 'blue', 'green'}
+
+# Remove — raises KeyError if item isn't found
+colors.remove("blue")
+
+# Discard — no error if item isn't found (safer)
+colors.discard("yellow")   # Silently does nothing
+
+# Remove and return an arbitrary item
+item = colors.pop()
+
+# Clear all items
+colors.clear()
+```
+
+<Tip>
+  Use `.discard()` instead of `.remove()` when you're not sure whether the item exists. It avoids a `KeyError` and makes your code more defensive.
+</Tip>
+
+## Set Operations
+
+Sets support mathematical set operations — union, intersection, difference, and symmetric difference. These are especially useful when comparing or combining collections.
+
+<Tabs>
+  <Tab title="Union (|)">
+    All items from **both** sets (no duplicates):
+    ```python
+    a = {1, 2, 3}
+    b = {3, 4, 5}
+
+    print(a | b)          # {1, 2, 3, 4, 5}
+    print(a.union(b))     # Same result
+    ```
+  </Tab>
+  <Tab title="Intersection (&)">
+    Only items that appear in **both** sets:
+    ```python
+    a = {1, 2, 3}
+    b = {3, 4, 5}
+
+    print(a & b)               # {3}
+    print(a.intersection(b))   # Same result
+    ```
+  </Tab>
+  <Tab title="Difference (-)">
+    Items in the **first** set but not in the second:
+    ```python
+    a = {1, 2, 3}
+    b = {3, 4, 5}
+
+    print(a - b)             # {1, 2}
+    print(a.difference(b))   # Same result
+    ```
+  </Tab>
+  <Tab title="Symmetric Difference (^)">
+    Items in **either** set, but not in **both**:
+    ```python
+    a = {1, 2, 3}
+    b = {3, 4, 5}
+
+    print(a ^ b)                          # {1, 2, 4, 5}
+    print(a.symmetric_difference(b))      # Same result
+    ```
+  </Tab>
+</Tabs>
+
+## Common Use Cases
+
+### Remove Duplicates from a List
+
+The fastest way to deduplicate a list is to convert it to a set and back:
+
+```python
+names = ["Alice", "Bob", "Alice", "Charlie", "Bob"]
+unique_names = list(set(names))
+print(unique_names)   # ['Alice', 'Bob', 'Charlie']
+```
+
+<Note>
+  The resulting list will not preserve the original order. If order matters, you'll need a different approach — for example, a loop that checks `if item not in seen`.
+</Note>
+
+### Fast Membership Testing
+
+Sets are extremely fast at checking whether an item exists — much faster than lists for large collections:
+
+```python
+allowed_users = {"alice", "bob", "charlie"}
+
+username = "alice"
+if username in allowed_users:    # Very fast lookup!
+    print("Access granted")
+else:
+    print("Access denied")
+```
+
+### Find Common Items
+
+```python
+team_a = {"Alice", "Bob", "Charlie"}
+team_b = {"Bob", "Charlie", "Diana"}
+
+# Who's on both teams?
+both = team_a & team_b
+print(both)   # {'Bob', 'Charlie'}
+
+# Who's only on team A?
+only_a = team_a - team_b
+print(only_a)   # {'Alice'}
+```
+
+## Common Mistakes
+
+<Accordion title="Using {} for an empty set">
+  This is the most common set mistake and creates a dictionary instead:
+
+  ```python
+  # Wrong — creates an empty dict
+  my_set = {}
+  print(type(my_set))   # <class 'dict'>
+
+  # Right — creates an empty set
+  my_set = set()
+  print(type(my_set))   # <class 'set'>
+  ```
+</Accordion>
+
+<Accordion title="Relying on set ordering">
+  Sets are unordered — the order of items when you print a set is not guaranteed and can change between runs.
+
+  ```python
+  numbers = {3, 1, 4, 1, 5}
+  print(numbers)   # Could print in any order: {1, 3, 4, 5}
+
+  # If you need consistent order, use a list:
+  ordered = sorted(numbers)   # [1, 3, 4, 5]
+  ```
+</Accordion>
+
+<Accordion title="Trying to index a set">
+  Because sets are unordered, they don't support indexing or slicing.
+
+  ```python
+  my_set = {1, 2, 3}
+  print(my_set[0])   # TypeError: 'set' object is not subscriptable
+
+  # If you need indexing, convert to a list first
+  my_list = list(my_set)
+  print(my_list[0])
+  ```
+</Accordion>
+
+<Accordion title="Adding mutable items to a set">
+  Like dictionary keys, set items must be **immutable**. You can't add a list to a set — use a tuple instead.
+
+  ```python
+  my_set = set()
+  my_set.add([1, 2])    # TypeError: unhashable type: 'list'
+  my_set.add((1, 2))    # OK — tuples are immutable
+  ```
+</Accordion>

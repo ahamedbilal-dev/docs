@@ -1,0 +1,222 @@
+---
+title: "Python String Manipulation: Methods and Techniques"
+sidebarTitle: "String Methods"
+description: "Learn how to manipulate Python strings using concatenation, f-strings, case methods, cleaning, searching, and replacing text."
+---
+
+Text is everywhere in programming — usernames, messages, file names, API responses, and more. Python provides a rich set of built-in tools for working with strings, letting you join them, transform their casing, strip unwanted whitespace, search for patterns, and swap out content — all with clean, readable code. This page walks through the most important string operations and methods you'll use day to day.
+
+## String Operations
+
+### Concatenation (Joining)
+
+You can combine strings using the `+` operator, but the modern and preferred approach is **f-strings**:
+
+<CodeGroup>
+```python Using + operator
+first_name = "Jane"
+last_name = "Doe"
+
+full_name = first_name + " " + last_name  # "Jane Doe"
+```
+
+```python Using f-strings (recommended)
+first_name = "Jane"
+last_name = "Doe"
+age = 25
+
+greeting = f"Hello, {first_name}!"               # "Hello, Jane!"
+intro = f"I'm {first_name} and I'm {age} years old"
+```
+</CodeGroup>
+
+<Tip>
+  F-strings (formatted string literals) were introduced in Python 3.6. They're faster, cleaner, and easier to read than using `+`. Always prefer them when embedding variables in text.
+</Tip>
+
+### Repetition
+
+Use the `*` operator to repeat a string multiple times:
+
+```python
+star = "*"
+stars = star * 10        # "**********"
+
+separator = "-" * 20     # "--------------------"
+print(separator)
+# --------------------
+```
+
+This is handy for building simple text UI elements like dividers or borders.
+
+## String Methods
+
+Python strings come with over 40 built-in methods — functions you can call directly on any string value. You can often guess what they do from their names: `upper()` makes text uppercase, `replace()` replaces content, and so on.
+
+### Changing Case
+
+```python
+text = "Python Programming"
+
+print(text.lower())   # "python programming"
+print(text.upper())   # "PYTHON PROGRAMMING"
+print(text.title())   # "Python Programming"
+```
+
+<CardGroup cols={3}>
+  <Card title=".lower()" icon="arrow-down">
+    Converts all characters to lowercase. Useful for case-insensitive comparisons.
+  </Card>
+  <Card title=".upper()" icon="arrow-up">
+    Converts all characters to uppercase. Common for headings or constants.
+  </Card>
+  <Card title=".title()" icon="font">
+    Capitalizes the first letter of each word. Great for formatting names.
+  </Card>
+</CardGroup>
+
+### Cleaning Strings
+
+Remove unwanted characters from the start and end of a string with `.strip()`:
+
+```python
+messy = "  hello world  "
+print(messy.strip())      # "hello world"
+
+price = "$19.99"
+print(price.strip("$"))   # "19.99"
+```
+
+<Note>
+  `.strip()` with no arguments removes whitespace (spaces, tabs, newlines) from both ends. You can also use `.lstrip()` to strip only the left side, or `.rstrip()` for only the right side.
+</Note>
+
+### Finding and Replacing
+
+Python gives you several tools to search within a string and make substitutions:
+
+```python
+message = "I love Python programming with Python"
+
+# Check if something exists
+print("Python" in message)          # True
+print(message.startswith("I"))      # True
+print(message.endswith("Python"))   # True
+
+# Find position
+print(message.find("Python"))       # 7 (index of first occurrence)
+print(message.count("Python"))      # 2 (number of times it appears)
+
+# Replace
+new_message = message.replace("Python", "JavaScript")
+print(new_message)
+# "I love JavaScript programming with JavaScript"
+```
+
+<Tabs>
+  <Tab title="in operator">
+    Checks whether a substring exists anywhere in the string. Returns `True` or `False`.
+    ```python
+    if "error" in log_line:
+        print("Problem detected!")
+    ```
+  </Tab>
+  <Tab title=".startswith() / .endswith()">
+    Check the beginning or end of a string. Great for validating prefixes or file extensions.
+    ```python
+    filename = "report.pdf"
+    if filename.endswith(".pdf"):
+        print("PDF file detected")
+    ```
+  </Tab>
+  <Tab title=".find()">
+    Returns the index of the first occurrence of the substring, or `-1` if not found.
+    ```python
+    text = "Hello, world!"
+    print(text.find("world"))   # 7
+    print(text.find("xyz"))     # -1
+    ```
+  </Tab>
+  <Tab title=".count()">
+    Returns how many times a substring appears in the string.
+    ```python
+    sentence = "the cat sat on the mat"
+    print(sentence.count("the"))   # 2
+    ```
+  </Tab>
+  <Tab title=".replace()">
+    Returns a new string with all occurrences of the old substring replaced by the new one. The original string is unchanged.
+    ```python
+    text = "I love cats"
+    new_text = text.replace("cats", "dogs")
+    print(new_text)   # "I love dogs"
+    print(text)       # "I love cats" — unchanged
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Python has over 40 string methods! These are the most commonly used. For a complete reference, check the [official Python documentation](https://docs.python.org/3/library/stdtypes.html#string-methods).
+</Note>
+
+## Common Mistakes
+
+<Accordion title="Forgetting the f in f-strings">
+  Without the `f` prefix, Python treats curly braces as literal characters — it won't substitute the variable.
+
+  ```python
+  name = "Alice"
+
+  # Wrong — prints the literal text
+  message = "Hello {name}"    # "Hello {name}"
+
+  # Right — substitutes the variable
+  message = f"Hello {name}"   # "Hello Alice"
+  ```
+</Accordion>
+
+<Accordion title="Mismatched or conflicting quotes">
+  If your string contains an apostrophe and you're using single quotes, Python will think the string ends early.
+
+  ```python
+  # Wrong — SyntaxError
+  text = 'It's Python'
+
+  # Right — use double quotes outside
+  text = "It's Python"
+
+  # Also right — escape the apostrophe
+  text = 'It\'s Python'
+  ```
+</Accordion>
+
+<Accordion title="Forgetting that strings are immutable">
+  Strings in Python cannot be changed in place. Methods like `.replace()` and `.lower()` return a **new** string — they don't modify the original.
+
+  ```python
+  name = "alice"
+
+  # Wrong — result is discarded
+  name.upper()
+  print(name)   # "alice" — unchanged!
+
+  # Right — assign the result
+  name = name.upper()
+  print(name)   # "ALICE"
+  ```
+</Accordion>
+
+<Accordion title="Using + to mix strings and numbers">
+  Python won't automatically convert numbers to strings when concatenating with `+`. Use an f-string instead.
+
+  ```python
+  age = 25
+
+  # Wrong — TypeError
+  message = "I am " + age + " years old"
+
+  # Right — convert with str() or use f-string
+  message = "I am " + str(age) + " years old"
+  message = f"I am {age} years old"   # Cleaner!
+  ```
+</Accordion>

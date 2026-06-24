@@ -1,0 +1,159 @@
+---
+title: "Python Comments: Document Your Code Effectively"
+sidebarTitle: "Comments"
+description: "Learn how to write Python comments, when to use single-line vs multi-line styles, and why good comments explain the why, not the what."
+---
+
+Comments are notes written inside your code that Python completely ignores when running the program. They exist purely for humans — to explain logic, document decisions, and make code easier to understand months or years later. Writing good comments is a habit that separates professional developers from beginners.
+
+## What Are Comments and Why Write Them?
+
+<CardGroup cols={2}>
+  <Card title="Help Others" icon="users">
+    Teammates can understand your logic without having to ask you.
+  </Card>
+  <Card title="Help Future You" icon="clock">
+    Code you wrote six months ago can feel like a foreign language without notes.
+  </Card>
+  <Card title="Disable Code" icon="toggle-off">
+    Temporarily "switch off" a line of code during testing without deleting it.
+  </Card>
+  <Card title="Document Complexity" icon="book">
+    Explain non-obvious decisions — especially the *why* behind a choice.
+  </Card>
+</CardGroup>
+
+## Single-Line Comments
+
+Use the `#` character to start a comment. Everything after `#` on that line is ignored by Python:
+
+```python
+# This is a standalone comment
+print("Hello")   # This is an inline comment
+
+# You can write multiple lines of comments
+# by starting each individual line
+# with a hash symbol
+
+age = 25   # Store the user's age for later calculations
+```
+
+Single-line comments are the most common type. They're great for brief explanations alongside or above a line of code.
+
+## Multi-Line Comments
+
+For longer explanations, use **triple quotes** (`"""` or `'''`). While Python technically treats these as multi-line strings (not true comments), they behave identically when not assigned to anything:
+
+```python
+"""
+This module handles user authentication.
+It connects to the database and validates
+credentials before granting access.
+"""
+
+def calculate_tip(bill):
+    """
+    Calculate a 20% tip for a restaurant bill.
+
+    Args:
+        bill: The total bill amount in dollars.
+
+    Returns:
+        The tip amount as a float.
+    """
+    return bill * 0.20
+```
+
+<Note>
+  Triple-quoted strings at the start of a function or class are called **docstrings**. They're a Python convention for documenting what a function does, its parameters, and what it returns. Many tools (including IDEs and documentation generators) read these automatically.
+</Note>
+
+## When to Write Comments: Explain WHY, Not WHAT
+
+The most important rule about comments: **explain why you made a decision, not what the code does**. The code itself shows *what* is happening — a good comment explains the reasoning behind it.
+
+<CodeGroup>
+```python Good — explains the WHY
+# Using 1.0625 because California sales tax is 6.25%
+total = subtotal * 1.0625
+
+# Retry up to 3 times to handle transient network errors
+for attempt in range(3):
+    response = send_request()
+```
+
+```python Bad — states the obvious
+# Multiply subtotal by 1.0625
+total = subtotal * 1.0625
+
+# Loop 3 times
+for attempt in range(3):
+    response = send_request()
+```
+</CodeGroup>
+
+<Tip>
+  When possible, use **descriptive variable names** instead of comments. `days_in_week = 7` is self-explanatory and needs no comment. `d = 7  # days in a week` is harder to read and the comment can become outdated.
+</Tip>
+
+## Temporary Comments
+
+One of the most practical uses of comments is temporarily disabling code during development:
+
+```python
+print("Starting process...")
+# print("Debug: raw API response", response)   # Uncomment to debug
+
+new_method()
+# old_method()   # Keeping old implementation as reference until v2 ships
+```
+
+This is far safer than deleting code you might need again soon.
+
+## Common Mistakes
+
+<Accordion title="Outdated comments that contradict the code">
+  When code changes but its comment doesn't, the comment becomes actively misleading. Always update comments when you update the code they describe.
+
+  ```python
+  # Bad: says 15% but the code does 20%
+  # Calculate 15% tip
+  tip = bill * 0.20
+
+  # Good: comment matches the code
+  # Calculate 20% tip (standard in the US)
+  tip = bill * 0.20
+  ```
+</Accordion>
+
+<Accordion title="Over-commenting obvious code">
+  Commenting every line creates noise and makes code harder — not easier — to read. Reserve comments for logic that isn't immediately obvious.
+
+  ```python
+  # Bad: restates what the code already makes clear
+  x = 5    # Set x to 5
+  y = 10   # Set y to 10
+
+  # Good: only comment the non-obvious part
+  x = 5
+  y = 10
+  position = x + y   # Convert (row, col) coordinates to a flat array index
+  ```
+</Accordion>
+
+<Accordion title="Leaving commented-out code in production">
+  A few lines of commented-out code while you're testing is fine. But shipping large blocks of dead code in your final program clutters the file and confuses future readers. Delete code you're no longer using — version control (like Git) keeps the history.
+
+  ```python
+  # Avoid shipping this kind of thing:
+  # def old_parser(text):
+  #     words = text.split()
+  #     result = []
+  #     for w in words:
+  #         result.append(w.upper())
+  #     return result
+
+  def parse(text):
+      return [w.upper() for w in text.split()]
+  ```
+</Accordion>

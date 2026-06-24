@@ -1,0 +1,244 @@
+---
+title: "Organizing Python Code Across Multiple Files"
+sidebarTitle: "Organizing Code"
+description: "Learn how to split Python code into reusable modules, import between files, use __init__.py for packages, and apply best practices for module naming."
+---
+
+As your Python scripts grow, keeping everything in one file becomes unwieldy. Functions get buried, logic is hard to follow, and copy-pasting code between projects becomes a maintenance nightmare. The solution is to split your code into focused modules — separate files that each do one thing well and can be reused wherever they're needed.
+
+## Why Split Code Into Multiple Files?
+
+<CardGroup cols={3}>
+  <Card title="Reusability" icon="recycle">
+    Write a helper function once and import it into any script that needs it — no copy-pasting.
+  </Card>
+  <Card title="Readability" icon="eye">
+    Your main script stays short and clear because the implementation details live elsewhere.
+  </Card>
+  <Card title="Testability" icon="flask">
+    Individual functions in isolated modules are easy to test independently.
+  </Card>
+</CardGroup>
+
+The pattern you'll use constantly in real projects: keep your **main logic** in a top-level script (e.g. `main.py`) and your **reusable utilities** in separate module files (e.g. `helpers.py`, `utils.py`).
+
+## Creating a Utility Module
+
+Let's add helper functions to our sales analysis project. In your `sales-analysis/` folder, create a new file called `helpers.py`:
+
+```python
+# helpers.py
+
+def calculate_total(quantity, price):
+    """Calculate the total value for a single line item."""
+    return quantity * price
+
+def format_currency(amount):
+    """Format a number as a USD currency string."""
+    return f"${amount:,.2f}"
+
+def summarise_product(product_name, total):
+    """Return a formatted summary line for a product."""
+    return f"{product_name}: {format_currency(total)}"
+```
+
+<Note>
+  The `:.2f` format specifier rounds a floating-point number to 2 decimal places — perfect for displaying monetary values. The `,` adds thousands separators (e.g. `$1,999.00`).
+</Note>
+
+Each function does exactly one thing. This makes them easy to understand, easy to test, and easy to reuse.
+
+## Importing From Your Own Files
+
+Once `helpers.py` exists in the same folder as your main script, you can import from it just like any built-in module:
+
+```python
+# analyzer.py
+
+# Import the whole module
+import helpers
+result = helpers.calculate_total(5, 29.99)
+
+# Import specific names (more common)
+from helpers import calculate_total, format_currency
+
+# Import everything (avoid this in production code)
+from helpers import *
+```
+
+<Tip>
+  Prefer `from helpers import calculate_total, format_currency` over `import *`. Explicit imports make it obvious where each name comes from when you read the code later.
+</Tip>
+
+## A Practical Example: `utils.py` + `main.py`
+
+Here's a complete, working example with two files. The project structure looks like:
+
+```
+sales-analysis/
+├── main.py         ← Orchestrates the analysis
+├── utils.py        ← Reusable helpers
+└── data/
+    └── sales.csv
+```
+
+<CodeGroup>
+```python utils.py
+# utils.py
+# Reusable helper functions for the sales analysis project
+
+def calculate_total(quantity, price):
+    """Calculate line-item total."""
+    return quantity * price
+
+def format_currency(amount):
+    """Format as a USD currency string."""
+    return f"${amount:,.2f}"
+
+def load_csv(filepath):
+    """Load a CSV file and return a pandas DataFrame."""
+    import pandas as pd
+    return pd.read_csv(filepath)
+
+def save_results(df, filepath):
+    """Save a DataFrame to CSV, creating directories if needed."""
+    import os
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    df.to_csv(filepath, index=False)
+    print(f"✅ Saved to {filepath}")
+```
+
+```python main.py
+# main.py
+# Main entry point for the sales analysis
+
+import pandas as pd
+from utils import calculate_total, format_currency, load_csv, save_results
+
+# 1. Load data
+df = load_csv("data/sales.csv")
+print(f"Loaded {len(df)} rows\n")
+
+# 2. Calculate totals using our helper
+df["total"] = df.apply(
+    lambda row: calculate_total(row["quantity"], row["price"]),
+    axis=1
+)
+
+# 3. Print formatted output
+print("Sales Summary:")
+for _, row in df.iterrows():
+    print(f"  {row['product']}: {format_currency(row['total'])}")
+
+# 4. Grand total
+grand_total = df["total"].sum()
+print(f"\nGrand Total: {format_currency(grand_total)}")
+
+# 5. Save results
+save_results(df, "output/sales_with_totals.csv")
+```
+</CodeGroup>
+
+## How Python Resolves Imports
+
+When you write `from utils import calculate_total`, Python:
+
+1. Looks for `utils.py` in the **same folder** as the running script
+2. Runs that file and makes its contents available
+3. Binds the requested names in your current namespace
+
+```python
+# This works if utils.py is in the same folder as main.py
+from utils import calculate_total   # ✅
+
+# This would fail if utils.py is in a subfolder called "helpers/"
+from utils import calculate_total   # ❌ ModuleNotFoundError
+from helpers.utils import calculate_total   # ✅ correct for subfolders
+```
+
+For files in a **parent folder**, you need to add that folder to `sys.path` first (covered in the [Python Paths](/practical-python/python-paths) page).
+
+## Using `__init__.py` for Packages
+
+When you want to group multiple modules into a named **package** (a folder you can import from), add an `__init__.py` file to that folder:
+
+```
+sales-analysis/
+├── main.py
+└── analysis/           ← This folder is now a package
+    ├── __init__.py     ← Makes it importable
+    ├── loader.py
+    └── reporter.py
+```
+
+```python
+# analysis/__init__.py
+# Can be empty, or can re-export key names for convenience
+
+from .loader import load_csv
+from .reporter import format_currency, summarise
+```
+
+```python
+# analysis/loader.py
+import pandas as pd
+
+def load_csv(filepath):
+    return pd.read_csv(filepath)
+```
+
+```python
+# main.py — now you can import from the package
+from analysis import load_csv       # via __init__.py re-export
+from analysis.reporter import summarise  # directly from submodule
+```
+
+<Accordion title="What does __init__.py actually do?">
+  An `__init__.py` file marks a directory as a Python package. Without it, Python won't recognise the folder as something you can import from. The file can be completely empty — its mere presence is enough. You can also put code in it to control what gets exposed when someone does `from mypackage import something`.
+</Accordion>
+
+<Accordion title="Do I always need __init__.py?">
+  In Python 3.3+, so-called "namespace packages" allow importing from folders without `__init__.py` in some cases. However, it's still best practice to include it for any folder you intend to import from. It makes your intentions explicit and avoids subtle edge cases.
+</Accordion>
+
+## Best Practices for Module Naming
+
+<Steps>
+  <Step title="Use lowercase with underscores">
+    Module names should be lowercase and use underscores to separate words. This matches Python's own standard library convention.
+    ```
+    ✅  data_loader.py
+    ✅  api_helpers.py
+    ❌  DataLoader.py
+    ❌  APIHelpers.py
+    ```
+  </Step>
+  <Step title="Keep names short and descriptive">
+    The module name should hint at what it contains. Short names are easier to type in import statements.
+    ```
+    ✅  utils.py, loader.py, reporter.py
+    ❌  my_really_long_helper_utilities_module.py
+    ```
+  </Step>
+  <Step title="Avoid shadowing built-in names">
+    Don't name your files after Python built-ins or popular packages — it will break imports.
+    ```
+    ❌  json.py      ← shadows the built-in json module
+    ❌  os.py        ← shadows the built-in os module
+    ❌  pandas.py    ← shadows the pandas package
+    ```
+  </Step>
+  <Step title="One responsibility per module">
+    Each module should have a clear, single purpose: `loader.py` loads data, `reporter.py` formats output, `validator.py` checks inputs. Avoid dumping unrelated utilities into one giant `helpers.py`.
+  </Step>
+</Steps>
+
+## What You've Accomplished
+
+By splitting code into modules, your projects become significantly more maintainable. You now have:
+
+- **`utils.py`** — a home for reusable functions that any script can import
+- **`main.py`** — a clean orchestration script that reads almost like plain English
+- **`analysis/`** (optional) — a proper package for larger projects with multiple modules
+
+This is exactly the structure used in professional Python projects. As your codebase grows, the same pattern scales — add more modules, organise them into packages, and keep `main.py` as the clear entry point.

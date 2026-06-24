@@ -1,0 +1,290 @@
+---
+title: "Python Modules and Packages: Import Code You Need"
+sidebarTitle: "Importing Modules"
+description: "Understand Python's module and package system, master every import pattern, install external packages, and manage dependencies with requirements.txt."
+---
+
+Python's real power isn't in the language itself — it's in the enormous ecosystem of packages you can pull into any project with a single import statement. Whether you need to manipulate data, call an API, send an email, or train a machine learning model, someone has already written a package for it. This page teaches you exactly how importing works, which patterns to use, and how to manage the packages your project depends on.
+
+## Built-in vs External Packages
+
+<CardGroup cols={2}>
+  <Card title="Built-in Packages" icon="box">
+    Come with every Python installation. No installation needed — just import and use. Examples: `math`, `os`, `json`, `datetime`, `random`, `csv`, `sys`.
+  </Card>
+  <Card title="External Packages" icon="cloud-arrow-down">
+    Downloaded from the internet (PyPI) into your virtual environment. Must be installed with `pip` before you can import them. Examples: `pandas`, `requests`, `openai`, `numpy`.
+  </Card>
+</CardGroup>
+
+## Understanding the Terminology
+
+Before diving into import syntax, let's clarify the vocabulary you'll encounter constantly:
+
+| Term | What it is | Analogy |
+|---|---|---|
+| **Module** | A single `.py` file | A toolbox |
+| **Package** | A folder of modules (with `__init__.py`) | A garage full of toolboxes |
+| **Function** | A reusable block of code (`def`) | A specific tool (hammer, screwdriver) |
+| **Class** | A blueprint for creating objects | Instructions for building a tool |
+
+So when you do `import pandas`, you're pulling in a **package** (a folder of modules). When you call `pd.read_csv()`, you're using a **function** from inside that package.
+
+## Import Patterns
+
+Python gives you several ways to import. Each has its place:
+
+<CodeGroup>
+```python import module
+# Pattern 1: Import the whole module
+import math
+
+result = math.sqrt(16)    # 4.0
+area   = math.pi * 5**2  # 78.54
+
+# You always prefix with the module name.
+# Makes it obvious where functions come from.
+```
+
+```python from module import
+# Pattern 2: Import specific names from a module
+from math import sqrt, pi
+
+result = sqrt(16)   # 4.0 — no prefix needed
+area   = pi * 5**2  # 78.54
+
+# Cleaner to write, but less obvious where names come from
+# in a large file with many imports.
+```
+
+```python import as (alias)
+# Pattern 3: Import with an alias
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.DataFrame({"a": [1, 2, 3]})
+arr = np.array([1, 2, 3])
+plt.plot(arr)
+
+# Conventional aliases — everyone in the Python community
+# uses these. Keeps names short without losing clarity.
+```
+
+```python avoid import *
+# Pattern 4: Import everything — AVOID THIS
+from math import *
+
+# Now sqrt, pi, cos, sin, log ... are all in your namespace.
+# Problems:
+# - It's impossible to tell where a name came from
+# - Names can silently overwrite each other
+# - Tools like linters and IDEs can't help you
+
+# The only exception: quick exploratory scripts or notebooks
+# where you won't share the code.
+```
+</CodeGroup>
+
+<Warning>
+  Avoid `from module import *` in any code you intend to share or maintain. It pollutes your namespace and causes hard-to-trace bugs when two modules export the same name.
+</Warning>
+
+## Built-in Module Examples
+
+These modules ship with Python — no installation required:
+
+<CodeGroup>
+```python math & random
+import math
+import random
+
+# Math
+print(math.sqrt(144))        # 12.0
+print(math.floor(3.7))       # 3
+print(math.ceil(3.2))        # 4
+print(round(math.pi, 4))     # 3.1416
+
+# Random
+print(random.randint(1, 10))               # Random int 1–10
+print(random.choice(["apple", "banana"]))  # Random element
+random.shuffle([1, 2, 3, 4, 5])           # Shuffle in place
+```
+
+```python datetime
+import datetime
+
+today = datetime.date.today()
+now   = datetime.datetime.now()
+
+print(today)                          # 2024-01-15
+print(now.strftime("%Y-%m-%d %H:%M")) # 2024-01-15 14:30
+
+# Date arithmetic
+tomorrow = today + datetime.timedelta(days=1)
+week_ago = today - datetime.timedelta(weeks=1)
+```
+
+```python os & json
+import os
+import json
+
+# os — file system operations
+print(os.getcwd())                   # Current directory
+os.makedirs("output", exist_ok=True) # Create folder
+files = os.listdir(".")              # List files
+
+# json — encode and decode JSON
+data = {"name": "Alice", "age": 30, "active": True}
+json_str = json.dumps(data, indent=2) # Python → JSON string
+parsed   = json.loads(json_str)        # JSON string → Python
+
+# Read / write JSON files
+with open("config.json", "w") as f:
+    json.dump(data, f, indent=2)
+
+with open("config.json", "r") as f:
+    loaded = json.load(f)
+```
+</CodeGroup>
+
+## Installing External Packages
+
+External packages live on [PyPI](https://pypi.org) and are installed with `pip`:
+
+```bash
+# Install a single package
+pip install requests
+
+# Install a specific version
+pip install requests==2.31.0
+
+# Install multiple packages at once
+pip install pandas numpy matplotlib
+
+# Upgrade an existing package
+pip install --upgrade pandas
+```
+
+<Warning>
+  **Always activate your virtual environment before installing.** This is the single biggest source of `ModuleNotFoundError` after installing a package. If you install into the wrong environment, Python can't find the package. See the [Virtual Environments](/getting-started/virtual-environments) page to set one up.
+</Warning>
+
+After installation, import and use the package normally:
+
+```python
+import requests
+
+response = requests.get("https://api.example.com/data")
+data = response.json()
+print(data)
+
+import pandas as pd
+
+df = pd.DataFrame({
+    "name": ["Alice", "Bob", "Charlie"],
+    "age":  [25, 30, 35],
+    "city": ["NYC", "LA", "Chicago"],
+})
+print(df)
+```
+
+## Managing Dependencies: requirements.txt
+
+When you share your project with others, they need to know which packages to install. The standard approach is a `requirements.txt` file at the root of your project.
+
+<Steps>
+  <Step title="Generate requirements.txt">
+    With your virtual environment activated and all packages installed, run:
+
+    ```bash
+    pip freeze > requirements.txt
+    ```
+
+    This produces a file like:
+
+    ```
+    certifi==2024.2.2
+    charset-normalizer==3.3.2
+    idna==3.6
+    pandas==2.2.0
+    requests==2.31.0
+    urllib3==2.2.0
+    ```
+  </Step>
+  <Step title="Commit the file">
+    Add `requirements.txt` to version control (Git). Anyone cloning your repo will have everything they need to reproduce your environment.
+  </Step>
+  <Step title="Install from requirements.txt">
+    When someone else (or you, on a new machine) sets up the project:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+    This installs all listed packages at the exact versions you specified — ensuring a reproducible environment.
+  </Step>
+</Steps>
+
+<Tip>
+  Later in the course, we'll explore `uv` — a modern, much faster alternative to pip that handles virtual environments and dependencies together. For now, `pip` + `requirements.txt` is the universal standard.
+</Tip>
+
+## Finding the Right Package
+
+With hundreds of thousands of packages on PyPI, how do you find the one you need?
+
+<CardGroup cols={2}>
+  <Card title="PyPI" icon="python" href="https://pypi.org">
+    The official Python Package Index. Search by name or keyword. Shows download stats, documentation links, and version history.
+  </Card>
+  <Card title="Awesome Python" icon="star" href="https://github.com/vinta/awesome-python">
+    A curated, categorised list of the best Python packages by use case. Great starting point when you're not sure what to search for.
+  </Card>
+  <Card title="Ask an AI" icon="robot">
+    Ask ChatGPT or Claude: *"What's the best Python package for reading Excel files?"* or *"Compare pandas vs polars for large-scale data analysis."* AI assistants are excellent at explaining trade-offs and recommending options.
+  </Card>
+  <Card title="Google Search" icon="magnifying-glass">
+    Search *"Python package for [task]"*. Stack Overflow answers and Real Python tutorials will point you to the community consensus quickly.
+  </Card>
+</CardGroup>
+
+## Common Mistakes
+
+<Accordion title="ModuleNotFoundError after installing a package">
+  You installed the package but Python still can't find it. Almost always means you installed into a different Python environment than the one running your script.
+
+  ```python
+  # Check which Python is running your script
+  import sys
+  print(sys.executable)   # Full path to the Python interpreter
+  ```
+
+  **Fix:** Activate the correct virtual environment, then re-install.
+</Accordion>
+
+<Accordion title="Naming your file the same as a package">
+  If you create a file called `requests.py`, Python will import *your* file instead of the `requests` package — even after you've installed it.
+
+  ```
+  ❌  requests.py    ← shadows the requests package
+  ❌  pandas.py      ← shadows pandas
+  ❌  os.py          ← shadows the built-in os module
+
+  ✅  api_client.py
+  ✅  data_loader.py
+  ```
+</Accordion>
+
+<Accordion title="Overwriting a module variable with a regular variable">
+  ```python
+  import datetime
+
+  # You import datetime...
+  datetime = "2024-01-01"  # ...then overwrite it with a string!
+
+  datetime.date.today()    # AttributeError: 'str' has no attribute 'date'
+  ```
+
+  **Fix:** Use a different variable name, e.g. `date_string = "2024-01-01"`.
+</Accordion>

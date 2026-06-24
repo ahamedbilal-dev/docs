@@ -1,0 +1,200 @@
+---
+title: "Python Dictionaries: Store Data as Key-Value Pairs"
+sidebarTitle: "Dictionaries"
+description: "Learn how to create, access, and modify Python dictionaries — the ideal data structure for storing and retrieving labeled, structured data."
+---
+
+Dictionaries are one of Python's most powerful built-in data structures. Where a list stores items by position (index 0, 1, 2…), a dictionary stores items by **name** — specifically, by a key. This makes them perfect for representing real-world objects like a user profile, a product in a catalog, or a configuration file, where each piece of information has a meaningful label.
+
+## What Are Dictionaries?
+
+A dictionary stores data as **key-value pairs**. Think of a real dictionary: you look up a word (the key) to find its definition (the value). Real-world examples:
+
+- **Phone book** — name → phone number
+- **Menu** — dish → price
+- **User profile** — field name → field value
+
+Each key must be unique within a dictionary. Values can be any Python type.
+
+## Creating Dictionaries
+
+```python
+# Empty dictionary
+my_dict = {}
+
+# Dictionary with data
+person = {
+    "name": "Alice",
+    "age": 30,
+    "city": "New York"
+}
+
+# Using dict() constructor
+scores = dict(math=95, english=87, science=92)
+```
+
+<Note>
+  Dictionaries use curly braces `{}` with key-value pairs separated by colons. Keys must be unique — if you define the same key twice, the second value overwrites the first.
+</Note>
+
+## Accessing Values
+
+<Tabs>
+  <Tab title="Direct access []">
+    Access a value by its key using square brackets. Raises a `KeyError` if the key doesn't exist.
+
+    ```python
+    person = {"name": "Alice", "age": 30, "city": "New York"}
+
+    print(person["name"])   # "Alice"
+    print(person["age"])    # 30
+    ```
+  </Tab>
+  <Tab title=".get() — safer">
+    Use `.get()` to safely retrieve a value. Returns `None` (or a default you specify) if the key is missing — no error.
+
+    ```python
+    person = {"name": "Alice", "age": 30}
+
+    print(person.get("city"))            # None — no error
+    print(person.get("city", "Unknown")) # "Unknown" — custom default
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+  Prefer `.get()` when you're not certain a key exists. It prevents your program from crashing with a `KeyError` and lets you specify a sensible fallback value.
+</Tip>
+
+## Modifying Dictionaries
+
+Dictionaries are mutable — you can add, update, and remove entries at any time:
+
+```python
+person = {"name": "Alice", "age": 30}
+
+# Add a new key-value pair
+person["email"] = "alice@email.com"
+
+# Update an existing value
+person["age"] = 31
+
+# Remove by key (raises KeyError if missing)
+del person["email"]
+
+# Remove and return the value
+age = person.pop("age")   # age = 31
+
+# Remove all items
+person.clear()
+```
+
+## Dictionary Methods
+
+```python
+person = {"name": "Alice", "age": 30, "city": "New York"}
+
+# View all keys, values, or both
+print(person.keys())    # dict_keys(['name', 'age', 'city'])
+print(person.values())  # dict_values(['Alice', 30, 'New York'])
+print(person.items())   # dict_items([('name', 'Alice'), ('age', 30), ...])
+
+# Check if a key exists
+if "name" in person:
+    print("Name found!")
+
+# Update multiple values at once
+person.update({"age": 31, "job": "Engineer"})
+print(person)
+# {"name": "Alice", "age": 31, "city": "New York", "job": "Engineer"}
+```
+
+<CardGroup cols={2}>
+  <Card title=".keys()" icon="key">
+    Returns a view of all keys in the dictionary. Useful for looping.
+  </Card>
+  <Card title=".values()" icon="list">
+    Returns a view of all values. Useful when you only need the data, not the labels.
+  </Card>
+  <Card title=".items()" icon="table">
+    Returns key-value pairs as tuples. Use this when you need both in a loop.
+  </Card>
+  <Card title=".update()" icon="arrows-rotate">
+    Merges another dictionary (or keyword arguments) into the current one, adding new keys and overwriting existing ones.
+  </Card>
+</CardGroup>
+
+### Looping Over a Dictionary
+
+```python
+person = {"name": "Alice", "age": 30, "city": "New York"}
+
+# Loop over keys
+for key in person:
+    print(key)
+
+# Loop over values
+for value in person.values():
+    print(value)
+
+# Loop over key-value pairs
+for key, value in person.items():
+    print(f"{key}: {value}")
+```
+
+## Nested Dictionaries
+
+Dictionaries can contain other dictionaries — useful for representing hierarchical data:
+
+```python
+students = {
+    "alice": {"age": 20, "grade": "A"},
+    "bob":   {"age": 21, "grade": "B"},
+    "charlie": {"age": 19, "grade": "A"}
+}
+
+# Access nested data
+print(students["alice"]["grade"])   # "A"
+print(students["bob"]["age"])       # 21
+```
+
+## Common Mistakes
+
+<Accordion title="KeyError when key doesn't exist">
+  Accessing a key that isn't in the dictionary with `[]` raises a `KeyError`. Use `.get()` for safe access.
+
+  ```python
+  # Wrong
+  person = {"name": "Alice"}
+  print(person["age"])   # KeyError!
+
+  # Right
+  print(person.get("age", 0))   # Returns 0 if key is missing
+  ```
+</Accordion>
+
+<Accordion title="Using mutable types as keys">
+  Dictionary keys must be **immutable** (strings, numbers, tuples). Lists and other mutable types cannot be keys.
+
+  ```python
+  # Wrong — lists can't be dictionary keys
+  bad_dict = {[1, 2]: "value"}   # TypeError!
+
+  # Right — use an immutable type
+  good_dict = {(1, 2): "value"}  # Tuple is OK
+  good_dict = {"1,2": "value"}   # String is OK
+  ```
+</Accordion>
+
+<Accordion title="Confusing {} for an empty set">
+  An empty `{}` creates an empty **dictionary**, not a set. Use `set()` to create an empty set.
+
+  ```python
+  empty_dict = {}         # Dictionary
+  empty_set = set()       # Set — use this!
+  ```
+</Accordion>
+
+<Accordion title="Assuming insertion order (Python < 3.7)">
+  In Python 3.7+, dictionaries maintain insertion order. In earlier versions, they did not. If you need guaranteed ordering in older Python, use `collections.OrderedDict`.
+</Accordion>

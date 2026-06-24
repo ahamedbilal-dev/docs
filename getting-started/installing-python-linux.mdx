@@ -1,0 +1,288 @@
+---
+title: "Install Python on Linux: Step-by-Step Guide"
+sidebarTitle: "Linux"
+description: "Install or update Python 3 on Linux using your distribution's package manager, with guides for Ubuntu, Fedora, Arch, openSUSE, and Alpine."
+---
+
+Most Linux distributions ship with Python 3 already installed — it's often required by system tools. That said, the pre-installed version may be older than what you need. This guide walks you through checking, installing, and verifying Python across the most popular distributions.
+
+<Steps>
+
+  <Step title="Check Your Existing Python">
+    Open a terminal and run:
+
+    ```bash
+    python3 --version
+    ```
+
+    If you see a recent Python 3 version (3.11 or newer), you may already be ready. If the version is outdated or the command isn't found, continue to the next step.
+
+    <Note>
+      Linux uses `python3` to distinguish from the older Python 2 that some legacy system tools still reference. Always use `python3` unless you've explicitly configured `python` as an alias.
+    </Note>
+  </Step>
+
+  <Step title="Install or Update Python">
+    Choose your Linux distribution and follow the corresponding commands:
+
+    <Tabs>
+      <Tab title="Ubuntu / Debian">
+        **Update package lists:**
+
+        ```bash
+        sudo apt update
+        ```
+
+        **Install Python and essential tools:**
+
+        ```bash
+        sudo apt install python3 python3-pip python3-venv
+        ```
+
+        **Install development headers** (required for compiling some packages):
+
+        ```bash
+        sudo apt install python3-dev build-essential
+        ```
+
+        **For the latest Python version** (if your distro ships an older one):
+
+        ```bash
+        # Add the deadsnakes PPA
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt update
+
+        # Install a specific version (example: 3.13)
+        sudo apt install python3.13 python3.13-venv python3.13-dev
+        ```
+      </Tab>
+
+      <Tab title="Fedora / RHEL / CentOS">
+        **Install Python and pip:**
+
+        ```bash
+        sudo dnf install python3 python3-pip python3-devel
+        ```
+
+        **Install compilation tools:**
+
+        ```bash
+        sudo dnf groupinstall "Development Tools"
+        ```
+
+        **For newer Python versions:**
+
+        ```bash
+        # Check available versions
+        dnf search python3
+
+        # Install a specific version
+        sudo dnf install python3.13
+        ```
+      </Tab>
+
+      <Tab title="Arch / Manjaro">
+        Python is usually pre-installed on Arch-based systems. If needed:
+
+        ```bash
+        # Install Python and pip
+        sudo pacman -S python python-pip
+        ```
+
+        **Install base development tools:**
+
+        ```bash
+        sudo pacman -S base-devel
+        ```
+
+        **For a specific version from AUR:**
+
+        ```bash
+        # Search available versions
+        pacman -Ss python3
+
+        # Install from AUR
+        yay -S python313
+        ```
+      </Tab>
+
+      <Tab title="openSUSE">
+        **Install Python and pip:**
+
+        ```bash
+        sudo zypper install python3 python3-pip python3-devel
+        ```
+
+        **Install development pattern:**
+
+        ```bash
+        sudo zypper install -t pattern devel_basis
+        ```
+      </Tab>
+
+      <Tab title="Alpine">
+        **Install Python, pip, and dev headers:**
+
+        ```bash
+        apk add python3 py3-pip python3-dev
+        ```
+
+        **Install build tools:**
+
+        ```bash
+        apk add build-base
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Verify the Installation">
+    After installation, confirm both Python and pip are available:
+
+    ```bash
+    python3 --version
+    pip3 --version
+    ```
+
+    You should see version numbers printed for both tools.
+  </Step>
+
+  <Step title="Test Python Interactive Mode">
+    Launch the Python interpreter to make sure everything works:
+
+    1. Start Python:
+
+    ```bash
+    python3
+    ```
+
+    2. You'll see the Python prompt:
+
+    ```
+    Python 3.13.5 (main, Jul 29 2025, 12:03:01) [GCC 11.2.0] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    ```
+
+    3. Run a quick test:
+
+    ```python
+    print("Hello from Linux!")
+    ```
+
+    4. Exit the interpreter:
+
+    ```python
+    exit()
+    ```
+
+    Or press `Ctrl + D`.
+  </Step>
+
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="python3: command not found">
+    Python isn't installed yet. Use your package manager to install it:
+
+    ```bash
+    # Ubuntu/Debian
+    sudo apt update && sudo apt install python3
+
+    # Fedora
+    sudo dnf install python3
+
+    # Arch
+    sudo pacman -S python
+    ```
+  </Accordion>
+
+  <Accordion title="pip3: command not found">
+    pip wasn't installed alongside Python. Fix it with one of these approaches:
+
+    ```bash
+    # Ubuntu/Debian
+    sudo apt install python3-pip
+
+    # Fedora
+    sudo dnf install python3-pip
+
+    # Using Python's built-in bootstrap
+    python3 -m ensurepip
+    ```
+  </Accordion>
+
+  <Accordion title="Permission denied when installing packages">
+    **For system packages** — always use `sudo`:
+
+    ```bash
+    sudo apt install python3-pip
+    ```
+
+    **For pip packages** — install in your user directory to avoid needing root:
+
+    ```bash
+    pip3 install --user package-name
+    ```
+
+    **Best practice** — use virtual environments to sidestep permission issues entirely (covered in a later section of this course).
+  </Accordion>
+
+  <Accordion title="Outdated Python version from your distribution">
+    If your distribution's package manager doesn't offer a recent enough Python, you have several options:
+
+    **Option 1 — deadsnakes PPA (Ubuntu/Debian):**
+
+    ```bash
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install python3.13
+    ```
+
+    **Option 2 — Compile from source:**
+
+    ```bash
+    # Install build dependencies
+    sudo apt install build-essential zlib1g-dev libncurses5-dev \
+      libgdbm-dev libnss3-dev libssl-dev libreadline-dev \
+      libffi-dev libsqlite3-dev wget libbz2-dev
+
+    # Download and compile Python 3.13.5
+    wget https://www.python.org/ftp/python/3.13.5/Python-3.13.5.tgz
+    tar -xf Python-3.13.5.tgz
+    cd Python-3.13.5
+    ./configure --enable-optimizations
+    make -j $(nproc)
+    sudo make altinstall
+    ```
+
+    **Option 3** — Use **pyenv** for flexible Python version management (recommended for advanced users).
+  </Accordion>
+
+  <Accordion title="externally-managed-environment error from pip">
+    Modern Linux distributions (Ubuntu 23.04+, Debian Bookworm+) prevent pip from installing packages system-wide to protect system tools. This is by design.
+
+    **Recommended — use a virtual environment:**
+
+    ```bash
+    python3 -m venv myenv
+    source myenv/bin/activate
+    pip install package-name
+    ```
+
+    **Install in your user directory:**
+
+    ```bash
+    pip3 install --user package-name
+    ```
+
+    **Use pipx for standalone applications:**
+
+    ```bash
+    sudo apt install pipx
+    pipx install application-name
+    ```
+  </Accordion>
+</AccordionGroup>

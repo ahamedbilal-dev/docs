@@ -1,0 +1,197 @@
+---
+title: "Python Tuples: Immutable Sequences for Fixed Data"
+sidebarTitle: "Tuples"
+description: "Learn how Python tuples work — immutable ordered sequences ideal for fixed data, multiple return values, dictionary keys, and tuple unpacking."
+---
+
+Tuples are like lists with one crucial difference: once created, they **cannot be changed**. This immutability isn't a limitation — it's a feature. When you know a collection of values should stay fixed (coordinates, RGB colors, database records), a tuple communicates that intent clearly and provides built-in protection against accidental modification. Tuples are also faster than lists and unlock some elegant Python patterns like tuple unpacking and multiple return values.
+
+## What Are Tuples?
+
+A tuple is an **ordered, immutable sequence** of values. "Immutable" means once you create it, you can't add, remove, or change its items. Think of a tuple as a sealed container — the contents are fixed.
+
+Common use cases for tuples include:
+
+- **Coordinates** — `(x, y)` or `(latitude, longitude)`
+- **RGB colors** — `(255, 0, 0)` for red
+- **Database records** — a row of data that shouldn't change
+- **Function return values** — returning multiple results at once
+
+## Creating Tuples
+
+```python
+# Empty tuple
+empty = ()
+
+# Tuple with items
+point = (3, 5)
+colors = ("red", "green", "blue")
+
+# Mixed types
+record = ("Alice", 30, "New York")
+
+# Without parentheses (implicit tuple)
+coordinates = 10, 20   # Same as (10, 20)
+```
+
+<Warning>
+  **Single-item tuples need a trailing comma!** Without it, Python thinks the parentheses are just grouping — not a tuple.
+
+  ```python
+  single = (42,)    # This IS a tuple
+  not_tuple = (42)  # This is just the integer 42
+
+  print(type(single))     # <class 'tuple'>
+  print(type(not_tuple))  # <class 'int'>
+  ```
+</Warning>
+
+## Accessing Items
+
+Tuples support the same indexing and slicing as lists:
+
+```python
+colors = ("red", "green", "blue")
+
+# Positive indexing
+print(colors[0])     # "red"
+print(colors[1])     # "green"
+
+# Negative indexing
+print(colors[-1])    # "blue"
+
+# Slicing
+print(colors[0:2])   # ("red", "green")
+print(colors[1:])    # ("green", "blue")
+```
+
+## Why Use Tuples?
+
+<CardGroup cols={2}>
+  <Card title="Protect data from changes" icon="lock">
+    Tuples are immutable — if you store settings or constants in a tuple, they can't be accidentally modified later in your code.
+  </Card>
+  <Card title="Faster than lists" icon="bolt">
+    Tuples use less memory and are slightly faster to create and iterate over. For fixed data, they're the more efficient choice.
+  </Card>
+  <Card title="Use as dictionary keys" icon="key">
+    Because tuples are immutable, they can be used as dictionary keys — lists cannot.
+    ```python
+    locations = {(40.7, -74.0): "New York"}
+    ```
+  </Card>
+  <Card title="Multiple return values" icon="arrow-right-from-bracket">
+    Functions that return multiple values actually return a tuple, making it easy to unpack the results cleanly.
+    ```python
+    def get_dimensions():
+        return 1920, 1080
+    ```
+  </Card>
+</CardGroup>
+
+## Tuple Packing and Unpacking
+
+**Packing** is creating a tuple by grouping values together. **Unpacking** is assigning those values to separate variables in one step — one of Python's most elegant features.
+
+```python
+# Packing
+point = (3, 5)
+
+# Unpacking
+x, y = point
+print(x)   # 3
+print(y)   # 5
+
+# Multiple assignment (implicit packing + unpacking)
+a, b, c = 1, 2, 3
+
+# Swap variables elegantly — no temp variable needed!
+x, y = y, x
+```
+
+<Tip>
+  The swap trick `x, y = y, x` works because Python evaluates the right side completely before assigning. It's idiomatic Python and much cleaner than using a temporary variable.
+</Tip>
+
+## Converting Between List and Tuple
+
+It's easy to move between lists and tuples when you need to:
+
+```python
+# List → Tuple (freeze it)
+my_list = [1, 2, 3]
+my_tuple = tuple(my_list)   # (1, 2, 3)
+
+# Tuple → List (make it mutable)
+my_tuple = (1, 2, 3)
+my_list = list(my_tuple)    # [1, 2, 3]
+my_list.append(4)           # Now you can modify it
+my_tuple = tuple(my_list)   # Freeze it again
+```
+
+This pattern is useful when you need to temporarily modify a tuple: convert it to a list, make your changes, then convert back.
+
+## Common Mistakes
+
+<Accordion title="Forgetting the comma in a single-item tuple">
+  This is the most common tuple mistake. Without the comma, Python doesn't create a tuple.
+
+  ```python
+  # Wrong — not a tuple
+  single = (42)
+  print(type(single))   # <class 'int'>
+
+  # Right — include the trailing comma
+  single = (42,)
+  print(type(single))   # <class 'tuple'>
+  ```
+</Accordion>
+
+<Accordion title="Trying to modify a tuple">
+  Tuples are immutable. Any attempt to change an item will raise a `TypeError`.
+
+  ```python
+  # Wrong
+  point = (3, 5)
+  point[0] = 4   # TypeError: 'tuple' object does not support item assignment
+
+  # Right — create a new tuple
+  point = (4, point[1])
+
+  # Or: convert, modify, convert back
+  temp = list(point)
+  temp[0] = 4
+  point = tuple(temp)
+  ```
+</Accordion>
+
+<Accordion title="Using a tuple when you need a mutable collection">
+  If you need to add, remove, or change items dynamically, use a list. Tuples are for data that won't change.
+
+  ```python
+  # Wrong — can't append to a tuple
+  items = (1, 2, 3)
+  items.append(4)   # AttributeError!
+
+  # Right — use a list
+  items = [1, 2, 3]
+  items.append(4)   # Works perfectly
+  ```
+</Accordion>
+
+<Accordion title="Unpacking with the wrong number of variables">
+  When unpacking a tuple, the number of variables on the left must exactly match the number of items in the tuple.
+
+  ```python
+  point = (3, 5)
+
+  # Wrong — too few variables
+  x = point        # x gets the whole tuple, not just 3
+
+  # Wrong — too many variables
+  x, y, z = point  # ValueError: not enough values to unpack
+
+  # Right
+  x, y = point
+  ```
+</Accordion>

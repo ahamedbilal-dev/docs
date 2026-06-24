@@ -1,0 +1,224 @@
+---
+title: "Python If Statements: Make Decisions in Your Code"
+sidebarTitle: "If Statements"
+description: "Learn how to use Python if statements to run code conditionally — including if-else, elif chains, multiple conditions, and nested logic."
+---
+
+If statements are Python's way of adding decision-making to your programs. Just like real life — where you grab an umbrella *if* it's raining or charge your phone *if* the battery is low — Python lets you run different blocks of code depending on whether a condition is true or false. Mastering if statements is one of the most important steps in learning to write programs that actually *respond* to data.
+
+## What Are If Statements?
+
+An if statement checks whether a condition is `True` or `False`, then acts accordingly. Here are some everyday examples translated into programming logic:
+
+- **IF** it's raining **THEN** take an umbrella
+- **IF** battery < 20% **THEN** charge phone
+- **IF** password correct **THEN** allow access
+
+Every if statement follows the same pattern: evaluate a condition, and if it's true, run the indented code block beneath it.
+
+## Basic If Statement
+
+The simplest form checks one condition and runs code only when it's true:
+
+```python
+age = 18
+
+if age >= 18:
+    print("You can vote!")
+    print("You're an adult")
+```
+
+<Steps>
+  <Step title="Check the condition">
+    Python evaluates `age >= 18`. Since `age` is `18`, this is `True`.
+  </Step>
+  <Step title="Run the indented block">
+    Both `print` statements execute because they belong to the `if` block.
+  </Step>
+  <Step title="Skip if False">
+    If the condition were `False` (e.g., `age = 16`), Python would skip the entire indented block.
+  </Step>
+</Steps>
+
+<Note>
+  The colon `:` at the end of the `if` line and the indentation of the code block are **required**. They tell Python exactly what code belongs to the if statement.
+</Note>
+
+## If-Else Statements
+
+Use `else` to handle both the `True` **and** `False` cases:
+
+```python
+temperature = 25
+
+if temperature > 30:
+    print("It's hot!")
+else:
+    print("Nice weather!")
+```
+
+The `else` block runs automatically when the `if` condition is `False`. You don't write any condition after `else` — it's the catch-all for everything that didn't match.
+
+## If-Elif-Else Chains
+
+When you have more than two possible outcomes, use `elif` (short for "else if") to check multiple conditions in sequence:
+
+```python
+score = 85
+
+if score >= 90:
+    print("A - Excellent!")
+elif score >= 80:
+    print("B - Good job!")
+elif score >= 70:
+    print("C - Keep it up!")
+else:
+    print("F - Need improvement")
+```
+
+<Tip>
+  Python checks each condition **in order** and runs only the first one that is `True`. Once a match is found, the rest are skipped. Always put more specific conditions first — if you put `score >= 70` before `score >= 80`, a score of `85` would match the first condition and never reach the second.
+</Tip>
+
+**Why use `elif` instead of multiple `if` statements?**
+
+```python
+# Using elif — stops at first match
+score = 95
+if score >= 90:
+    print("A")        # This runs
+elif score >= 80:
+    print("B")        # This is skipped
+
+# Using separate ifs — checks every condition
+if score >= 90:
+    print("A")        # This runs
+if score >= 80:
+    print("B")        # This ALSO runs — probably not what you want!
+```
+
+## Multiple Conditions
+
+Combine conditions using `and`, `or`, and `not` to build more expressive logic:
+
+<Tabs>
+  <Tab title="and">
+    **Both** conditions must be `True`:
+    ```python
+    age = 25
+    has_license = True
+
+    if age >= 18 and has_license:
+        print("You can drive!")
+    ```
+  </Tab>
+  <Tab title="or">
+    **At least one** condition must be `True`:
+    ```python
+    weekend = True
+    holiday = False
+
+    if weekend or holiday:
+        print("No work today!")
+    ```
+  </Tab>
+  <Tab title="not">
+    **Reverses** the condition — `True` becomes `False` and vice versa:
+    ```python
+    raining = False
+
+    if not raining:
+        print("Let's go outside!")
+    ```
+  </Tab>
+</Tabs>
+
+You can also combine all three in one condition:
+
+```python
+age = 20
+has_id = True
+is_banned = False
+
+if age >= 18 and has_id and not is_banned:
+    print("Welcome in!")
+```
+
+## Nested If Statements
+
+You can place if statements inside other if statements to check conditions in layers:
+
+```python
+has_ticket = True
+age = 15
+
+if has_ticket:
+    if age >= 18:
+        print("Enjoy the movie!")
+    else:
+        print("Need adult supervision")
+else:
+    print("Buy a ticket first")
+```
+
+<Note>
+  Nested if statements add an extra level of indentation for each layer. While nesting is powerful, try not to go more than two or three levels deep — deeply nested code becomes hard to read.
+</Note>
+
+## Common Mistakes
+
+<Accordion title="Forgetting the colon">
+  The colon `:` is required at the end of every `if`, `elif`, and `else` line.
+
+  ```python
+  # Wrong — SyntaxError
+  if x > 5
+      print("Big")
+
+  # Right
+  if x > 5:
+      print("Big")
+  ```
+</Accordion>
+
+<Accordion title="Using = instead of ==">
+  A single `=` is **assignment** (setting a value). A double `==` is **comparison** (checking equality).
+
+  ```python
+  # Wrong — SyntaxError (assignment inside if)
+  if x = 5:
+      print("Five")
+
+  # Right — comparison
+  if x == 5:
+      print("Five")
+  ```
+</Accordion>
+
+<Accordion title="Wrong indentation">
+  Python uses indentation to define code blocks. Code inside an `if` statement must be indented consistently (4 spaces is standard).
+
+  ```python
+  # Wrong — IndentationError
+  if True:
+  print("Hello")
+
+  # Right
+  if True:
+      print("Hello")
+  ```
+</Accordion>
+
+<Accordion title="Confusing and / or logic">
+  It's easy to mix up `and` and `or`. Always ask yourself: do **all** conditions need to be true (`and`), or is **one** enough (`or`)?
+
+  ```python
+  # This only grants access if BOTH are true
+  if is_admin and is_logged_in:
+      print("Access granted")
+
+  # This grants access if EITHER is true
+  if is_admin or is_moderator:
+      print("Access granted")
+  ```
+</Accordion>

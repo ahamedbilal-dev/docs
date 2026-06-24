@@ -1,0 +1,165 @@
+---
+title: "Using Interactive Python Mode in VS Code"
+sidebarTitle: "Interactive Python"
+description: "Run Python line-by-line with Shift+Enter in VS Code's interactive window — the fastest way to learn, explore data, and build AI applications."
+---
+
+Interactive Python mode is arguably the most productive way to write Python — especially for learning and AI work. Instead of running an entire file and waiting to see results, you execute individual lines or small blocks instantly and watch the output appear in a side panel. This page shows you how to set it up and get the most out of it.
+
+## What Is Interactive Python Mode?
+
+Think of it like cooking and tasting as you go, rather than waiting until the whole meal is done. Interactive mode gives you:
+
+- The **organisation** of a `.py` file (clean, version-controllable code)
+- The **immediacy** of a Jupyter notebook (instant output per cell)
+- **Persistent variables** — values you define stay in memory across executions
+
+When you're working with AI models, processing data, or exploring an API response, running a whole file on every change is slow and frustrating. Interactive mode lets you build up code incrementally, inspecting results at each step.
+
+<Steps>
+  <Step title="Install the Jupyter Extension">
+    Interactive Python is powered by the Jupyter extension from Microsoft.
+
+    1. Click the **Extensions** icon in the Activity Bar (four squares).
+    2. Search for **Jupyter**.
+    3. Select the one published by **Microsoft** and click **Install**.
+
+    <Note>
+      If you installed the **Python** extension earlier from Microsoft, Jupyter may already be present — check your installed extensions list before searching.
+    </Note>
+  </Step>
+
+  <Step title="Install the IPython Kernel">
+    The Jupyter extension needs the `ipykernel` package to execute Python interactively. Make sure your virtual environment is activated first (you should see `(.venv)` in your terminal prompt), then run:
+
+    ```bash
+    pip install ipykernel
+    ```
+
+    You'll see download and installation output ending with:
+
+    ```
+    Successfully installed ipykernel-x.x.x
+    ```
+
+    <Warning>
+      Install `ipykernel` inside your virtual environment, not into system Python. Always confirm you see `(.venv)` in the terminal prompt before running pip commands.
+    </Warning>
+  </Step>
+
+  <Step title="Enable the Interactive Window Setting">
+    Tell VS Code to send code to the interactive window when you press `Shift + Enter`:
+
+    1. Open Settings with `Ctrl/Cmd + ,`.
+    2. Search for **execute selection**.
+    3. Find **Jupyter › Interactive Window › Text Editor: Execute Selection**.
+    4. Check the box to enable it.
+
+    <Tip>
+      This single setting is what makes `Shift + Enter` open the interactive panel instead of running the whole file. Without it, `Shift + Enter` does nothing special.
+    </Tip>
+  </Step>
+
+  <Step title="Create Your First Interactive File">
+    Create a new file called `interactive_demo.py` and type this code:
+
+    ```python
+    # Let's explore interactive mode
+    name = "Python Learner"
+    print(f"Hello, {name}!")
+
+    # Some data to work with
+    numbers = [1, 2, 3, 4, 5]
+    print(f"Numbers: {numbers}")
+
+    # Calculate something
+    total = sum(numbers)
+    print(f"Total: {total}")
+    ```
+
+    Now place your cursor on the first line and press **`Shift + Enter`**.
+  </Step>
+
+  <Step title="Run Code Interactively">
+    When you press `Shift + Enter`:
+
+    1. An **Interactive window** opens on the right side of VS Code.
+    2. The current line (or selected block) executes immediately.
+    3. Output appears in the interactive panel — not the terminal.
+    4. Your cursor advances to the next line, ready for the next execution.
+
+    <Tabs>
+      <Tab title="Run a Single Line">
+        Place your cursor anywhere on a line and press `Shift + Enter`. That one line executes and the cursor moves to the next line. Keep pressing to step through your file.
+      </Tab>
+      <Tab title="Run a Selected Block">
+        Highlight multiple lines with your mouse or keyboard, then press `Shift + Enter`. The entire selection runs as one cell.
+      </Tab>
+      <Tab title="Run the Whole File">
+        To run the entire file at once (as a single cell), use the **Run All** button at the top of the Interactive window — or just press `Ctrl + F5` as usual.
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Understand Persistent Variables">
+    One of interactive mode's most powerful features: variables stay in memory between executions.
+
+    ```python
+    # Run this first (Shift+Enter)
+    message = "Hello"
+
+    # Then run this separately — it still knows about `message`
+    print(message + " World!")
+
+    # Modify it
+    message = message.upper()
+    print(message)  # HELLO
+    ```
+
+    Each execution adds to a shared session. You can define a variable in one run and reference it in a later run — just like a Jupyter notebook cell.
+
+    <Warning>
+      Because variables persist, the order you run cells matters. If you restart the kernel (the circular arrow button in the interactive panel) all variables are cleared and you start fresh.
+    </Warning>
+  </Step>
+</Steps>
+
+## Interactive Mode vs Running the Whole File
+
+| | Interactive Mode (`Shift+Enter`) | Run File (`Ctrl+F5`) |
+|---|---|---|
+| **Best for** | Exploring, learning, data work | Final testing, scripts, automation |
+| **Output location** | Interactive panel (right side) | Terminal (bottom) |
+| **Variables** | Persist between runs | Reset on every run |
+| **Speed** | Fast iteration on small pieces | Full execution every time |
+
+## Tips for Using Interactive Mode Effectively
+
+<CardGroup cols={2}>
+  <Card title="Use # %% Cell Markers" icon="table-cells">
+    Add `# %%` on its own line to define a "cell" — a named block of code you can run all at once. VS Code highlights the cell and adds a **Run Cell** button above it, similar to a Jupyter notebook.
+
+    ```python
+    # %%
+    # Data loading cell
+    data = [1, 2, 3, 4, 5]
+
+    # %%
+    # Analysis cell
+    print(sum(data))
+    ```
+  </Card>
+  <Card title="Inspect Variables" icon="magnifying-glass">
+    After running code, click the **Variables** button in the interactive panel toolbar. VS Code shows a live table of every variable in memory — its name, type, and value. Invaluable when working with lists, dictionaries, or DataFrames.
+  </Card>
+  <Card title="Clear Output When Needed" icon="broom">
+    Click the **Clear All** button (eraser icon) in the interactive panel to wipe the output history. This does **not** clear variables from memory — use **Restart Kernel** for a true fresh start.
+  </Card>
+  <Card title="Keep Files Organised" icon="folder">
+    Interactive mode works best when your `.py` file is clean and intentional. Write code you'd actually want to keep, and use interactive execution to verify each section works before moving on. Avoid pasting one-off experiments directly into production files.
+  </Card>
+</CardGroup>
+
+<Tip>
+  This is the coding style used throughout the rest of this course. Get comfortable with `Shift + Enter` now — by the time you're building AI applications, running code interactively will feel completely natural.
+</Tip>

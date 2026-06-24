@@ -1,31 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "name": "Python for AI",
+  "projectType": "saas",
+  "projectName": "Python for AI",
+  "projectDescription": "A beginner-friendly Python course handbook focused on AI development, covering everything from setup to building AI applications, with written lessons, code examples, and reference materials.",
   "theme": "willow",
-  "logo": {
-    "light": "https://media.brand.dev/5d92bedf-003c-426e-a6d4-8d9d15f370a7.svg",
-    "dark": "https://media.brand.dev/17c35107-0305-412f-968a-105d4217c0cb.svg"
-  },
-  "favicon": "https://media.brand.dev/50cb4fff-9fb6-45ba-877e-149a8e6d5966.png",
-  "colors": {
-    "primary": "#47ca75",
-    "light": "#040404",
-    "dark": "#ffffff"
-  },
-  "font": {
-    "headings": {
-      "family": "Inter"
-    },
-    "body": {
-      "family": "Inter"
-    }
-  },
-  "navbar": {
-    "primary": {
-      "type": "github",
-      "href": "https://github.com/daveebbelaar/python-course"
-    }
-  },
+  "primaryColor": "#47ca75",
+  "lightColor": "#040404",
+  "darkColor": "#ffffff",
   "navigation": {
     "tabs": [
       {
@@ -212,5 +192,36 @@
         ]
       }
     ]
-  }
+  },
+  "keyFeatures": [
+    "Beginner-friendly Python course for AI development",
+    "Written handbook companion to a YouTube video course",
+    "Step-by-step setup guides for Windows, macOS, and Linux",
+    "Real-world AI-focused code examples throughout",
+    "Coverage of professional developer tools: VS Code, Git, uv",
+    "Secrets management and environment variable best practices",
+    "Classes, error handling, and practical Python project structure",
+    "Libraries and API integration tutorials",
+    "AI assistant usage tips for accelerated learning",
+    "Course resources and Datalumina Academy next steps"
+  ],
+  "publicApiSurface": [
+    "print() — output to terminal",
+    "input() — read user input",
+    "range() — generate number sequences",
+    "len() — get length of a sequence",
+    "int(), float(), str(), bool() — type conversions",
+    "list, dict, tuple, set — data structure constructors",
+    "open() — file I/O",
+    "import requests — HTTP API calls",
+    "import pandas as pd — data analysis",
+    "import json — JSON serialization",
+    "import os — file system operations",
+    "try/except/else/finally — error handling",
+    "class — object-oriented programming",
+    "def — function definition",
+    "pip install — package management",
+    "python -m venv — virtual environment creation",
+    "uv — modern Python package manager"
+  ]
 }

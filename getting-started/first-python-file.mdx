@@ -1,0 +1,174 @@
+---
+title: "Write and Run Your First Python Program"
+sidebarTitle: "First Program"
+description: "Create hello.py, write your first print() statements, select a Python interpreter, and run the file using VS Code's play button or keyboard shortcut."
+---
+
+Writing and running your first Python file is a milestone worth doing properly. By the end of this page you'll have created a real Python program, understood what happens when it runs, and picked up terminal habits that will serve you for the rest of the course. Everything that follows in Python — functions, loops, AI calls — builds on these exact steps.
+
+<Steps>
+  <Step title="Create a New Python File">
+    With your `python-for-ai` workspace open in VS Code:
+
+    1. In the **Explorer sidebar**, click the **New File** icon (a page with a `+` symbol).
+    2. Type `hello.py` and press **Enter**.
+
+    <Warning>
+      Always include the `.py` extension. This tells both VS Code and Python that the file contains Python code. Without it, VS Code won't activate syntax highlighting or code completion.
+    </Warning>
+
+    Once saved, you'll notice:
+    - VS Code colours your code immediately (syntax highlighting).
+    - The bottom-right of the status bar shows **Python** — confirming the file type is recognised.
+    - The Explorer shows `hello.py` listed under your project.
+  </Step>
+
+  <Step title="Write Your First Program">
+    In `hello.py`, type the following exactly:
+
+    ```python
+    print("Hello, World!")
+    print("I'm learning Python for AI")
+    ```
+
+    The `print()` function displays text or values on your screen. It's the simplest way to see what your code is doing, and you'll use it constantly throughout this course.
+
+    Notice how VS Code colours your code:
+    - `print` is highlighted as a built-in function.
+    - The text inside the quotes appears in a different colour.
+    - Mismatched quotes or brackets are flagged immediately — VS Code is already checking your work.
+  </Step>
+
+  <Step title="Select Your Python Interpreter">
+    Before running code, confirm VS Code is using the right Python installation:
+
+    1. Look at the **bottom-right corner** of VS Code — you should see something like `Python 3.13.x`.
+    2. If it says "Select Interpreter" or shows nothing, click that area.
+    3. A picker appears at the top — choose the Python version you installed.
+
+    <Note>
+      For now, select your main Python installation. Later in the course you'll select a virtual environment (`.venv`) instead — that's the preferred approach for real projects.
+    </Note>
+
+    Once selected, the interpreter persists for this workspace and is saved to your `.code-workspace` file automatically.
+  </Step>
+
+  <Step title="Run Your Program">
+    There are three equivalent ways to run a Python file — choose whichever feels most natural:
+
+    <Tabs>
+      <Tab title="Play Button (Easiest)">
+        Click the **▷ Run** button in the top-right corner of the editor window.
+
+        Or click the small dropdown arrow next to it and select **Run Python File**.
+
+        The integrated terminal opens at the bottom and your program executes immediately.
+      </Tab>
+      <Tab title="Right-Click Menu">
+        Right-click anywhere inside your code.
+
+        Select **Run Python File in Terminal** from the context menu.
+
+        Useful when you want to run without moving your hands to the mouse corner.
+      </Tab>
+      <Tab title="Keyboard Shortcut">
+        Press `Ctrl + F5` on Windows/Linux or `Cmd + F5` on macOS.
+
+        This is the fastest method once you've memorised it.
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Understand the Terminal Output">
+    After running, the terminal at the bottom shows something like this:
+
+    ```
+    cd /path/to/python-for-ai
+    /path/to/.venv/bin/python /path/to/python-for-ai/hello.py
+    Hello, World!
+    I'm learning Python for AI
+    ```
+
+    Here's what each line means:
+
+    | Line | Meaning |
+    |------|---------|
+    | `cd /path/to/...` | VS Code navigates to your project folder first |
+    | `/path/to/python hello.py` | VS Code calls Python with your file as the argument |
+    | `Hello, World!` | Output from your first `print()` |
+    | `I'm learning Python for AI` | Output from your second `print()` |
+
+    <Note>
+      The long file paths look intimidating but are just VS Code being precise about which Python and which file to use. The important lines are always the ones at the bottom — your program's actual output.
+    </Note>
+  </Step>
+
+  <Step title="Understand How Python Executes Your Code">
+    What VS Code's Run button actually does is equivalent to typing this in a terminal:
+
+    ```bash
+    python hello.py
+    ```
+
+    Python then:
+    1. **Opens the file** and reads it as plain text.
+    2. **Interprets each line** from top to bottom, converting it to instructions the computer can execute.
+    3. **Runs each instruction** in order — line 1 always before line 2.
+    4. **Displays output** for every `print()` call it encounters.
+
+    ```python
+    print("Hello, World!")        # Line 1 runs first → Hello, World!
+    print("I'm learning Python")  # Line 2 runs second → I'm learning Python
+    ```
+
+    This top-to-bottom, left-to-right execution order is fundamental. Every concept you learn later — loops, functions, classes — is simply a way to control or redirect this flow.
+
+    <Tip>
+      On some macOS and Linux systems you may need `python3 hello.py` instead of `python hello.py`. VS Code handles this automatically via the interpreter you selected in Step 3.
+    </Tip>
+  </Step>
+
+  <Step title="Use the Integrated Terminal">
+    The terminal at the bottom is a full shell — the same as opening Terminal.app or PowerShell separately. Useful commands to know right now:
+
+    ```bash
+    # Check which Python version is active
+    python --version
+
+    # Run a file manually (without the play button)
+    python hello.py
+
+    # Clear the terminal screen
+    clear        # macOS / Linux
+    cls          # Windows
+    ```
+
+    **Opening and managing the terminal:**
+    - **Open/close:** `` Ctrl + ` `` (Windows/Linux) or `` Cmd + ` `` (macOS)
+    - **New terminal instance:** click the **+** button in the terminal panel
+    - **Recall previous commands:** press the **↑** arrow key
+
+    <Tip>
+      Use the up arrow to recall and re-run previous commands — no retyping needed when you're iterating on a script.
+    </Tip>
+  </Step>
+
+  <Step title="Experiment and Save">
+    Try extending your program and running it again:
+
+    ```python
+    print("Hello, World!")
+    print("I'm learning Python for AI")
+    print("My name is [Your Name]")
+    print("Today is a great day to code!")
+    ```
+
+    Each `print()` produces a new line of output. Notice that the order in the terminal exactly matches the order in your file.
+
+    **Save your work** before running:
+    - `Ctrl + S` (Windows/Linux) or `Cmd + S` (macOS)
+    - VS Code shows a **dot** on the file's tab when there are unsaved changes — the dot disappears on save.
+
+    Congratulations — you've written and run your first Python program! This is the foundation every other concept in this course builds on.
+  </Step>
+</Steps>

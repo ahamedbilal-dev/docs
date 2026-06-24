@@ -1,0 +1,188 @@
+---
+title: "Python Strings: Working with Text Data"
+sidebarTitle: "Strings"
+description: "Learn how to create, combine, measure, and convert Python strings — the data type you'll use every time your program works with text."
+---
+
+Strings are how Python represents text — any sequence of characters enclosed in quotes. From user names to error messages to entire documents, whenever your program works with words or characters, it's working with strings. They're one of the most versatile and commonly used data types in all of Python.
+
+## What Are Strings?
+
+A string is any sequence of characters: letters, numbers, punctuation, spaces, even emoji. The key rule is that the content must be wrapped in quotes:
+
+```python
+name = "Alice"
+message = 'Hello, World!'
+emoji = "👋"
+empty = ""       # An empty string — zero characters, still a valid string
+```
+
+Python doesn't care whether you use single quotes or double quotes, as long as you're consistent within one string. Most Python style guides prefer double quotes.
+
+## Creating Strings: Three Quote Styles
+
+<Tabs>
+  <Tab title="Single Quotes">
+    ```python
+    greeting = 'Hello'
+    language = 'Python'
+    ```
+    Works perfectly, but can be awkward when your text contains apostrophes.
+  </Tab>
+  <Tab title="Double Quotes">
+    ```python
+    greeting = "Hello"
+    sentence = "It's a great day!"   # apostrophe is fine inside double quotes
+    ```
+    The most common style in Python. Handles apostrophes naturally.
+  </Tab>
+  <Tab title="Triple Quotes">
+    ```python
+    paragraph = """This is a multi-line
+    string that spans
+    several lines."""
+
+    another = '''Also works
+    with single quotes.'''
+    ```
+    Use triple quotes when your text naturally spans multiple lines — like long messages, HTML snippets, or SQL queries.
+  </Tab>
+</Tabs>
+
+<Note>
+  Use double quotes when your text contains an apostrophe: `"It's Python!"`. That way you don't need to escape the apostrophe with a backslash.
+</Note>
+
+## Combining Strings
+
+### Concatenation with `+`
+
+Join strings together using the `+` operator:
+
+```python
+first_name = "John"
+last_name = "Doe"
+
+full_name = first_name + " " + last_name
+print(full_name)   # John Doe
+```
+
+### Repetition with `*`
+
+Repeat a string a given number of times:
+
+```python
+stars = "*" * 5
+print(stars)    # *****
+
+separator = "-" * 40
+print(separator)   # ----------------------------------------
+```
+
+### F-strings (Recommended)
+
+F-strings are the modern, readable way to embed variables directly into a string. Prefix the string with `f` and put variable names inside `{}`:
+
+```python
+name = "Alice"
+age = 25
+
+message = f"My name is {name} and I am {age} years old."
+print(message)   # My name is Alice and I am 25 years old.
+
+# You can even do math inside the braces
+price = 19.99
+print(f"Total with tax: ${price * 1.08:.2f}")   # Total with tax: $21.59
+```
+
+<Tip>
+  F-strings are almost always the best way to build strings that contain variables. They're more readable than concatenation with `+` and require less typing than older methods like `.format()`.
+</Tip>
+
+## String Length with `len()`
+
+The built-in `len()` function counts the number of characters in a string (including spaces and punctuation):
+
+```python
+message = "Hello"
+print(len(message))   # 5
+
+with_spaces = "Hello World"
+print(len(with_spaces))   # 11  (space counts as a character)
+
+empty = ""
+print(len(empty))   # 0
+```
+
+## Converting to String
+
+Use `str()` to convert other data types into a string:
+
+```python
+age = 25
+score = 98.6
+
+# Convert to string so you can concatenate
+message = "I am " + str(age) + " years old"
+print(message)   # I am 25 years old
+
+# F-strings handle the conversion automatically
+print(f"Score: {score}")   # Score: 98.6
+```
+
+## Common Mistakes
+
+<Accordion title="Mismatched quote types">
+  Every string must open and close with the same quote character.
+
+  ```python
+  # Wrong — opens with double, closes with single
+  text = "Hello'   # SyntaxError
+
+  # Right — matching quotes
+  text = "Hello"
+  text = 'Hello'
+  ```
+</Accordion>
+
+<Accordion title="Adding a string and a number directly">
+  Python cannot automatically convert a number to a string. You must do it explicitly using `str()` or an f-string.
+
+  ```python
+  # Wrong — TypeError: can only concatenate str (not "int") to str
+  result = "Age: " + 25
+
+  # Right — convert the number first
+  result = "Age: " + str(25)
+
+  # Even better — use an f-string
+  age = 25
+  result = f"Age: {age}"
+  ```
+</Accordion>
+
+<Accordion title="Forgetting quotes entirely">
+  Without quotes, Python interprets the value as a variable name and raises a `NameError` if no such variable exists.
+
+  ```python
+  # Wrong — Python looks for a variable called Alice
+  name = Alice    # NameError: name 'Alice' is not defined
+
+  # Right — quotes mark it as a string literal
+  name = "Alice"
+  ```
+</Accordion>
+
+<Accordion title="Confusing string numbers with real numbers">
+  `"5"` and `5` look similar but are completely different types. You can't do math with string numbers.
+
+  ```python
+  a = "5"
+  b = "3"
+
+  print(a + b)    # "53" — string concatenation, not addition!
+
+  # Convert to int or float first
+  print(int(a) + int(b))   # 8
+  ```
+</Accordion>

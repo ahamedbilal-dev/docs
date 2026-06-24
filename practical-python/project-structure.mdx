@@ -1,0 +1,176 @@
+---
+title: "Python Project Structure: Organize Your Code Like a Pro"
+sidebarTitle: "Project Structure"
+description: "Learn how to organize Python projects with proper folder structure, manage file paths, and run scripts effectively in VS Code."
+---
+
+Real Python projects quickly grow beyond a single file. As soon as you're working with data, generating output, or splitting logic across modules, you need a clear folder structure — one that makes it obvious where things live and keeps your code easy to maintain. This page walks you through setting up a clean, practical project layout from scratch.
+
+## Working with Multiple Files
+
+So far you may have written single Python files, but real projects have multiple files, folders, and resources. Good organization makes your code easier to understand, navigate, and share with others. Let's set up a proper workspace for a sales analysis project.
+
+<CardGroup cols={2}>
+  <Card title="Separation of Concerns" icon="folder-tree">
+    Keep data, output, and scripts in distinct folders so each has a clear purpose.
+  </Card>
+  <Card title="Predictable Paths" icon="route">
+    A consistent structure means file paths stay simple and work the same way every time.
+  </Card>
+  <Card title="Easier Collaboration" icon="users">
+    Anyone picking up your project can immediately see what goes where.
+  </Card>
+  <Card title="Scalability" icon="arrow-up-right">
+    Adding new scripts, datasets, or outputs is straightforward when the structure is already in place.
+  </Card>
+</CardGroup>
+
+## Recommended Folder Structure
+
+Here is the recommended layout for a self-contained Python project like a sales analysis:
+
+```
+python-for-ai/
+├── hello.py                  # Your existing practice file
+└── sales-analysis/           # New project folder
+    ├── analyzer.py           # Your main script
+    ├── helpers.py            # Reusable helper functions
+    ├── data/                 # Input files (CSV, JSON, etc.)
+    │   └── sales.csv
+    └── output/               # Generated files and results
+```
+
+<Note>
+  Create folders in VS Code by right-clicking in the Explorer panel and selecting **New Folder**, or click the new-folder icon at the top of the Explorer panel.
+</Note>
+
+The key principle here is that your **main script sits at the project root**, alongside any helper modules, while `data/` and `output/` serve as clearly labelled compartments for input and output files respectively.
+
+## Creating the Data Folder
+
+Inside `sales-analysis/data/`, create a file called `sales.csv` and paste in the following sample data:
+
+```csv
+date,product,quantity,price
+2024-01-01,Laptop,2,999.99
+2024-01-01,Mouse,5,29.99
+2024-01-02,Keyboard,3,79.99
+2024-01-02,Monitor,1,299.99
+2024-01-03,Laptop,1,999.99
+2024-01-03,Mouse,10,29.99
+2024-01-04,Keyboard,2,79.99
+2024-01-05,Monitor,2,299.99
+```
+
+<Warning>
+  Make sure the file extension is `.csv`, not `.txt`. VS Code may default to `.txt` if you're not careful when naming the file.
+</Warning>
+
+## Understanding File Paths
+
+When your script opens a file, Python looks for it relative to your **current working directory** — the folder Python is running from. With the structure above, your script `analyzer.py` lives in `sales-analysis/`, so all paths start from there:
+
+```python
+# From analyzer.py inside sales-analysis/
+
+"data/sales.csv"        # ✅ Look in the data subfolder
+"output/report.json"    # ✅ Save to the output subfolder
+
+# Visualising where things are:
+# sales-analysis/
+#   ├── analyzer.py        <- Your script is here
+#   ├── data/sales.csv     <- Your data is here
+#   └── output/            <- Results go here
+```
+
+<Tip>
+  Always keep your main script at the same level as `data/` and `output/`. This makes paths stay short and consistent regardless of how you run the script.
+</Tip>
+
+## Creating Your First Script
+
+In the `sales-analysis/` folder (not inside a subfolder), create `analyzer.py`. This starter script checks that Python is running from the right place and that your data file exists before doing any real work:
+
+```python
+import os
+
+# Check if we're in the right place
+print("Current directory:", os.getcwd())
+
+# Check if our data file exists
+data_path = "data/sales.csv"
+
+if os.path.exists(data_path):
+    print(f"✅ Found {data_path}")
+else:
+    print(f"❌ Cannot find {data_path}")
+    print("Make sure you're running from the sales-analysis folder!")
+```
+
+Run this first. If you see `❌ Cannot find data/sales.csv`, you're either missing the file or running the script from the wrong directory.
+
+## Running Code in VS Code
+
+VS Code offers two convenient ways to run Python code, each with its own strengths:
+
+<Tabs>
+  <Tab title="▶️ Play Button">
+    <Steps>
+      <Step title="Open the file">
+        Open `analyzer.py` in VS Code.
+      </Step>
+      <Step title="Click Run">
+        Click the **▶️ (play)** button in the top-right corner of the editor.
+      </Step>
+      <Step title="View output">
+        The script runs in its entirety and output appears in the integrated terminal below.
+      </Step>
+    </Steps>
+
+    The play button is great for running a complete, finished script. VS Code sets the working directory to the script's location automatically.
+  </Tab>
+  <Tab title="⇧ Shift+Enter (Interactive)">
+    <Steps>
+      <Step title="Open the file">
+        Open `analyzer.py` in VS Code.
+      </Step>
+      <Step title="Select code">
+        Highlight the lines you want to run, or just place your cursor on a single line.
+      </Step>
+      <Step title="Press Shift+Enter">
+        Press **Shift+Enter** to send the selection to the interactive Python window.
+      </Step>
+      <Step title="Inspect results">
+        Results appear immediately in the interactive panel — you can inspect variables and iterate quickly.
+      </Step>
+    </Steps>
+
+    <Tip>
+      Interactive mode is **highly recommended for learning and exploration**. You can run one block at a time, see the intermediate state, and fix issues before moving on.
+    </Tip>
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+Following a few simple conventions will save you headaches as your projects grow:
+
+<Accordion title="Keep data separate from code">
+  Never mix `.csv`, `.json`, or other data files in the same folder as your Python scripts. Put them in a dedicated `data/` folder. This makes it obvious what is source code and what is input data, and prevents you from accidentally committing large data files to version control.
+</Accordion>
+
+<Accordion title="Use clear, predictable folder names">
+  Stick to `data/` for input files and `output/` (or `results/`) for generated files. Anyone reading your project — including future you — will immediately know where to look.
+</Accordion>
+
+<Accordion title="Keep the main script at project level">
+  Place your primary script (`analyzer.py`, `main.py`, etc.) directly inside the project folder, not inside a subfolder. This keeps file paths short and ensures both the play button and Shift+Enter work without extra configuration.
+</Accordion>
+
+<Accordion title="Test as you go">
+  Use Shift+Enter to run your script incrementally. Verifying each step before moving to the next catches path and logic errors early, before they compound into harder-to-debug problems.
+</Accordion>
+
+<Accordion title="Check your working directory first">
+  If something isn't working, add `print(os.getcwd())` at the top of your script. Nine times out of ten, a `FileNotFoundError` is caused by running the script from an unexpected directory.
+</Accordion>

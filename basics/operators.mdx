@@ -1,0 +1,196 @@
+---
+title: "Python Operators: Math, Comparison, and Logic"
+sidebarTitle: "Operators"
+description: "Master Python's arithmetic, comparison, and logical operators — including order of operations, truth tables, and handy assignment shortcuts."
+---
+
+Operators are the symbols that make things happen in Python. They're the "verbs" of the language — performing calculations, comparing values, and combining logical conditions. You already know most of them from everyday math; Python just adds a few extras that are especially useful in programming.
+
+## What Are Operators?
+
+Python groups operators into three main categories:
+
+<CardGroup cols={3}>
+  <Card title="Arithmetic" icon="calculator">
+    Perform math: `+`, `-`, `*`, `/`, `//`, `%`, `**`
+  </Card>
+  <Card title="Comparison" icon="scale-balanced">
+    Compare values, return `True` or `False`: `==`, `!=`, `>`, `<`, `>=`, `<=`
+  </Card>
+  <Card title="Logical" icon="diagram-venn">
+    Combine boolean conditions: `and`, `or`, `not`
+  </Card>
+</CardGroup>
+
+## Arithmetic Operators
+
+These work exactly like a calculator, with a few Python-specific additions:
+
+```python
+# Standard math
+print(10 + 3)    # 13   — Addition
+print(10 - 3)    # 7    — Subtraction
+print(10 * 3)    # 30   — Multiplication
+print(10 / 3)    # 3.333... — Division (always returns a float)
+
+# Python-specific operators
+print(10 // 3)   # 3    — Floor division (rounds down to nearest integer)
+print(10 % 3)    # 1    — Modulo (remainder after division)
+print(10 ** 3)   # 1000 — Exponentiation (10 to the power of 3)
+```
+
+<Note>
+  Regular division (`/`) **always returns a float**, even when the result is a whole number. Use floor division (`//`) when you need an integer result.
+</Note>
+
+### Order of Operations (PEMDAS)
+
+Python follows the same order of operations as mathematics — Parentheses, Exponents, Multiplication/Division, Addition/Subtraction:
+
+```python
+result = 2 + 3 * 4       # 14 — multiplication happens first
+result = (2 + 3) * 4     # 20 — parentheses force addition first
+
+# A common mistake with averages:
+wrong_avg = 10 + 20 + 30 / 3    # 40.0 — only 30 is divided!
+right_avg = (10 + 20 + 30) / 3  # 20.0 — all three values are summed first
+```
+
+<Tip>
+  When in doubt, add parentheses. They make the intended order explicit and the code easier to read.
+</Tip>
+
+## Comparison Operators
+
+Comparison operators evaluate a relationship between two values and always return `True` or `False`:
+
+```python
+age = 18
+
+print(age == 18)    # True  — Equal to
+print(age != 21)    # True  — Not equal to
+print(age > 17)     # True  — Greater than
+print(age < 20)     # True  — Less than
+print(age >= 18)    # True  — Greater than or equal to
+print(age <= 18)    # True  — Less than or equal to
+```
+
+<Warning>
+  Don't confuse `=` (assignment) with `==` (comparison). They look similar but do completely different things.
+
+  ```python
+  age = 18       # Stores the value 18 in the variable age
+  age == 18      # Checks whether age is equal to 18 → True
+  ```
+</Warning>
+
+## Logical Operators
+
+Logical operators let you combine multiple conditions:
+
+```python
+age = 25
+has_license = True
+
+# AND — both conditions must be True
+can_drive = age >= 16 and has_license
+print(can_drive)   # True
+
+# OR — at least one condition must be True
+day = "Saturday"
+is_weekend = day == "Saturday" or day == "Sunday"
+print(is_weekend)  # True
+
+# NOT — reverses the boolean value
+is_adult = age >= 18
+is_child = not is_adult
+print(is_child)    # False
+```
+
+### Truth Tables
+
+Understanding how `and`, `or`, and `not` combine values:
+
+<Tabs>
+  <Tab title="and">
+    Both operands must be `True` for the result to be `True`.
+
+    ```python
+    print(True and True)    # True
+    print(True and False)   # False
+    print(False and True)   # False
+    print(False and False)  # False
+    ```
+  </Tab>
+  <Tab title="or">
+    At least one operand must be `True` for the result to be `True`.
+
+    ```python
+    print(True or True)     # True
+    print(True or False)    # True
+    print(False or True)    # True
+    print(False or False)   # False
+    ```
+  </Tab>
+  <Tab title="not">
+    Flips `True` to `False` and vice versa.
+
+    ```python
+    print(not True)    # False
+    print(not False)   # True
+    ```
+  </Tab>
+</Tabs>
+
+## Assignment Shortcuts
+
+Instead of writing `score = score + 10`, Python provides shorthand operators that update a variable in place:
+
+```python
+score = 10
+
+score += 5     # same as: score = score + 5    → 15
+score -= 3     # same as: score = score - 3    → 12
+score *= 2     # same as: score = score * 2    → 24
+score /= 4     # same as: score = score / 4    → 6.0
+score //= 2    # same as: score = score // 2   → 3
+score **= 3    # same as: score = score ** 3   → 27
+score %= 5     # same as: score = score % 5    → 2
+```
+
+## Common Mistakes
+
+<Accordion title="Division always returns a float">
+  Even when the result divides evenly, `/` returns a float. Use `//` if you need a whole number.
+
+  ```python
+  print(10 / 2)    # 5.0 — float, not 5
+  print(10 // 2)   # 5   — integer floor division
+  ```
+</Accordion>
+
+<Accordion title="Incorrect order of operations">
+  Forgetting parentheses leads to subtly wrong results — especially dangerous in formulas.
+
+  ```python
+  # Wrong — divides only the last number
+  average = 10 + 20 + 30 / 3   # 40.0
+
+  # Right — divides the total
+  average = (10 + 20 + 30) / 3  # 20.0
+  ```
+</Accordion>
+
+<Accordion title="Using = instead of == in comparisons">
+  Assignment inside an `if` condition causes a `SyntaxError` in Python (in some languages it's a silent bug).
+
+  ```python
+  # Wrong — this is an assignment, not a comparison
+  if age = 18:
+      print("Just turned adult!")
+
+  # Right — use == to compare
+  if age == 18:
+      print("Just turned adult!")
+  ```
+</Accordion>

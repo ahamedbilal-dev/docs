@@ -1,0 +1,221 @@
+---
+title: "Python Function Parameters: Pass Data into Functions"
+sidebarTitle: "Parameters"
+description: "Learn how to use Python function parameters and arguments — including multiple parameters, default values, and keyword arguments — to write flexible functions."
+---
+
+Parameters transform functions from fixed scripts into flexible tools. Without parameters, a function can only do one hard-coded thing. With parameters, the same function can handle any input you give it — greeting any user, calculating any total, validating any password. This page covers everything you need to know about passing data into Python functions effectively.
+
+## What Are Parameters?
+
+Parameters are the variables listed in a function definition that receive the values you pass in when calling the function. They make functions flexible instead of hard-coded:
+
+```python
+# Without parameters — only works for Alice
+def greet_alice():
+    print("Hello, Alice!")
+
+# With a parameter — works for anyone
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Alice")    # Hello, Alice!
+greet("Bob")      # Hello, Bob!
+greet("Charlie")  # Hello, Charlie!
+```
+
+<Note>
+  **Parameter** refers to the variable in the function definition (`name` in `def greet(name):`). **Argument** refers to the actual value you pass when calling it (`"Alice"` in `greet("Alice")`). In practice, people use these terms interchangeably.
+</Note>
+
+## Basic Parameters
+
+Add parameters inside the parentheses of the function definition:
+
+```python
+def introduce(name, age):
+    print(f"My name is {name}")
+    print(f"I am {age} years old")
+
+introduce("Alice", 25)
+introduce("Bob", 30)
+```
+
+Each parameter becomes a local variable inside the function. The values are bound in order: `name` gets `"Alice"`, `age` gets `25`.
+
+## Multiple Parameters
+
+Functions can accept as many parameters as needed:
+
+```python
+def calculate_total(price, tax_rate, discount):
+    tax = price * tax_rate
+    final_price = price + tax - discount
+    print(f"Total: ${final_price:.2f}")
+
+# Arguments must be provided in the correct order!
+calculate_total(100, 0.08, 10)   # Total: $98.00
+calculate_total(50, 0.05, 0)     # Total: $52.50
+```
+
+<Warning>
+  With positional arguments, **order matters**. Python assigns values left to right. Passing `calculate_total(0.08, 100, 10)` would swap the price and tax rate, giving you a wrong result without raising an error.
+</Warning>
+
+## Default Values
+
+Give parameters default values to make them optional:
+
+```python
+def greet(name, greeting="Hello"):
+    print(f"{greeting}, {name}!")
+
+# Use the default value
+greet("Alice")              # Hello, Alice!
+
+# Override the default
+greet("Bob", "Hi")          # Hi, Bob!
+greet("Charlie", "Hey")     # Hey, Charlie!
+```
+
+<Tip>
+  Always put parameters **with** default values after parameters **without** defaults. Python requires this — required parameters must come first, optional ones last.
+
+  ```python
+  # Wrong — SyntaxError
+  def greet(greeting="Hello", name):
+      ...
+
+  # Right — required params first
+  def greet(name, greeting="Hello"):
+      ...
+  ```
+</Tip>
+
+## Keyword Arguments
+
+When calling a function, you can specify arguments by name instead of relying on position. This makes code more readable and lets you pass arguments in any order:
+
+```python
+def create_profile(name, age, city):
+    print(f"{name}, {age}, from {city}")
+
+# Positional — order matters
+create_profile("Alice", 25, "NYC")
+
+# Keyword — order doesn't matter
+create_profile(city="NYC", age=25, name="Alice")
+create_profile(name="Bob", city="LA", age=30)
+```
+
+<Tabs>
+  <Tab title="Positional arguments">
+    Arguments assigned purely by their position in the call:
+    ```python
+    def power(base, exponent):
+        return base ** exponent
+
+    power(2, 10)   # base=2, exponent=10 → 1024
+    ```
+  </Tab>
+  <Tab title="Keyword arguments">
+    Arguments assigned by name — order is flexible:
+    ```python
+    def power(base, exponent):
+        return base ** exponent
+
+    power(exponent=10, base=2)   # Same result: 1024
+    ```
+  </Tab>
+  <Tab title="Mixed">
+    Positional and keyword arguments can be combined, but positional must come first:
+    ```python
+    def create_profile(name, age, city):
+        print(f"{name}, {age}, from {city}")
+
+    # Positional for name, keyword for the rest
+    create_profile("Alice", city="NYC", age=25)
+    ```
+  </Tab>
+</Tabs>
+
+## Common Mistakes
+
+<Accordion title="Wrong number of arguments">
+  Calling a function with too few or too many arguments raises a `TypeError`.
+
+  ```python
+  def greet(name, age):
+      print(f"Hi {name}, you're {age}")
+
+  # Wrong — too few
+  greet("Alice")          # TypeError: missing argument 'age'
+
+  # Wrong — too many
+  greet("Alice", 25, "NYC")   # TypeError: takes 2 arguments but 3 were given
+
+  # Right
+  greet("Alice", 25)
+  ```
+</Accordion>
+
+<Accordion title="Default values with mutable objects">
+  Using a mutable object (like a list or dictionary) as a default value is a classic Python gotcha. The default object is created **once** and shared across all calls — changes persist between function calls.
+
+  ```python
+  # Wrong — the list persists between calls!
+  def add_item(item, my_list=[]):
+      my_list.append(item)
+      return my_list
+
+  print(add_item("a"))   # ['a']
+  print(add_item("b"))   # ['a', 'b'] — unexpected!
+
+  # Right — use None and create fresh each time
+  def add_item(item, my_list=None):
+      if my_list is None:
+          my_list = []
+      my_list.append(item)
+      return my_list
+
+  print(add_item("a"))   # ['a']
+  print(add_item("b"))   # ['b'] — correct!
+  ```
+</Accordion>
+
+<Accordion title="Positional arguments after keyword arguments">
+  In a function call, you cannot put a positional argument after a keyword argument.
+
+  ```python
+  def greet(name, age, city):
+      print(f"{name}, {age}, {city}")
+
+  # Wrong — positional after keyword
+  greet(name="Alice", 25, "NYC")   # SyntaxError
+
+  # Right — keyword arguments at the end
+  greet("Alice", age=25, city="NYC")
+  ```
+</Accordion>
+
+<Accordion title="Modifying parameter values expecting the caller to see the change">
+  Reassigning a parameter inside a function doesn't affect the variable that was passed in (for immutable types like strings and numbers). For mutable types like lists, modifying the contents *does* affect the original.
+
+  ```python
+  # Reassigning has no effect outside
+  def try_rename(name):
+      name = "Bob"   # Only changes the local variable
+
+  username = "Alice"
+  try_rename(username)
+  print(username)   # "Alice" — unchanged
+
+  # But modifying a list's contents DOES affect the original
+  def append_item(lst, item):
+      lst.append(item)   # Modifies the original list!
+
+  my_list = [1, 2]
+  append_item(my_list, 3)
+  print(my_list)   # [1, 2, 3]
+  ```
+</Accordion>

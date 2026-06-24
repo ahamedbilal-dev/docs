@@ -1,0 +1,146 @@
+# Source: https://python.datalumina.com/tools/code-quality
+
+## 
+
+[​](https://python.datalumina.com/#what-is-ruff)
+
+What is Ruff?
+
+Ruff is a modern Python tool that’s incredibly fast and combines multiple tools in one:
+
+- **Linting** - Finding issues and potential errors
+- **Formatting** - Fixing code style automatically
+- **Import sorting** - Organizing imports cleanly
+
+It’s beginner-friendly with clear error messages and works seamlessly with VS Code.
+
+A **linter** checks your code for style issues and potential errors. A **formatter** automatically fixes these issues for you.
+
+## 
+
+[​](https://python.datalumina.com/#install-ruff-in-vs-code)
+
+Install Ruff in VS Code
+
+1. Open VS Code
+2. Press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (Mac)
+3. Search for “Ruff”
+4. Install the official Ruff extension by Astral
+
+The Ruff extension replaces older tools like Pylint, Black, and isort. You only need this one extension.
+
+## 
+
+[​](https://python.datalumina.com/#enable-format-on-save)
+
+Enable format on save
+
+Let’s make VS Code automatically format your code when you save:
+
+1. Press `Ctrl+,` (Windows/Linux) or `Cmd+,` (Mac) to open settings
+2. Search for “format on save”
+3. Check the box for “Editor: Format On Save”
+4. Search for “default formatter”
+5. Set “Python > Formatting: Provider” to “Ruff”
+
+## 
+
+[​](https://python.datalumina.com/#see-it-in-action)
+
+See it in action
+
+Here’s messy code before formatting:
+
+```
+import os
+def   calculate_total(items):
+    total=0
+    for item in items:
+        total+=item['price']*item['quantity']
+    return total
+
+shopping_cart=[{'name':'apple','price':0.5,'quantity':6},{'name':'banana','price':0.3,'quantity':8}]
+print(calculate_total(shopping_cart))
+```
+
+After saving with Ruff (automatic):
+
+```
+import os
+
+def calculate_total(items):
+    total = 0
+    for item in items:
+        total += item["price"] * item["quantity"]
+    return total
+
+shopping_cart = [
+    {"name": "apple", "price": 0.5, "quantity": 6},
+    {"name": "banana", "price": 0.3, "quantity": 8},
+]
+print(calculate_total(shopping_cart))
+```
+
+Ruff automatically:
+
+- Separated imports
+- Added proper spacing
+- Fixed indentation
+- Made quotes consistent
+- Formatted the list for readability
+
+If formatting doesn’t work on save, right-click in your Python file and select “Format Document”. This should trigger Ruff manually.
+
+## 
+
+[​](https://python.datalumina.com/#common-formatting-rules)
+
+Common formatting rules
+
+Ruff follows Python’s style guide (PEP 8) automatically:
+
+- 4 spaces for indentation
+- Spaces around operators (`x = 1`, not `x=1`)
+- Two blank lines between functions
+- Maximum line length of 88 characters
+
+You don’t need to memorize these - Ruff handles them for you!
+
+## 
+
+[​](https://python.datalumina.com/#understanding-linting-errors)
+
+Understanding linting errors
+
+Ruff will underline code issues in your editor:
+
+```
+# Unused imports (Ruff warns you)
+import os
+import sys
+
+# Only using one
+print("Hello")
+```
+
+Hover over underlined code to see:
+
+- What the issue is
+- Why it matters
+- How to fix it
+
+Don’t ignore linting warnings! They help you write better code and catch bugs early.
+
+## 
+
+[​](https://python.datalumina.com/#what’s-next)
+
+What’s next?
+
+With Ruff set up, your code will always look professional and follow best practices automatically.
+
+[Suggest edits](https://github.com/daveebbelaar/python-course/edit/main/tools/code-quality/index.mdx)
+
+[Using .env files](https://python.datalumina.com/tools/environment/dotenv) [Modern Python](https://python.datalumina.com/tools/dependencies)
+
+⌘I

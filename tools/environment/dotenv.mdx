@@ -1,0 +1,223 @@
+---
+title: "Using .env Files with python-dotenv to Manage Secrets"
+sidebarTitle: ".env Files"
+description: "Store API keys and secrets in a .env file, load them automatically with python-dotenv, and keep them out of Git using .gitignore."
+---
+
+A `.env` file is a plain text file that lives in your project folder and holds all the secret configuration your project needs. Instead of manually typing `export` commands every time you open a terminal, you write your secrets once in `.env` and load them with a single line of Python. It's the standard approach for local development across virtually every Python framework.
+
+## Basic setup
+
+<Steps>
+  <Step title="Install python-dotenv">
+    Add `python-dotenv` to your project. If you're using uv (recommended):
+    ```bash
+    uv add python-dotenv
+    ```
+    Or with pip:
+    ```bash
+    pip install python-dotenv
+    ```
+  </Step>
+  <Step title="Create your .env file">
+    Create a file called `.env` in the root of your project (the same folder
+    as your main Python file):
+    ```bash
+    # .env
+    OPENAI_API_KEY=sk-your-actual-key-here
+    DATABASE_URL=sqlite:///myapp.db
+    DEBUG=True
+    PORT=8000
+    ```
+    No quotes needed unless your value contains spaces.
+  </Step>
+  <Step title="Load the variables in Python">
+    Call `load_dotenv()` near the top of your script, before any code that
+    reads environment variables:
+    ```python
+    from dotenv import load_dotenv
+    import os
+
+    # Load .env into the environment
+    load_dotenv()
+
+    # Now read variables normally
+    api_key = os.environ.get("OPENAI_API_KEY")
+    debug = os.environ.get("DEBUG")
+
+    print(f"API Key loaded: {bool(api_key)}")
+    print(f"Debug mode: {debug}")
+    ```
+  </Step>
+  <Step title="Add .env to .gitignore">
+    <Warning>
+      Do this **before** your first `git add .`. Once a secret is committed, it
+      lives in your Git history even after deletion. If you ever push secrets
+      to a public repo, treat them as compromised and regenerate them
+      immediately.
+    </Warning>
+    ```bash
+    # .gitignore
+    .env
+    .venv/
+    __pycache__/
+    *.pyc
+    ```
+  </Step>
+</Steps>
+
+## A complete real-world example
+
+Here's how a typical AI script uses `.env`:
+
+<CodeGroup>
+```python app.py
+from dotenv import load_dotenv
+import os
+import requests
+
+# Load environment variables first
+load_dotenv()
+
+# Get required secrets
+API_KEY = os.environ.get("OPENAI_API_KEY")
+MODEL = os.environ.get("MODEL", "gpt-4o-mini")
+MAX_TOKENS = int(os.environ.get("MAX_TOKENS", "100"))
+
+if not API_KEY:
+    print("Error: OPENAI_API_KEY not set in .env file")
+    exit(1)
+
+print(f"Using model: {MODEL}")
+print(f"Max tokens: {MAX_TOKENS}")
+
+# Your API calls here...
+headers = {"Authorization": f"Bearer {API_KEY}"}
+```
+
+```bash .env
+# .env  ← never commit this file
+OPENAI_API_KEY=sk-your-actual-key-here
+MODEL=gpt-4o-mini
+MAX_TOKENS=500
+LOG_LEVEL=INFO
+```
+
+```bash .env.example
+# .env.example  ← DO commit this file
+# Copy this to .env and fill in your actual values
+OPENAI_API_KEY=your-openai-api-key-here
+MODEL=gpt-4o-mini
+MAX_TOKENS=500
+LOG_LEVEL=INFO
+```
+</CodeGroup>
+
+<Tip>
+  Always create a `.env.example` file alongside your `.env`. This shows
+  collaborators (and future you) exactly which variables the project needs —
+  without exposing the actual secret values. Commit `.env.example` to Git;
+  never commit `.env`.
+</Tip>
+
+## .env file syntax rules
+
+```bash
+# Comments start with #
+# Variable names are UPPERCASE by convention
+# No spaces around the equals sign
+API_KEY=myvalue
+
+# Quotes are optional — use them only when values contain spaces
+APP_NAME="My AI Assistant"
+
+# Numbers work fine — but they're still strings in Python
+PORT=8000
+MAX_RETRIES=3
+
+# Booleans are strings too — cast them in Python
+DEBUG=True
+```
+
+## Common patterns
+
+<Accordion title="Checking all required variables at startup">
+  Validate that every required variable is present when your app starts, so you
+  get a clear error message rather than a cryptic failure later:
+
+  ```python
+  from dotenv import load_dotenv
+  import os
+
+  load_dotenv()
+
+  REQUIRED = ["OPENAI_API_KEY", "DATABASE_URL"]
+  missing = [var for var in REQUIRED if not os.environ.get(var)]
+
+  if missing:
+      raise EnvironmentError(f"Missing required environment variables: {missing}")
+  ```
+</Accordion>
+
+<Accordion title="Type conversions">
+  All `.env` values are strings. Cast them to the right type as early as
+  possible:
+
+  ```python
+  from dotenv import load_dotenv
+  import os
+
+  load_dotenv()
+
+  # Integer
+  port = int(os.environ.get("PORT", "8000"))
+
+  # Boolean — be careful, "False" is truthy as a string!
+  debug = os.environ.get("DEBUG", "False").lower() == "true"
+
+  # List — split on a delimiter
+  allowed_hosts = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+  ```
+</Accordion>
+
+<Accordion title="Different .env files for different environments">
+  For larger projects you can use environment-specific files:
+
+  ```python
+  from dotenv import load_dotenv
+  import os
+
+  env = os.environ.get("APP_ENV", "development")
+  load_dotenv(f".env.{env}")  # loads .env.development, .env.production, etc.
+  ```
+</Accordion>
+
+## Quick-reference checklist
+
+<CardGroup cols={2}>
+  <Card title="Load early" icon="bolt">
+    Call `load_dotenv()` at the very start of your program, before any code that
+    reads variables.
+  </Card>
+  <Card title="Provide defaults" icon="shield">
+    Use `os.environ.get("VAR", "default")` for optional settings so the app
+    works even without the variable.
+  </Card>
+  <Card title="Check .gitignore" icon="eye-slash">
+    Verify `.env` is in your `.gitignore` before every new project's first
+    commit. Make it a habit.
+  </Card>
+  <Card title="Commit .env.example" icon="file-circle-plus">
+    Always commit `.env.example` so teammates know which variables they need to
+    configure.
+  </Card>
+</CardGroup>
+
+## What's next?
+
+You now know how to manage secrets professionally. Ready to level up your Python tooling?
+
+<Card title="Modern Python Dependency Management" icon="box" href="/tools/dependencies">
+  Learn why uv is 10–100× faster than pip and how it simplifies your entire
+  project workflow.
+</Card>

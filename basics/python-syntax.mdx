@@ -1,0 +1,162 @@
+---
+title: "Python Syntax: Rules for Writing Python Code"
+sidebarTitle: "Python Syntax"
+description: "Understand Python's syntax rules, why indentation matters, and how the PEP 8 style guide helps you write clean, professional Python code."
+---
+
+Every programming language has its own syntax — a set of rules that governs how code must be written. Think of it like grammar in a human language: the same words in the wrong order produce nonsense. Python's syntax is famously clean and readable, but it still has firm rules you must follow, or your code simply won't run.
+
+## What Is Syntax?
+
+Syntax defines the structure of valid code. Just like these two sentences carry the same words but only one is grammatical:
+
+- ✅ "The cat sat on the mat"
+- ❌ "Cat the on mat sat the"
+
+…Python code must be written in the right order and form:
+
+```python
+# Correct Python — Python understands this
+if age > 18:
+    print("Adult")
+
+# Wrong — Python will raise a SyntaxError
+age > 18 print("Adult")
+```
+
+<Note>
+  A `SyntaxError` is Python's way of telling you it can't understand what you wrote. The error message always includes the line number — that's where to start investigating.
+</Note>
+
+## Python's Unique Feature: Indentation
+
+Most programming languages use curly braces `{}` to group blocks of code. Python uses **indentation** — the leading spaces at the start of a line. This is Python's single most distinctive feature, and it makes code visually cleaner.
+
+<Tabs>
+  <Tab title="Python (indentation)">
+    ```python
+    if temperature > 30:
+        print("It's hot!")
+        print("Turn on AC")
+    ```
+  </Tab>
+  <Tab title="JavaScript (curly braces)">
+    ```javascript
+    if (temperature > 30) {
+        console.log("It's hot!");
+        console.log("Turn on AC");
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Both achieve the same result. Python simply requires the indentation to *be* the structure, so the visual layout of your code always reflects its logical structure.
+
+## Indentation Rules
+
+The rule is simple: **use 4 spaces per indentation level**, and be consistent throughout your file.
+
+<CodeGroup>
+```python Correct — consistent 4 spaces
+if score > 90:
+    print("A grade")
+    if score == 100:
+        print("Perfect!")
+```
+
+```python Wrong — mixed indentation
+if score > 90:
+  print("A grade")    # 2 spaces
+    if score == 100:  # 4 spaces — IndentationError!
+      print("Perfect!")
+```
+</CodeGroup>
+
+<Warning>
+  Incorrect indentation is the **#1 mistake made by Python beginners**. Python will raise an `IndentationError` and refuse to run your code until you fix it. Configure your editor to use 4 spaces (not tabs) to avoid this entirely.
+</Warning>
+
+### Nested Indentation
+
+Each level of nesting adds another 4 spaces:
+
+```python
+def check_grade(score):         # Level 0
+    if score >= 90:             # Level 1 (4 spaces)
+        print("A")              # Level 2 (8 spaces)
+        if score == 100:        # Level 2 (8 spaces)
+            print("Perfect!")   # Level 3 (12 spaces)
+    else:                       # Level 1
+        print("Keep trying")    # Level 2
+```
+
+## Python Style Guide: PEP 8
+
+Beyond the syntax rules that make code *run*, Python has style guidelines that make code *readable*. These are documented in **PEP 8** (Python Enhancement Proposal 8) — the official Python style guide, authored by Python's creator Guido van Rossum.
+
+<CardGroup cols={2}>
+  <Card title="Indentation" icon="indent">
+    4 spaces per level — never tabs.
+  </Card>
+  <Card title="Line Length" icon="ruler-horizontal">
+    Keep lines to 79 characters maximum.
+  </Card>
+  <Card title="Naming" icon="tag">
+    Use `snake_case` for variables and functions, `PascalCase` for classes.
+  </Card>
+  <Card title="Spacing" icon="arrows-left-right">
+    Spaces around operators: `x = 1 + 2`, not `x=1+2`.
+  </Card>
+</CardGroup>
+
+<Note>
+  PEP 8 guidelines are **not** required for code to run — they're conventions. But following them means your code looks professional and any Python developer can read it immediately. Throughout this course we follow PEP 8 by default, so you won't need to make style decisions yourself.
+</Note>
+
+You can read the full PEP 8 specification at [peps.python.org/pep-0008](https://peps.python.org/pep-0008/).
+
+## Correct vs Incorrect: Side by Side
+
+Here are common syntax mistakes and their fixes:
+
+<Tabs>
+  <Tab title="Missing Colon">
+    ```python
+    # Wrong — missing : at end of if statement
+    if age > 18
+        print("Adult")
+
+    # Correct
+    if age > 18:
+        print("Adult")
+    ```
+  </Tab>
+  <Tab title="Wrong Indentation">
+    ```python
+    # Wrong — print is not indented
+    if age > 18:
+    print("Adult")
+
+    # Correct — print is indented 4 spaces
+    if age > 18:
+        print("Adult")
+    ```
+  </Tab>
+  <Tab title="Mixing Tabs and Spaces">
+    ```python
+    # Wrong — tab on first line, spaces on second
+    if age > 18:
+    	print("Adult")    # tab
+        print("OK")       # spaces
+
+    # Correct — consistent 4 spaces throughout
+    if age > 18:
+        print("Adult")
+        print("OK")
+    ```
+  </Tab>
+</Tabs>
+
+## Summary
+
+Syntax is simply *how* you write Python — the rules you follow. At this stage, remember three things: Python cares about **spelling**, **order**, and **indentation**. As you write more code, the specific syntax for each concept will become second nature.

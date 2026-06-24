@@ -1,0 +1,157 @@
+# Source: https://python.datalumina.com/getting-started/interactive-python
+
+## 
+
+[​](https://python.datalumina.com/#the-best-of-both-worlds)
+
+The best of both worlds
+
+Interactive Python mode is my favorite way to write Python code, and I rarely use anything else. It combines the organization of Python files with the interactivity of Jupyter notebooks.
+
+This is how I’ll be coding throughout the entire course. Once you try it, you’ll understand why it’s so powerful for learning and developing AI applications.
+
+## 
+
+[​](https://python.datalumina.com/#what-is-interactive-python)
+
+What is Interactive Python?
+
+Imagine you’re cooking and tasting as you go, rather than waiting until the entire meal is done. That’s Interactive Python:
+
+- Write code in a `.py` file (organized and clean)
+- Run pieces of it instantly with `Shift + Enter`
+- See results immediately in a side panel
+- Keep all your variables in memory
+
+## 
+
+[​](https://python.datalumina.com/#why-it’s-perfect-for-ai-development)
+
+Why it’s perfect for AI development
+
+When working with AI and data:
+
+- You’re constantly inspecting data
+- Testing transformations
+- Checking outputs
+- Experimenting with different approaches
+
+Running an entire file every time (like we did with `hello.py`) would be slow and frustrating. Interactive mode lets you work iteratively.
+
+## 
+
+[​](https://python.datalumina.com/#prerequisites)
+
+Prerequisites
+
+Interactive Python requires the IPython kernel. Let’s install it:
+
+1. Make sure your virtual environment is activated:
+ 
+ ```
+    # You should see (venv) in your terminal
+    ```
+ 
+2. Install the required package:
+ 
+ ```
+    pip install ipykernel
+    ```
+ 
+
+This package allows Jupyter to run Python code interactively.
+
+## 
+
+[​](https://python.datalumina.com/#set-up-interactive-python)
+
+Set up Interactive Python
+
+Now let’s enable the interactive feature:
+
+1. Open VS Code settings:
+ - Press `Ctrl/Cmd + ,` (comma)
+ - Or File > Preferences > Settings
+2. Search for “execute selection”
+3. Find this setting: **Jupyter > Interactive Window > Text Editor: Execute Selection**
+4. Check the box to enable it
+
+What this does: When you press `Shift + Enter`, your selected code will run in the Jupyter interactive window instead of the Python terminal. This gives you a much richer, more visual experience. That’s it! You’re ready to use interactive mode.
+
+## 
+
+[​](https://python.datalumina.com/#your-first-interactive-session)
+
+Your first interactive session
+
+1. Create a new file called `interactive_demo.py`
+2. Type this code:
+
+```
+# Let's explore interactive mode
+name = "Python Learner"
+print(f"Hello, {name}!")
+
+# Some data to work with
+numbers = [1, 2, 3, 4, 5]
+print(f"Numbers: {numbers}")
+
+# Calculate something
+total = sum(numbers)
+print(f"Total: {total}")
+```
+
+3. Place your cursor on the first line
+4. Press `Shift + Enter`
+
+Watch what happens:
+
+- An Interactive window opens on the right
+- Your code runs line by line
+- You see output immediately
+
+## 
+
+[​](https://python.datalumina.com/#interactive-superpowers)
+
+Interactive superpowers
+
+### 
+
+[​](https://python.datalumina.com/#run-selected-code)
+
+Run selected code
+
+- Highlight any code
+- Press `Shift + Enter`
+- Only that selection runs
+
+### 
+
+[​](https://python.datalumina.com/#variables-stay-in-memory)
+
+Variables stay in memory
+
+Run this step by step:
+
+```
+# First, create a variable
+message = "Hello"
+
+# Later, use it (even in a different cell)
+print(message + " World!")
+
+# Modify it
+message = message.upper()
+print(message)
+```
+
+The variable `message` stays available throughout your session!
+
+[**Start learning Python**\\ \\ Your environment is perfect. Let’s dive into Python fundamentals!](https://python.datalumina.com/basics)
+
+[Suggest edits](https://github.com/daveebbelaar/python-course/edit/main/getting-started/interactive-python.mdx)
+
+[Packages and pip](https://python.datalumina.com/getting-started/packages-and-pip)
+
+Ctrl+I

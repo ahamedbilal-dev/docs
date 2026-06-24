@@ -1,0 +1,284 @@
+---
+title: "Python Class Methods and Attributes Explained"
+sidebarTitle: "Methods & Attributes"
+description: "Understand instance attributes, instance methods, __str__, class methods, and static methods with practical AI client examples."
+---
+
+Attributes and methods are the two building blocks of every Python class. Attributes store *data* — the "what it knows" — while methods define *behaviour* — the "what it can do." Once you understand how they work together, you can design classes that are genuinely pleasant to use.
+
+## Attributes: Storing Data
+
+There are two places you can define attributes: on the **instance** (unique per object) or on the **class** (shared by all objects).
+
+<Tabs>
+  <Tab title="Instance Attributes">
+    Instance attributes are defined inside `__init__` using `self`. Every object gets its own independent copy.
+
+    ```python
+    class APIClient:
+        def __init__(self, api_key, base_url):
+            self.api_key       = api_key        # unique to each client
+            self.base_url      = base_url       # unique to each client
+            self.request_count = 0              # starts at 0 for each client
+
+    client1 = APIClient(api_key="key1", base_url="https://api1.com")
+    client2 = APIClient(api_key="key2", base_url="https://api2.com")
+
+    # Completely independent
+    client1.request_count = 5
+    print(client2.request_count)  # 0 — unaffected
+    ```
+  </Tab>
+  <Tab title="Class Attributes">
+    Class attributes are defined at the class body level, outside any method. They are shared across all instances.
+
+    ```python
+    class APIClient:
+        version     = "1.0"   # same for every client
+        max_retries = 3       # same for every client
+
+        def __init__(self, api_key):
+            self.api_key = api_key  # unique to each client
+
+    client = APIClient(api_key="key1")
+    print(client.version)          # 1.0
+    print(APIClient.max_retries)   # 3  — accessible from the class too
+    ```
+
+    <Warning>
+      Never use a class attribute to store a **mutable** object (list, dict, set). Because it's shared, modifying it from one instance affects every other instance.
+
+      ```python
+      # Bug waiting to happen
+      class TodoList:
+          items = []  # class attribute — shared!
+
+      list1 = TodoList()
+      list1.items.append("Buy milk")
+
+      list2 = TodoList()
+      print(list2.items)  # ['Buy milk'] — Oops!
+
+      # Fix: move it to __init__
+      class TodoList:
+          def __init__(self):
+              self.items = []  # each instance gets its own list
+      ```
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Instance Methods
+
+Instance methods are the most common type. They always receive `self` as their first parameter, giving them access to the object's attributes. You never pass `self` when calling — Python handles it automatically.
+
+```python
+class DataValidator:
+    def __init__(self):
+        self.errors = []
+
+    def validate_email(self, email):
+        if "@" not in email:
+            self.errors.append(f"Invalid email: {email}")
+            return False
+        return True
+
+    def validate_age(self, age):
+        if age < 0 or age > 150:
+            self.errors.append(f"Invalid age: {age}")
+            return False
+        return True
+
+    def get_errors(self):
+        return self.errors
+
+validator = DataValidator()
+
+validator.validate_email("bad-email")   # False
+validator.validate_age(200)             # False
+
+print(validator.get_errors())
+# ['Invalid email: bad-email', 'Invalid age: 200']
+```
+
+<Tip>
+  When you call `validator.validate_email("test@example.com")`, Python automatically passes `validator` as `self`. You only supply the remaining arguments.
+</Tip>
+
+## The `__str__` Method
+
+`__str__` is a special dunder method that controls what Python displays when you `print()` an object or call `str()` on it. Without it, you get something unhelpful like `<__main__.APIClient object at 0x7f3a...>`.
+
+```python
+class APIConfig:
+    def __init__(self, api_key, model, max_tokens):
+        self.api_key    = api_key
+        self.model      = model
+        self.max_tokens = max_tokens
+
+    def __str__(self):
+        # Never expose the full key — show only the last 4 characters
+        masked_key = f"...{self.api_key[-4:]}"
+        return f"APIConfig(model={self.model}, key={masked_key}, max_tokens={self.max_tokens})"
+
+config = APIConfig("sk-abc123xyz", "gpt-4o-mini", 500)
+print(config)
+# APIConfig(model=gpt-4o-mini, key=...xyz, max_tokens=500)
+```
+
+## Class Methods
+
+Class methods receive the **class itself** (`cls`) instead of an instance. They are defined with the `@classmethod` decorator and are often used as alternative constructors.
+
+```python
+class APIConfig:
+    def __init__(self, api_key, model, max_tokens):
+        self.api_key    = api_key
+        self.model      = model
+        self.max_tokens = max_tokens
+
+    @classmethod
+    def from_dict(cls, config_dict):
+        """Create an APIConfig from a dictionary."""
+        return cls(
+            api_key    = config_dict["api_key"],
+            model      = config_dict.get("model", "gpt-3.5-turbo"),
+            max_tokens = config_dict.get("max_tokens", 100),
+        )
+
+    @classmethod
+    def default_dev(cls):
+        """Convenience constructor for development."""
+        return cls(api_key="sk-dev-key", model="gpt-3.5-turbo", max_tokens=50)
+
+# Use the regular constructor
+config1 = APIConfig("sk-key", "gpt-4", 1000)
+
+# Use the alternative constructors
+config2 = APIConfig.from_dict({"api_key": "sk-key2", "max_tokens": 200})
+config3 = APIConfig.default_dev()
+```
+
+## Static Methods
+
+Static methods don't receive `self` or `cls` — they're just regular functions that happen to live inside the class namespace. Use them for utility logic that is conceptually related to the class but doesn't need access to any instance or class data.
+
+```python
+class APIConfig:
+    def __init__(self, api_key, model, max_tokens):
+        self.api_key    = api_key
+        self.model      = model
+        self.max_tokens = max_tokens
+
+    @staticmethod
+    def is_valid_model(model_name):
+        """Check whether a model name is supported."""
+        supported = {"gpt-3.5-turbo", "gpt-4", "gpt-4o", "gpt-4o-mini"}
+        return model_name in supported
+
+    @staticmethod
+    def mask_key(api_key):
+        """Return a masked version of an API key for safe logging."""
+        return f"...{api_key[-4:]}"
+
+# Call directly on the class — no instance needed
+print(APIConfig.is_valid_model("gpt-4"))          # True
+print(APIConfig.is_valid_model("gpt-5-turbo"))    # False
+print(APIConfig.mask_key("sk-abc123xyz"))         # ...xyz
+```
+
+## Putting It All Together
+
+Here is a more complete AI client class that uses every concept from this page:
+
+```python
+class AIClient:
+    # Class attribute — shared by all instances
+    supported_models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o"]
+
+    def __init__(self, api_key, model="gpt-4o-mini"):
+        # Instance attributes
+        self.api_key       = api_key
+        self.model         = model
+        self.request_count = 0
+        self.history       = []
+
+    # __str__ for readable output
+    def __str__(self):
+        return f"AIClient(model={self.model}, requests={self.request_count})"
+
+    # Instance method — needs self
+    def chat(self, message):
+        self.request_count += 1
+        self.history.append({"role": "user", "content": message})
+        # (API call would happen here)
+        return f"Response to: {message}"
+
+    # Class method — alternative constructor
+    @classmethod
+    def from_env(cls):
+        import os
+        return cls(api_key=os.environ["OPENAI_API_KEY"])
+
+    # Static method — utility, no self/cls needed
+    @staticmethod
+    def count_tokens(text):
+        # Rough estimate: ~4 characters per token
+        return len(text) // 4
+
+
+client = AIClient(api_key="sk-key", model="gpt-4o-mini")
+client.chat("What is Python?")
+
+print(client)                           # AIClient(model=gpt-4o-mini, requests=1)
+print(AIClient.count_tokens("Hello!"))  # 1
+```
+
+## Common Mistakes
+
+<Accordion title="Using a mutable class attribute for per-instance state">
+  ```python
+  # Wrong — all instances share one list
+  class TodoList:
+      items = []
+
+  t1 = TodoList()
+  t1.items.append("Task A")
+  t2 = TodoList()
+  print(t2.items)  # ['Task A'] — unexpected!
+
+  # Right — each instance gets its own list
+  class TodoList:
+      def __init__(self):
+          self.items = []
+  ```
+</Accordion>
+
+<Accordion title="Accessing an attribute before it is set">
+  If a method increments `self.count` but `count` is never initialised in `__init__`, you'll get an `AttributeError`.
+
+  ```python
+  # Wrong
+  class Counter:
+      def increment(self):
+          self.count += 1  # AttributeError on first call!
+
+  # Right
+  class Counter:
+      def __init__(self):
+          self.count = 0
+
+      def increment(self):
+          self.count += 1
+  ```
+</Accordion>
+
+## What's Next?
+
+Now that you know how to add behaviour to classes, learn how to build on existing ones with inheritance.
+
+<CardGroup cols={1}>
+  <Card title="Inheritance" icon="sitemap" href="/advanced/classes/inheritance">
+    Create child classes that extend parents, call `super()`, and override methods to specialise behaviour.
+  </Card>
+</CardGroup>

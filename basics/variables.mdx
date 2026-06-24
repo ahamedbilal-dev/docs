@@ -1,0 +1,148 @@
+---
+title: "Python Variables: Store and Use Data in Your Programs"
+sidebarTitle: "Variables"
+description: "Learn how Python variables work, how to name them correctly, follow snake_case convention, and avoid the most common beginner mistakes."
+---
+
+A variable is like a labeled box where you store information. You give the box a name, put a value inside, and later use that name to retrieve the value. This concept is at the heart of every program you'll ever write — without variables, your code has no memory.
+
+## What Are Variables?
+
+In everyday life, you already use variables constantly:
+
+- Your **name** is a variable that stores what people call you.
+- Your **age** is a variable that stores a number.
+- Your **favorite color** is a variable that stores a piece of text.
+
+In Python, variables let programs remember data between steps — prices, user input, calculation results, and much more.
+
+## Creating Your First Variable
+
+Creating a variable in Python is called **assignment**. You write the variable name, an equals sign, and then the value:
+
+```python
+name = "Alice"
+age = 25
+is_student = True
+```
+
+Let's break down what's happening:
+
+- `name` — the variable name (the label on the box)
+- `=` — the assignment operator ("store the value on the right into the variable on the left")
+- `"Alice"` — the value being stored
+
+<Note>
+  The `=` sign in Python does **not** mean "equals" the way it does in math. It means **assign** — store this value in this variable.
+</Note>
+
+## Naming Rules
+
+Python enforces strict rules about what you can and cannot name a variable.
+
+<Tabs>
+  <Tab title="✅ Allowed">
+    ```python
+    user_name = "Dave"      # lowercase with underscores (Python style)
+    userName = "Dave"       # camelCase (works but not Python style)
+    age2 = 30               # numbers are OK — just not at the start
+    _private = "secret"     # leading underscore is fine
+    ```
+  </Tab>
+  <Tab title="❌ Not Allowed">
+    ```python
+    2age = 30               # Can't start with a number
+    my-name = "Dave"        # No hyphens — Python reads this as subtraction
+    my name = "Dave"        # No spaces in variable names
+    class = "Python"        # Can't use Python reserved keywords
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  Using a Python keyword like `class`, `if`, `for`, or `return` as a variable name will cause a `SyntaxError`. Python reserves these words for the language itself.
+</Warning>
+
+## The snake_case Convention
+
+Python has an official style guide called PEP 8 that recommends **snake_case** for variable names: all lowercase letters with underscores between words. This is the standard across the entire Python ecosystem.
+
+<CodeGroup>
+```python Good Python Style
+first_name = "Alice"
+user_age = 25
+is_logged_in = True
+shopping_cart_total = 49.99
+```
+
+```python Avoid (camelCase)
+firstName = "Alice"    # Works, but not Pythonic
+userAge = 25
+isLoggedIn = True
+```
+</CodeGroup>
+
+<Tip>
+  Use **descriptive names** even when they're longer. `user_score` is far better than `x` or `temp`. Your future self — and any teammates reading your code — will thank you.
+</Tip>
+
+## Changing Variables
+
+Variables can change over time — that's literally why they're called *variables*:
+
+```python
+# Start with one value
+score = 0
+print(score)   # 0
+
+# Update it
+score = 10
+print(score)   # 10
+
+# Build on the current value
+score = score + 5
+print(score)   # 15
+```
+
+Python simply replaces the old value with the new one each time you assign to the same name.
+
+## Common Mistakes
+
+<Accordion title="Forgetting quotes around text">
+  Without quotes, Python assumes you're referring to another variable — not text.
+
+  ```python
+  # Wrong — Python looks for a variable called Alice
+  name = Alice
+
+  # Right — quotes create a text value (string)
+  name = "Alice"
+  ```
+</Accordion>
+
+<Accordion title="Using a variable before defining it">
+  Python reads code top to bottom. You must create a variable before you can use it.
+
+  ```python
+  # Wrong — score doesn't exist yet
+  print(score)
+  score = 10
+
+  # Right — define first, then use
+  score = 10
+  print(score)   # 10
+  ```
+</Accordion>
+
+<Accordion title="Confusing = (assign) with == (compare)">
+  These two operators look similar but do completely different things.
+
+  ```python
+  # = stores a value
+  age = 25
+
+  # == checks if two values are equal (returns True or False)
+  if age == 25:
+      print("Quarter century!")
+  ```
+</Accordion>

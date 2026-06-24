@@ -1,0 +1,164 @@
+---
+title: "Set Up Git and GitHub for Your Python Projects"
+sidebarTitle: "GitHub Setup"
+description: "Create a free GitHub account, install Git, configure your identity, and choose an authentication method to start pushing code today."
+---
+
+GitHub is where the world's code lives — open-source AI libraries, example projects, community tools. Having your own account lets you back up your work, share it with employers, and download anything that interests you. Setup takes less than ten minutes.
+
+## Step 1: Create your GitHub account
+
+<Steps>
+  <Step title="Go to github.com">
+    Visit [github.com](https://github.com) and click **Sign up**.
+  </Step>
+  <Step title="Fill in your details">
+    - **Username** — pick something professional; employers will see this
+    - **Email** — use one you check regularly
+    - **Password** — make it strong
+  </Step>
+  <Step title="Verify your email">
+    GitHub sends a confirmation link. Click it to activate your account.
+  </Step>
+  <Step title="Set up your profile">
+    Click your profile picture → **Your profile** → **Edit profile**. Add your
+    real name, a photo, and a short bio like *"Learning Python for AI
+    development"*.
+  </Step>
+</Steps>
+
+## Step 2: Configure Git locally
+
+Tell Git who you are so your commits are properly attributed. This is a one-time setup:
+
+```bash
+# Open the terminal in VS Code (Terminal > New Terminal)
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+<Note>
+  Use the same email address you registered with on GitHub. This links your
+  local commits to your GitHub profile.
+</Note>
+
+## Step 3: Choose an authentication method
+
+When you push code to GitHub, it needs to verify your identity. Pick one of the three methods below — we recommend the GitHub CLI for beginners.
+
+<Tabs>
+  <Tab title="GitHub CLI (Recommended)">
+    The GitHub CLI (`gh`) is the modern, hassle-free approach. It handles
+    authentication automatically and works on every platform.
+
+    <Steps>
+      <Step title="Install GitHub CLI">
+        - **Windows**: Download from [cli.github.com](https://cli.github.com)
+        - **macOS**: `brew install gh`
+        - **Linux**: See the [installation guide](https://github.com/cli/cli#installation)
+      </Step>
+      <Step title="Authenticate">
+        ```bash
+        gh auth login
+        ```
+      </Step>
+      <Step title="Follow the prompts">
+        - Choose **GitHub.com**
+        - Choose **SSH** (recommended) or **HTTPS**
+        - Authenticate via your browser
+
+        That's it — Git will use your `gh` credentials automatically from now on.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="HTTPS with Token">
+    Personal Access Tokens are the traditional HTTPS approach.
+
+    <Steps>
+      <Step title="Generate a token">
+        1. Go to GitHub **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+        2. Click **Generate new token (classic)**
+        3. Give it a name like "My Laptop"
+        4. Select the `repo` scope
+        5. Set an expiration date (or choose no expiration)
+        6. Click **Generate token**
+      </Step>
+      <Step title="Copy the token immediately">
+        <Warning>
+          You will only see the token once. Copy it and store it somewhere safe
+          (a password manager is ideal) before closing the page.
+        </Warning>
+      </Step>
+      <Step title="Use the token when pushing">
+        The first time you run `git push`, Git will ask for your credentials:
+        ```
+        Username: your-github-username
+        Password: paste-your-token-here   ← NOT your GitHub password
+        ```
+        VS Code will remember these credentials after the first use.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="SSH Keys">
+    SSH is the most secure method — no passwords or tokens needed once set up.
+
+    <Steps>
+      <Step title="Generate a key pair">
+        ```bash
+        ssh-keygen -t ed25519 -C "your_email@example.com"
+        # Press Enter for all prompts to accept defaults
+        ```
+      </Step>
+      <Step title="Add the key to ssh-agent">
+        <Tabs>
+          <Tab title="macOS / Linux">
+            ```bash
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/id_ed25519
+            ```
+          </Tab>
+          <Tab title="Windows (Git Bash)">
+            ```bash
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/id_ed25519
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+      <Step title="Copy your public key">
+        ```bash
+        # macOS
+        pbcopy < ~/.ssh/id_ed25519.pub
+
+        # Windows (Git Bash)
+        cat ~/.ssh/id_ed25519.pub | clip
+
+        # Linux
+        cat ~/.ssh/id_ed25519.pub   # then select and copy the output
+        ```
+      </Step>
+      <Step title="Add the key to GitHub">
+        Go to [github.com/settings/keys](https://github.com/settings/keys) → **New SSH key** → paste your key → **Add SSH key**.
+      </Step>
+      <Step title="Test the connection">
+        ```bash
+        ssh -T git@github.com
+        # Expected: "Hi username! You've successfully authenticated..."
+        ```
+      </Step>
+    </Steps>
+
+    <Note>
+      When using SSH, clone repos with SSH URLs:
+      `git clone git@github.com:username/repo.git`
+    </Note>
+  </Tab>
+</Tabs>
+
+## What's next?
+
+Your GitHub account is ready. Now let's create your first repository and learn how to clone existing projects.
+
+<Card title="Clone & Create Repos" icon="clone" href="/tools/git/clone-create">
+  Start using GitHub by cloning an existing project and pushing your own code.
+</Card>

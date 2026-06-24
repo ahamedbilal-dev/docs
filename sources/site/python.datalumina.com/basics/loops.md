@@ -1,0 +1,186 @@
+# Source: https://python.datalumina.com/basics/loops
+
+## 
+
+[​](https://python.datalumina.com/#what-are-loops)
+
+What are loops?
+
+Loops let you repeat code without writing it multiple times. Instead of copying and pasting, you tell Python to repeat the code for you. Without loops:
+
+```
+print("Hello!")
+print("Hello!")
+print("Hello!")
+print("Hello!")
+print("Hello!")
+```
+
+With loops:
+
+```
+for i in range(5):
+    print("Hello!")
+```
+
+Both do the same thing, but the loop is much cleaner!
+
+## 
+
+[​](https://python.datalumina.com/#for-loops)
+
+For loops
+
+The `for` loop is the most common loop in Python. Let’s start simple:
+
+### 
+
+[​](https://python.datalumina.com/#repeat-a-specific-number-of-times)
+
+Repeat a specific number of times
+
+```
+# Print numbers 0 through 4
+for i in range(5):
+    print(i)
+
+# Output:
+# 0
+# 1
+# 2
+# 3
+# 4
+```
+
+Python starts counting at 0, not 1. This is called “zero-indexing”. So `range(5)` gives you 0, 1, 2, 3, 4 (five numbers total).
+
+### 
+
+[​](https://python.datalumina.com/#count-from-different-starting-points)
+
+Count from different starting points
+
+```
+# Count from 1 to 5
+for i in range(1, 6):
+    print(i)
+# Output: 1, 2, 3, 4, 5
+
+# Count by 2s
+for i in range(0, 10, 2):
+    print(i)
+# Output: 0, 2, 4, 6, 8
+```
+
+### 
+
+[​](https://python.datalumina.com/#loop-through-text)
+
+Loop through text
+
+You can loop through each character in a string:
+
+```
+name = "Python"
+for letter in name:
+    print(letter)
+
+# Output:
+# P
+# y
+# t
+# h
+# o
+# n
+```
+
+### 
+
+[​](https://python.datalumina.com/#loop-through-a-list-preview)
+
+Loop through a list (preview)
+
+We’ll learn more about lists later, but here’s a preview:
+
+```
+colors = ["red", "blue", "green"]
+for color in colors:
+    print(f"I like {color}")
+
+# Output:
+# I like red
+# I like blue
+# I like green
+```
+
+## 
+
+[​](https://python.datalumina.com/#while-loops)
+
+While loops
+
+A `while` loop continues as long as a condition is true:
+
+```
+count = 0
+while count < 5:
+    print(f"Count is {count}")
+    count = count + 1  # Increase count by 1
+
+# Output:
+# Count is 0
+# Count is 1
+# Count is 2
+# Count is 3
+# Count is 4
+```
+
+Always make sure your while loop will eventually stop! If you forget to update the variable, it will run forever.
+
+## 
+
+[​](https://python.datalumina.com/#common-mistakes)
+
+Common mistakes
+
+Forgetting the colon
+
+```
+# Wrong - missing colon
+for i in range(5)
+    print(i)
+
+# Right - colon after the loop line
+for i in range(5):
+    print(i)
+```
+Wrong indentation
+
+```
+# Wrong - not indented
+for i in range(3):
+print(i)
+
+# Right - indented inside the loop
+for i in range(3):
+    print(i)
+```
+Off-by-one errors
+
+```
+# Wrong - only goes to 4
+for i in range(5):
+    print(f"Item {i}")  # 0, 1, 2, 3, 4
+
+# Right - if you want 1-5
+for i in range(1, 6):
+    print(f"Item {i}")  # 1, 2, 3, 4, 5
+```
+
+[**Data structures**\\ \\ Learn about lists, dictionaries, and more](https://python.datalumina.com/data-structures)
+
+[Suggest edits](https://github.com/daveebbelaar/python-course/edit/main/basics/loops.mdx)
+
+[If statements](https://python.datalumina.com/control-flow/if-statements) [Data structures](https://python.datalumina.com/data-structures)
+
+Ctrl+I

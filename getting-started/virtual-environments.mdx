@@ -1,0 +1,166 @@
+---
+title: "Python Virtual Environments: Keep Projects Isolated"
+sidebarTitle: "Virtual Environments"
+description: "Learn why virtual environments are essential, then create and activate one for your project using VS Code's command palette or the terminal."
+---
+
+Every Python project you build will install packages — libraries that give your code new capabilities. The problem is that different projects often need different versions of the same library, and if you install everything into one shared Python installation, projects eventually conflict with each other. Virtual environments are the standard Python solution: one isolated environment per project, each with its own packages and version pins.
+
+<Steps>
+  <Step title="Understand Your System Python">
+    When you installed Python, it landed in a specific location on your computer:
+
+    | OS | Default system Python path |
+    |----|---------------------------|
+    | **Windows** | `C:\Users\YourName\AppData\Local\Programs\Python\Python313\` |
+    | **macOS** | `/Library/Frameworks/Python.framework/Versions/3.13/` |
+    | **Linux** | `/usr/bin/python3` |
+
+    This is your **system Python** — shared by your entire computer. Installing packages here means every project on your machine shares them, which creates the version conflict problem described next.
+  </Step>
+
+  <Step title="Understand the Problem with Sharing Packages">
+    Imagine you're working on two projects at once:
+
+    - **Project A** was built six months ago and requires `requests==2.28.0`.
+    - **Project B** is brand new and uses features only in `requests==2.31.0`.
+
+    If you upgrade `requests` for Project B, you break Project A. If you stay on the old version, Project B fails. There's no way to satisfy both with a single shared installation.
+
+    <Warning>
+      This is not a hypothetical problem. Package version conflicts are one of the most common reasons Python projects stop working. Virtual environments eliminate the issue entirely.
+    </Warning>
+  </Step>
+
+  <Step title="What a Virtual Environment Actually Is">
+    A virtual environment is a **self-contained folder** that holds:
+
+    - A private copy of the Python interpreter
+    - Its own `site-packages` directory for installed packages
+    - Activation scripts that make your shell use this Python instead of system Python
+
+    Creating a virtual environment for every project means:
+    - Installing a package for one project **never affects** any other project
+    - You can pin exact versions without fear of breaking something else
+    - Sharing your project is simple — just share the list of packages (`requirements.txt`)
+
+    <Tip>
+      Make it a habit: every new project gets its own virtual environment before you install anything. It takes seconds and prevents hours of debugging later.
+    </Tip>
+  </Step>
+
+  <Step title="Create Your Virtual Environment">
+    From your `python-for-ai` project folder, choose the method you prefer:
+
+    <Tabs>
+      <Tab title="Method 1 — VS Code (Recommended)">
+        This is the easiest approach. VS Code creates and activates the environment for you:
+
+        1. Press `Ctrl/Cmd + Shift + P` to open the **Command Palette**.
+        2. Type **Python: Create Environment** and press Enter.
+        3. Select **Venv** from the options.
+        4. Select your Python installation from the list.
+        5. Wait a moment while VS Code creates the `.venv` folder.
+
+        VS Code automatically selects the new environment as your interpreter — you'll see `.venv` in the bottom-right status bar.
+      </Tab>
+      <Tab title="Method 2 — Terminal">
+        Open the integrated terminal (`Ctrl/Cmd + `` ` ``) and run:
+
+        <Tabs>
+          <Tab title="Windows">
+            ```bash
+            python -m venv .venv
+            ```
+          </Tab>
+          <Tab title="macOS / Linux">
+            ```bash
+            python3 -m venv .venv
+            ```
+          </Tab>
+        </Tabs>
+
+        Then select the interpreter in VS Code:
+        1. Press `Ctrl/Cmd + Shift + P`.
+        2. Type **Python: Select Interpreter**.
+        3. Choose the entry that includes `.venv` (e.g., `./.venv/bin/python`).
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Inspect What Was Created">
+    Look at your project folder — a new `.venv` folder has appeared:
+
+    ```
+    python-for-ai/
+    ├── .venv/                  ← your virtual environment
+    │   ├── bin/                (macOS/Linux) or Scripts/ (Windows)
+    │   │   ├── python          ← isolated Python interpreter
+    │   │   ├── pip             ← isolated pip
+    │   │   └── activate        ← activation script
+    │   └── lib/
+    │       └── python3.x/
+    │           └── site-packages/   ← packages install here
+    ├── hello.py
+    └── python-for-ai.code-workspace
+    ```
+
+    <Note>
+      The dot in `.venv` makes it a hidden folder on macOS and Linux. That's intentional — it keeps your project Explorer uncluttered. You can see it with `ls -la` in a terminal.
+    </Note>
+  </Step>
+
+  <Step title="Activate and Verify the Environment">
+    VS Code activates the environment automatically when you open a terminal while `.venv` is selected as your interpreter. You'll see this prefix in your prompt:
+
+    ```bash
+    (.venv) PS C:\...\python-for-ai>   # Windows PowerShell
+    (.venv) user@machine:~/python-for-ai$   # macOS/Linux
+    ```
+
+    The `(.venv)` prefix confirms every `pip install` command will go into your project's isolated environment — not system Python.
+
+    Verify the correct Python is active:
+
+    ```bash
+    python --version
+    which python    # macOS/Linux → should show .venv path
+    where python    # Windows     → should show .venv path
+    ```
+  </Step>
+</Steps>
+
+## Common Issues and Fixes
+
+<CardGroup cols={1}>
+  <Card title="python -m venv: command not found" icon="circle-xmark">
+    On Ubuntu/Debian, the `venv` module may need to be installed separately:
+
+    ```bash
+    sudo apt install python3-venv
+    ```
+
+    On other systems it ships with Python by default. Try re-running `python3 -m venv .venv`.
+  </Card>
+  <Card title="Permission denied on macOS/Linux" icon="lock">
+    Make the activation script executable:
+
+    ```bash
+    chmod +x .venv/bin/activate
+    ```
+
+    Then re-select the interpreter in VS Code.
+  </Card>
+  <Card title="VS Code doesn't detect the new .venv" icon="magnifying-glass">
+    1. Open the Command Palette (`Ctrl/Cmd + Shift + P`).
+    2. Run **Developer: Reload Window**.
+    3. Open the Command Palette again and run **Python: Select Interpreter**.
+    4. Choose the `.venv` entry from the list.
+  </Card>
+</CardGroup>
+
+## A Note on Anaconda
+
+You may have heard of **Anaconda** — a popular Python distribution in data science that manages environments through its own `conda` tool. Unless your employer or a specific project explicitly requires it, stick with Python's built-in `venv`. You'll have a lighter, faster, and simpler setup that works identically across development and production environments.
+
+Now that your environment is isolated and ready, the next step is installing packages into it.
